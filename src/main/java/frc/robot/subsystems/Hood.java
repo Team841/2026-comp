@@ -32,9 +32,6 @@ public class Hood extends SubsystemBase {
         this.hoodHeightMap.put(1.0, HoodHeight.M1.getPosition());
         this.hoodHeightMap.put(8.0, HoodHeight.M5.getPosition());
         this.hoodHeightMap.put(16.0, HoodHeight.M10.getPosition());
-
-        this.zero();
-
     }
 
     public void setPosition(double position) {

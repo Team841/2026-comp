@@ -26,7 +26,6 @@ public class Turret extends SubsystemBase {
     public Turret() {
         turretMotor.getConfigurator().apply(SuperstructureConstants.TurretConstants.turretMotorConfigs);
 
-        this.zero();
     }
 
     public void setPosition(double position) {
@@ -49,6 +48,10 @@ public class Turret extends SubsystemBase {
 
     public double getPosition() {
         return this.turretMotor.getPosition().getValueAsDouble();
+    }
+
+    public double getPositionInRadians() {
+        return this.turretMotor.getPosition().getValueAsDouble() * (Math.PI / 6.25);
     }
 
     public boolean isAtPosition() {
