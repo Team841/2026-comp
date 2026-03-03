@@ -24,6 +24,7 @@ public class IntakePivot extends SubsystemBase {
 
     public IntakePivot() {
         intakePivotMotor.getConfigurator().apply(SuperstructureConstants.IntakePivotConstants.intakePivotMotorConfigs);
+        this.zero();
     }
 
     public void setPosition(double position) {

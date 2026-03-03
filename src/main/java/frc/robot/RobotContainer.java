@@ -105,12 +105,12 @@ public class RobotContainer {
         joystick.povLeft().whileTrue(rotateHoodToJoystick(() -> -joystick.getRightY()));
 
         joystick.a().onTrue(new InstantCommand(() -> shooter.requestVelocity(-10)));
-        joystick.b().onTrue(new InstantCommand(() -> shooter.requestVelocity(-30)));
-        joystick.x().onTrue(new InstantCommand(() -> shooter.requestVelocity(-50)));
+        joystick.b().onTrue(new InstantCommand(() -> shooter.requestVelocity(-40)));
+        joystick.x().onTrue(new InstantCommand(() -> shooter.requestVelocity(-45)));
         joystick.y().onTrue(new InstantCommand(() -> shooter.requestVelocity(-90)));
 
         joystick.leftTrigger().onTrue(new InstantCommand(() -> intake.setDutyCycle(-0.5))).onFalse(new InstantCommand(() -> intake.stopMotor()));
-        joystick.leftTrigger().onTrue(new InstantCommand(() -> intakePivot.setPosition(-16))).onFalse(new InstantCommand(() -> intakePivot.setPosition(-8)));
+        joystick.leftTrigger().onTrue(new InstantCommand(() -> intakePivot.setPosition(-16))).onFalse(new InstantCommand(() -> intakePivot.setPosition(-2)));
         
         joystick.rightTrigger().onTrue(new InstantCommand(() -> dyeRotor.setDutyCycle(1))).onFalse(new InstantCommand(() -> dyeRotor.stopMotor()));
 
