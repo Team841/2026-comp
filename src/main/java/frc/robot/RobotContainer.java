@@ -12,11 +12,14 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.TunerConstants;
+import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.DyeRotor;
 import frc.robot.subsystems.Hood;
@@ -33,12 +36,11 @@ public class RobotContainer {
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.05).withRotationalDeadband(MaxAngularRate * 0.05) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
-    private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-    private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
+    private final CommandXboxController cojoystick = new CommandXboxController(1);
 
     public final Drivetrain drivetrain;
     public final DyeRotor dyeRotor;
@@ -84,6 +86,52 @@ public class RobotContainer {
                 });
     }
 
+    public Command snapTurretToHub() {
+        return new InstantCommand(
+            () -> turret.setPositionWithRotation2d(
+                drivetrain.getAngleToScoreWhileMoving(
+                    shooter.getTimeOfFlightFromDistanceMeters(
+                        drivetrain.getDistanceToHub()
+        ))), turret);
+    }
+
+    public Command snapHoodToHub() {
+        return Commands.run(
+            () -> {
+                hood.setPosition(hood.getHoodHeightFromMetersToHub(drivetrain.getDistanceToHubWhileMoving(shooter.getTimeOfFlightFromDistanceMeters(drivetrain.getDistanceToHub()))));
+            }, 
+            hood);
+    }
+
+    public Command spinUpShooterForHubShot() {
+        return Commands.run(
+                () -> {
+                    double distanceToHub = drivetrain.getDistanceToHubWhileMoving(
+                            shooter.getTimeOfFlightFromDistanceMeters(
+                                    drivetrain.getDistanceToHub()));
+                    shooter.setVelocity(shooter.getShooterSpeedFromDistanceMeters(distanceToHub));
+                },
+                shooter);
+    }
+
+    public Command snapToPass() {
+        return Commands.run(
+            () -> {
+                double angle;
+                
+                if (RobotConstants.isRedAlliance.getAsBoolean()) {
+                    angle = wrapToPi(-drivetrain.getState().Pose.getRotation().getRadians());
+                } else {
+                    angle = wrapToPi(-drivetrain.getState().Pose.getRotation().getRadians() - Math.PI);
+                }
+
+                turret.setPositionWithRotation2d(new Rotation2d(angle));
+                hood.setPosition(-4.1);
+                shooter.setVelocity(-50);
+            }, 
+            turret, hood, shooter);
+    }
+
     public static double wrapToPi(double angle) {
         angle = (angle + Math.PI) % (2.0 * Math.PI);
         if (angle < 0) {
@@ -93,24 +141,42 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        joystick.povLeft().whileFalse(
+        drivetrain.setDefaultCommand(
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                {if (DriverStation.getAlliance().isPresent()) {
+                            if (DriverStation.getAlliance().get() == Alliance.Red) {
+                                return drive.withVelocityX(joystick.getLeftY() * MaxSpeed) 
+                                    .withVelocityY(joystick.getLeftX() * MaxSpeed) 
+                                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate); 
+                            } else {
+                                return drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) 
+                                    .withVelocityY(-joystick.getLeftX() * MaxSpeed) 
+                                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate); 
+                            }
+                        } else {
+                            return drive.withVelocityX(0) 
+                                .withVelocityY(0) 
+                                .withRotationalRate(0); 
+                        }}
             )
         );
 
-        joystick.povLeft().whileTrue(rotateTurretToJoystick(() -> joystick.getLeftX(), () -> -joystick.getLeftY()));
-        joystick.povLeft().whileTrue(rotateHoodToJoystick(() -> -joystick.getRightY()));
+        turret.setDefaultCommand(snapTurretToHub());
+        hood.setDefaultCommand(snapHoodToHub());
 
-        joystick.a().onTrue(new InstantCommand(() -> shooter.requestVelocity(-10)));
-        joystick.b().onTrue(new InstantCommand(() -> shooter.requestVelocity(-40)));
-        joystick.x().onTrue(new InstantCommand(() -> shooter.requestVelocity(-45)));
+        joystick.leftBumper().whileTrue(spinUpShooterForHubShot()).onFalse(new InstantCommand(() -> shooter.setVelocity(0)));
+        joystick.rightBumper().whileTrue(snapToPass()).onFalse(new InstantCommand(() -> shooter.setVelocity(0)));
+
+        cojoystick.leftBumper().whileTrue(rotateTurretToJoystick(() -> cojoystick.getLeftX(), () -> -cojoystick.getLeftY()));
+        cojoystick.leftBumper().whileTrue(rotateHoodToJoystick(() -> -cojoystick.getRightY()));
+
+        joystick.a().onTrue(new InstantCommand(() -> shooter.requestVelocity(-40)));
+        joystick.b().onTrue(new InstantCommand(() -> shooter.requestVelocity(-45)));
+        joystick.x().onTrue(new InstantCommand(() -> shooter.requestVelocity(-55)));
         joystick.y().onTrue(new InstantCommand(() -> shooter.requestVelocity(-90)));
 
         joystick.leftTrigger().onTrue(new InstantCommand(() -> intake.setDutyCycle(-0.5))).onFalse(new InstantCommand(() -> intake.stopMotor()));
-        joystick.leftTrigger().onTrue(new InstantCommand(() -> intakePivot.setPosition(-16))).onFalse(new InstantCommand(() -> intakePivot.setPosition(-2)));
+        joystick.leftTrigger().onTrue(new InstantCommand(() -> intakePivot.setPosition(-16.5))).onFalse(new InstantCommand(() -> intakePivot.setPosition(-2)));
         
         joystick.rightTrigger().onTrue(new InstantCommand(() -> dyeRotor.setDutyCycle(1))).onFalse(new InstantCommand(() -> dyeRotor.stopMotor()));
 

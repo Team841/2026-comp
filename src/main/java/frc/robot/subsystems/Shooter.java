@@ -7,7 +7,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
@@ -19,7 +19,7 @@ public class Shooter extends SubsystemBase {
 	private TalonFX rightMotor = new TalonFX(SuperstructureConstants.IDs.rightShooterMotorID, "rio");
 	private TalonFX leftMotor = new TalonFX(SuperstructureConstants.IDs.leftShooterMotorID, "rio");
 
-	private VelocityVoltage velocityControl = new VelocityVoltage(0);
+	private MotionMagicVelocityVoltage velocityControl = new MotionMagicVelocityVoltage(0);
 	private Follower follower = new Follower(SuperstructureConstants.IDs.rightShooterMotorID, MotorAlignmentValue.Opposed);
 
 	private InterpolatingDoubleTreeMap shooterSpeedsMap;
@@ -31,7 +31,7 @@ public class Shooter extends SubsystemBase {
 	StatusCode[] latestStatus;
 
 	public Shooter() {
-		this.rightMotor.getConfigurator().apply(SuperstructureConstants.ShooterConstants.shooterConfigs);
+		this.rightMotor.getConfigurator().apply(SuperstructureConstants.ShooterConstants.shooterMotorConfigs);
 		this.leftMotor.setControl(follower);
 
 		this.targetVelocity = 0;
@@ -106,11 +106,11 @@ public class Shooter extends SubsystemBase {
 
 	public enum ShooterSpeed {
 
-		M1(-24),
-		M2(-28),
-		M3(-32),
-		M4(-34.5),
-		M5(-37);
+		M1(-24 * 3/2),
+		M2(-28 * 3/2),
+		M3(-32 * 3/2),
+		M4(-34.5 * 3/2),
+		M5(-37 * 3/2);
 
 		private final double rps;
 

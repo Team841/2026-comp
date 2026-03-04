@@ -25,11 +25,25 @@ public class SuperstructureConstants {
     
     public class ShooterConstants {
         public static final Slot0Configs shooterConfigs = new Slot0Configs()
-            .withKP(0.1)
+            .withKP(0.3)
             .withKI(0)
             .withKD(0)
-            .withKV(0.13)
+            .withKV(0.12)
             .withKS(0);
+
+        public static final TalonFXConfiguration shooterMotorConfigs = new TalonFXConfiguration()
+            .withSlot0(shooterConfigs)
+            .withFeedback(
+                new FeedbackConfigs()
+                    .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+                    .withRotorToSensorRatio(1))
+            .withMotionMagic(
+                new MotionMagicConfigs()
+                    .withMotionMagicCruiseVelocity(110)
+                    .withMotionMagicAcceleration(1000)
+                    .withMotionMagicJerk(200)
+                    .withMotionMagicExpo_kA(0.12)
+                    .withMotionMagicExpo_kV(0.1));
     }
 
     public class HoodConstants {
@@ -73,9 +87,9 @@ public class SuperstructureConstants {
 
     public class TurretConstants {
         public static final Slot0Configs turretConfigs = new Slot0Configs()
-            .withKP(8)
-            .withKI(0)
-            .withKD(0)
+            .withKP(12)
+            .withKI(0.1)
+            .withKD(0.1)
             .withKV(0.12)
             .withKA(0)
             .withKS(0)
@@ -146,6 +160,6 @@ public class SuperstructureConstants {
                     .withForwardSoftLimitEnable(true)
                     .withReverseSoftLimitEnable(true)
                     .withForwardSoftLimitThreshold(0)
-                    .withReverseSoftLimitThreshold(-16));
+                    .withReverseSoftLimitThreshold(-16.5));
     }
 }

@@ -236,7 +236,6 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
         }
     }
 
-    @Override
     public void periodic() {
 
         Logger.recordOutput("peri/test", true);
@@ -358,50 +357,23 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
                 fieldRelativeSpeeds.vxMetersPerSecond * timeOfFlight,
                 fieldRelativeSpeeds.vyMetersPerSecond * timeOfFlight);
 
+        Rotation2d robotToHubAngle;
+
         if (RobotConstants.isRedAlliance.getAsBoolean()) {
-            return new Rotation2d(
+            robotToHubAngle = new Rotation2d(
                     Math.atan2(
                             redHubPose.getY() - robotTranslationOverTime.getY() - this.getState().Pose.getY(),
                             redHubPose.getX() - robotTranslationOverTime.getX() - this.getState().Pose.getX()));
         } else {
-            return new Rotation2d(
+            robotToHubAngle = new Rotation2d(
                     Math.atan2(
                             blueHubPose.getY() - robotTranslationOverTime.getY() - this.getState().Pose.getY(),
                             blueHubPose.getX() - robotTranslationOverTime.getX() - this.getState().Pose.getX()));
         }
-    }
 
-    public Rotation2d getTurretAngleToScoreWhileMoving(double timeOfFlight) {
-        ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-            this.getState().Speeds, this.getState().Pose.getRotation());
+        Rotation2d turretToHubAngle = robotToHubAngle.minus(this.getState().Pose.getRotation());
 
-        Translation2d robotTranslationOverTime = new Translation2d(
-            fieldRelativeSpeeds.vxMetersPerSecond * timeOfFlight,
-            fieldRelativeSpeeds.vyMetersPerSecond * timeOfFlight);
-
-        Translation2d turretDisplacementFromRobot = new Translation2d(
-            0.1651, 
-            this.getState().Pose.getRotation().minus(new Rotation2d(Math.PI)));
-
-        Translation2d turretDisplacementFromField = this.getState().Pose.getTranslation().plus(turretDisplacementFromRobot);
-
-        Rotation2d turretAngleToHubFieldRelative;
-
-        if (RobotConstants.isRedAlliance.getAsBoolean()) {
-            turretAngleToHubFieldRelative = new Rotation2d(
-                Math.atan2(
-                    redHubPose.getY() - robotTranslationOverTime.getY() - turretDisplacementFromField.getY(),
-                    redHubPose.getX() - robotTranslationOverTime.getX() - turretDisplacementFromField.getX()));
-        } else {
-            turretAngleToHubFieldRelative = new Rotation2d(
-                Math.atan2(
-                    blueHubPose.getY() - robotTranslationOverTime.getY() - turretDisplacementFromField.getY(), 
-                    blueHubPose.getX() - robotTranslationOverTime.getX() - turretDisplacementFromField.getX()));
-        }
-
-        Rotation2d turretAngleToHubRobotRelative = wrapTo2Pi(turretAngleToHubFieldRelative.minus(this.getState().Pose.getRotation()).minus(new Rotation2d(Math.PI)));
-
-        return turretAngleToHubRobotRelative;
+        return turretToHubAngle.minus(new Rotation2d(fieldRelativeSpeeds.omegaRadiansPerSecond * 0.1));
     }
 
     public double getDistanceToHub() {
@@ -430,29 +402,6 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
             return getDistanceBetweenPoses(
                     new Pose2d(blueHubPose.getTranslation().minus(robotTranslationOverTime), new Rotation2d()),
                     this.getState().Pose);
-        }
-    }
-
-    public double getTurretDistanceToHubWhileMoving(double timeOfFlight) {
-        ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-            this.getState().Speeds, this.getState().Pose.getRotation());
-
-        Translation2d robotTranslationOverTime = new Translation2d(
-            fieldRelativeSpeeds.vxMetersPerSecond * timeOfFlight,
-            fieldRelativeSpeeds.vyMetersPerSecond * timeOfFlight);
-
-        Translation2d turretDisplacementFromRobot = new Translation2d(
-            0.1651, 
-            this.getState().Pose.getRotation().minus(new Rotation2d(Math.PI)));
-
-        Translation2d turretDisplacementFromField = this.getState().Pose.getTranslation().plus(turretDisplacementFromRobot);
-
-        Translation2d turretDisplacementFromFieldOverTime = turretDisplacementFromField.plus(robotTranslationOverTime);
-
-        if (RobotConstants.isRedAlliance.getAsBoolean()) {
-            return getDistanceBetweenTranslations(redHubPose.getTranslation(), turretDisplacementFromFieldOverTime);
-        } else {
-            return getDistanceBetweenTranslations(blueHubPose.getTranslation(), turretDisplacementFromFieldOverTime);
         }
     }
 

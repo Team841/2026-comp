@@ -76,7 +76,7 @@ public class Robot extends LoggedRobot {
         Logger.start();
 
         drivetrain = new Drivetrain(
-        () -> turret.getPositionInRadians(),
+        () -> turret.getPositionInRadians_ZerotoTwoPi(),
         () -> turret.isAtPosition(),
         TunerConstants.DrivetrainConstants, 
         TunerConstants.FrontLeft, 
