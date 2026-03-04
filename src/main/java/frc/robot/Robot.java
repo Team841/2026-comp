@@ -4,13 +4,18 @@
 
 package frc.robot;
 
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+
 import com.ctre.phoenix6.HootAutoReplay;
+import com.ctre.phoenix6.SignalLogger;
 
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -23,7 +28,7 @@ import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
 
-public class Robot extends TimedRobot {
+public class Robot extends LoggedRobot {
     private Command m_autonomousCommand;
 
     public NetworkTable table = NetworkTableInstance.getDefault().getTable("Robot");
@@ -48,14 +53,7 @@ public class Robot extends TimedRobot {
 
     private final RobotContainer robotContainer;
     private final Turret turret = new Turret();
-    private final Drivetrain drivetrain = new Drivetrain(
-        () -> turret.getPositionInRadians(),
-        () -> turret.isAtPosition(),
-        TunerConstants.DrivetrainConstants, 
-        TunerConstants.FrontLeft, 
-        TunerConstants.FrontRight, 
-        TunerConstants.BackLeft, 
-        TunerConstants.BackRight);
+    private final Drivetrain drivetrain;
     private final DyeRotor dyeRotor = new DyeRotor();
     private final Hood hood = new Hood();
     private final Intake intake = new Intake();
@@ -68,12 +66,30 @@ public class Robot extends TimedRobot {
         .withJoystickReplay();
 
     public Robot() {
+        Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
+
+        Logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
+        Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+
+        SignalLogger.enableAutoLogging(false);
+
+        Logger.start();
+
+        drivetrain = new Drivetrain(
+        () -> turret.getPositionInRadians(),
+        () -> turret.isAtPosition(),
+        TunerConstants.DrivetrainConstants, 
+        TunerConstants.FrontLeft, 
+        TunerConstants.FrontRight, 
+        TunerConstants.BackLeft, 
+        TunerConstants.BackRight);
+
         robotContainer = new RobotContainer(drivetrain, dyeRotor, hood, intake, intakePivot, shooter, turret);
     }
 
     @Override
     public void robotPeriodic() {
-        m_timeAndJoystickReplay.update();
+        // m_timeAndJoystickReplay.update();
         CommandScheduler.getInstance().run(); 
 
         turretPosition.set(this.turret.getPosition());
