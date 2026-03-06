@@ -73,12 +73,8 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
     private final BooleanSupplier turretAtPositionSupplier;
 
     NetworkTable turretCameraTable = NetworkTableInstance.getDefault().getTable("limelight-turret");
-
-    private final NetworkTableInstance test = NetworkTableInstance.getDefault();
-
-    private final NetworkTable poseStateTable = test.getTable("PoseStates");
-    private final StructPublisher<Pose2d> limelightDisplacedPose = poseStateTable
-            .getStructTopic("LimelightDisplacedPose", Pose2d.struct).publish();
+    NetworkTable leftCameraTable = NetworkTableInstance.getDefault().getTable("limelight-left");
+    NetworkTable rightCameraTable = NetworkTableInstance.getDefault().getTable("limelight-right");
 
     public final NetworkTableInstance vision = NetworkTableInstance.getDefault();
 
@@ -428,20 +424,52 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
         visionProcessor.driveYawAngularVelocity.addSample(timestamp, this.getState().Speeds.omegaRadiansPerSecond);
         visionProcessor.measuredRobotRelativeChassisSpeeds.set(this.getState().Speeds);
         visionProcessor.robotPose.addSample(timestamp, this.getState().Pose);
-        boolean turretCameraSeesTarget = turretCameraTable.getEntry("tv").getDouble(0) == 1.0;
-        Logger.recordOutput("Drivetrain/turretSeesCameraTargetCamera", turretCameraSeesTarget);
-        if (turretCameraSeesTarget) { // does it see target?
-            var megatag = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-turret");
-            var megatag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-turret");
-            Logger.recordOutput("Drivtrain/megatag1llpose", megatag.pose);
-            Logger.recordOutput("Drivtrain/megatag2llpose", megatag2.pose);
-            if (megatag != null && megatag2 != null && this.turretAtPositionSupplier.getAsBoolean()){
+        // boolean turretCameraSeesTarget = turretCameraTable.getEntry("tv").getDouble(0) == 1.0;
+        // Logger.recordOutput("Drivetrain/turretSeesCameraTargetCamera", turretCameraSeesTarget);
+        // if (turretCameraSeesTarget) { // does it see target?
+        //     var megatag = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-turret");
+        //     var megatag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-turret");
+        //     Logger.recordOutput("Drivtrain/megatag1llpose", megatag.pose);
+        //     Logger.recordOutput("Drivtrain/megatag2llpose", megatag2.pose);
+        //     if (megatag != null && megatag2 != null && this.turretAtPositionSupplier.getAsBoolean()){
+        //         visionProcessor.updateVision(
+        //             turretCameraSeesTarget,
+        //             FiducialObservation.fromLimelight(megatag.rawFiducials),
+        //             MegatagPoseEstimate.fromLimelight(megatag),
+        //             MegatagPoseEstimate.fromLimelight(megatag2),
+        //             "Vision/Gamma");
+        //     }
+        // }
+        boolean leftCameraSeesTarget = leftCameraTable.getEntry("tv").getDouble(0) == 1.0;
+        Logger.recordOutput("Drivetrain/leftCameraSeesTarget", leftCameraSeesTarget);
+        if (leftCameraSeesTarget) { // does it see target?
+            var megatag = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-left");
+            var megatag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-left");
+            Logger.recordOutput("Drivtrain/megatag1llposeLeft", megatag.pose);
+            Logger.recordOutput("Drivtrain/megatag2llposeLeft", megatag2.pose);
+            if (megatag != null && megatag2 != null){
                 visionProcessor.updateVision(
-                    turretCameraSeesTarget,
+                    leftCameraSeesTarget,
                     FiducialObservation.fromLimelight(megatag.rawFiducials),
                     MegatagPoseEstimate.fromLimelight(megatag),
                     MegatagPoseEstimate.fromLimelight(megatag2),
-                    "Vision/Gamma");
+                    "Vision/left");
+            }
+        }
+        boolean rightCameraSeesTarget = rightCameraTable.getEntry("tv").getDouble(0) == 1.0;
+        Logger.recordOutput("Drivetrain/rightCameraSeesTarget", rightCameraSeesTarget);
+        if (rightCameraSeesTarget) { // does it see target?
+            var megatag = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-right");
+            var megatag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-right");
+            Logger.recordOutput("Drivtrain/megatag1llposeRight", megatag.pose);
+            Logger.recordOutput("Drivtrain/megatag2llposeRight", megatag2.pose);
+            if (megatag != null && megatag2 != null){
+                visionProcessor.updateVision(
+                    rightCameraSeesTarget,
+                    FiducialObservation.fromLimelight(megatag.rawFiducials),
+                    MegatagPoseEstimate.fromLimelight(megatag),
+                    MegatagPoseEstimate.fromLimelight(megatag2),
+                    "Vision/right");
             }
         }
     }
@@ -451,6 +479,9 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
         double gyroAngularVelocity = Math.toDegrees(this.getState().Speeds.omegaRadiansPerSecond);
         try {
             LimelightHelpers.SetIMUMode("limelight-turret", 1);
+            LimelightHelpers.SetIMUMode("limelight-right", 1);
+            LimelightHelpers.SetIMUMode("limelight-left", 1);
+
 
             Translation2d limelightToCenterOfTurret = new Translation2d(
                     0.072151,
@@ -464,8 +495,22 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
                     0,
                     Math.toDegrees(this.turretAngleSupplier.getAsDouble()));
 
-            limelightDisplacedPose
-                    .set(new Pose2d(limelightToCenterOfTurret, new Rotation2d(this.turretAngleSupplier.getAsDouble())));
+            LimelightHelpers.setCameraPose_RobotSpace("limelight-left", 
+                0, 
+                -0.305, 
+                0.53467, 
+                0, 
+                0, 
+                90);
+
+            LimelightHelpers.setCameraPose_RobotSpace("limelight-right", 
+                0, 
+                0.305, 
+                0.53467, 
+                0, 
+                0, 
+                270);
+
         } catch (Exception e) {
             Logger.recordOutput("Drivetrain/llsettingsSet", false);
             return;
