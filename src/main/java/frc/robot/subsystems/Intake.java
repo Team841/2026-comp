@@ -17,8 +17,8 @@ public class Intake extends SubsystemBase {
         intakeMotor.getConfigurator().apply(new TalonFXConfiguration());
     }
 
-    public void setDutyCycle(double rps) {
-        this.intakeMotor.set(rps);
+    public void setDutyCycle(double speed) {
+        this.intakeMotor.set(speed);
     }
 
     public void stopMotor() {

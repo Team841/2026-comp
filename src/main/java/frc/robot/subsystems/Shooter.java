@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.Follower;
@@ -84,7 +86,7 @@ public class Shooter extends SubsystemBase {
 	}
 
 	public boolean atfullSpeed() {
-		return Math.abs(this.targetVelocity - this.getShooterVelocity()) < 2.5 && this.targetVelocity != 0;
+		return Math.abs(this.targetVelocity - this.getShooterVelocity()) < 2 && this.targetVelocity != 0;
 	}
 
 	public double getShooterVelocity() {
@@ -102,15 +104,19 @@ public class Shooter extends SubsystemBase {
 		} else {
 			this.latestStatus = this.setControl(velocityControl.withVelocity(this.targetVelocity));
 		}
+
+		Logger.recordOutput("Shooter/TargetSpeed", this.getShooterTargetVelocity());
+		Logger.recordOutput("Shooter/Speed", this.getShooterVelocity());
+		Logger.recordOutput("Shooter/AtFullSpeed", this.atfullSpeed());
 	}
 
 	public enum ShooterSpeed {
 
 		M1(-24 * 3/2),
-		M2(-28 * 3/2),
-		M3(-32 * 3/2),
-		M4(-34.5 * 3/2),
-		M5(-37 * 3/2);
+		M2(-27 * 3/2),
+		M3(-30 * 3/2),
+		M4(-33 * 3/2),
+		M5(-36 * 3/2);
 
 		private final double rps;
 

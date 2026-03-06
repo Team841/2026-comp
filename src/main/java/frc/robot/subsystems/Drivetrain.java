@@ -69,9 +69,6 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
     private static final Pose2d blueHubPose = new Pose2d(4.626, 4.035, new Rotation2d());
     private static final Pose2d redHubPose = new Pose2d(11.914, 4.035, new Rotation2d());
 
-    private final DoubleSupplier turretAngleSupplier;
-    private final BooleanSupplier turretAtPositionSupplier;
-
     NetworkTable turretCameraTable = NetworkTableInstance.getDefault().getTable("limelight-turret");
     NetworkTable leftCameraTable = NetworkTableInstance.getDefault().getTable("limelight-left");
     NetworkTable rightCameraTable = NetworkTableInstance.getDefault().getTable("limelight-right");
@@ -174,16 +171,12 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
      * @param modules             Constants for each specific module
      */
     public Drivetrain(
-            DoubleSupplier turretAngleSupplier,
-            BooleanSupplier turretAtPositionSupplier,
             SwerveDrivetrainConstants drivetrainConstants,
             SwerveModuleConstants<?, ?, ?>... modules) {
          super(
                 TalonFX::new, TalonFX::new, CANcoder::new,
                 drivetrainConstants, modules
             );
-        this.turretAngleSupplier = turretAngleSupplier;
-        this.turretAtPositionSupplier = turretAtPositionSupplier;
     }
 
     /**
@@ -483,17 +476,17 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
             LimelightHelpers.SetIMUMode("limelight-left", 1);
 
 
-            Translation2d limelightToCenterOfTurret = new Translation2d(
-                    0.072151,
-                    new Rotation2d(this.turretAngleSupplier.getAsDouble()));
+            // Translation2d limelightToCenterOfTurret = new Translation2d(
+            //         0.072151,
+            //         new Rotation2d(this.turretAngleSupplier.getAsDouble()));
 
-            LimelightHelpers.setCameraPose_RobotSpace("limelight-turret",
-                    limelightToCenterOfTurret.getY(),
-                    limelightToCenterOfTurret.getX(),
-                    0.7406386,
-                    0,
-                    0,
-                    Math.toDegrees(this.turretAngleSupplier.getAsDouble()));
+            // LimelightHelpers.setCameraPose_RobotSpace("limelight-turret",
+            //         limelightToCenterOfTurret.getY(),
+            //         limelightToCenterOfTurret.getX(),
+            //         0.7406386,
+            //         0,
+            //         0,
+            //         Math.toDegrees(this.turretAngleSupplier.getAsDouble()));
 
             LimelightHelpers.setCameraPose_RobotSpace("limelight-left", 
                 0, 

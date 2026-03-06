@@ -4,8 +4,10 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SuperstructureConstants;
@@ -14,19 +16,15 @@ public class DyeRotor extends SubsystemBase {
     private TalonFX rotorMotor = new TalonFX(SuperstructureConstants.IDs.dyeRotorMotorID, "rio");
 
     public DyeRotor() {
-        rotorMotor.getConfigurator().apply(new TalonFXConfiguration());
+        rotorMotor.getConfigurator().apply(new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake)));
     }
 
-    public void setDutyCycle(double rps) {
-        this.rotorMotor.set(rps);
+    public void setDutyCycle(double speed) {
+        this.rotorMotor.set(speed);
     }
 
     public void stopMotor() {
         this.rotorMotor.stopMotor();
-    }
-
-    public double getIntakeVelocity() {
-        return this.rotorMotor.getRotorVelocity().getValueAsDouble();
     }
 
     @Override

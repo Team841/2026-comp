@@ -31,26 +31,6 @@ import frc.robot.subsystems.Turret;
 public class Robot extends LoggedRobot {
     private Command m_autonomousCommand;
 
-    public NetworkTable table = NetworkTableInstance.getDefault().getTable("Robot");
-
-    DoublePublisher turretPosition =
-    table.getDoubleTopic("TurretPosition").publish();
-
-    DoublePublisher turretTargetPosition =
-    table.getDoubleTopic("TurretTargetPosition").publish();
-    
-    BooleanPublisher turretAtPosition =
-    table.getBooleanTopic("TurretAtPosition").publish();
-
-    DoublePublisher shooterVelocity =
-    table.getDoubleTopic("ShooterVelocity").publish();
-
-    DoublePublisher shooterTargetVelocity =
-    table.getDoubleTopic("ShooterTargetVelocity").publish();
-    
-    BooleanPublisher ShooterAtSpeed =
-    table.getBooleanTopic("ShooterAtSpeed").publish();
-
     private final RobotContainer robotContainer;
     private final Turret turret = new Turret();
     private final Drivetrain drivetrain;
@@ -76,8 +56,6 @@ public class Robot extends LoggedRobot {
         Logger.start();
 
         drivetrain = new Drivetrain(
-        () -> turret.getPositionInRadians_ZerotoTwoPi(),
-        () -> turret.isAtPosition(),
         TunerConstants.DrivetrainConstants, 
         TunerConstants.FrontLeft, 
         TunerConstants.FrontRight, 
@@ -89,16 +67,7 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void robotPeriodic() {
-        // m_timeAndJoystickReplay.update();
         CommandScheduler.getInstance().run(); 
-
-        turretPosition.set(this.turret.getPosition());
-        turretTargetPosition.set(this.turret.getTurretTargetPosition());
-        turretAtPosition.set(this.turret.isAtPosition());
-
-        shooterVelocity.set(this.shooter.getShooterVelocity());
-        shooterTargetVelocity.set(this.shooter.getShooterTargetVelocity());
-        ShooterAtSpeed.set(this.shooter.atfullSpeed());
     }
 
     @Override

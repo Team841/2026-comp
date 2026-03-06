@@ -120,8 +120,8 @@ public class SuperstructureConstants {
                 new SoftwareLimitSwitchConfigs()
                     .withForwardSoftLimitEnable(true)
                     .withReverseSoftLimitEnable(true)
-                    .withForwardSoftLimitThreshold(7)
-                    .withReverseSoftLimitThreshold(-7));
+                    .withForwardSoftLimitThreshold(7.5)
+                    .withReverseSoftLimitThreshold(-7.5));
     }
 
     public class IntakePivotConstants {

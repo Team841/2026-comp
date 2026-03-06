@@ -23,25 +23,68 @@ public class Turret extends SubsystemBase {
 
     private MotionMagicExpoVoltage positionControl = new MotionMagicExpoVoltage(0);
 
-    private VoltageOut voltageControl = new VoltageOut(0);
-
-    private double targetPosition = 0;
-
-    public boolean positionMode = true;
+    private Rotation2d targetAngle = new Rotation2d();
 
     StatusCode[] latestStatus;
 
     public Turret() {
         turretMotor.getConfigurator().apply(SuperstructureConstants.TurretConstants.turretMotorConfigs);
-        this.positionMode = true;
     }
 
-    public void setPosition(double position) {
-        this.targetPosition = position;
+    public void setPosition(Rotation2d angle) {
+        this.targetAngle = new Rotation2d(Math.atan2(Math.sin(angle.getRadians()), Math.cos(angle.getRadians())));
     }
 
-    public void setPositionWithRotation2d(Rotation2d angle) {
-        this.targetPosition = -angle.getRotations() * 12.5;
+    public Rotation2d getTurretTargetAngle() {
+        return this.targetAngle;
+    }
+
+    public Rotation2d getTurretAngle() {
+        return new Rotation2d(-this.turretMotor.getPosition().getValueAsDouble() * (Math.PI / 6.25));
+    }
+
+    public Rotation2d getTurretAngleAbsolute() {
+        return new Rotation2d(Math.atan2(Math.sin(this.getTurretAngle().getRadians()), Math.cos(this.getTurretAngle().getRadians())));
+    }
+
+    public double getContinuousTurretSetpoint() {
+
+        double targetRadians = this.getTurretTargetAngle().getRadians();
+        double ROTATIONS_PER_TURRET_REV = 12.5;
+        double MIN_ROT = -5;
+        double MAX_ROT = 5;
+
+        double currentRot = turretMotor.getPosition().getValueAsDouble();
+
+        // Convert radians → turret rotations
+        double targetRot = targetRadians * (ROTATIONS_PER_TURRET_REV / (2 * Math.PI));
+
+        // Find closest equivalent revolution
+        double base = Math.round((currentRot - targetRot) / ROTATIONS_PER_TURRET_REV);
+        double candidate = targetRot + base * ROTATIONS_PER_TURRET_REV;
+
+        // If outside limits, jump one revolution
+        if (candidate > MAX_ROT) {
+            candidate -= ROTATIONS_PER_TURRET_REV;
+        } 
+        else if (candidate < MIN_ROT) {
+            candidate += ROTATIONS_PER_TURRET_REV;
+        }
+
+        return -candidate;
+    }
+
+    public boolean atAngle(double toleranceDegrees) {
+        return Math.abs(this.getTurretTargetAngle().getDegrees() - this.getTurretAngleAbsolute().getDegrees()) < toleranceDegrees;
+    }
+
+    public static double shortestAngleDifference(double current, double target) {
+        double diff = target - current;
+        return Math.atan2(Math.sin(diff), Math.cos(diff));
+    }
+
+    public void zero() {
+        this.turretMotor.setPosition(0);
     }
 
     public StatusCode[] setControl(ControlRequest control) {
@@ -50,50 +93,15 @@ public class Turret extends SubsystemBase {
         };
     }
 
-    public double getTurretTargetPosition() {
-        return this.targetPosition;
-    }
-
-    public double getPosition() {
-        return this.turretMotor.getPosition().getValueAsDouble();
-    }
-
-    public double getPositionInRadians_PitoPi() {
-        return this.turretMotor.getPosition().getValueAsDouble() * (Math.PI / 6.25);
-    }
-
-    public double getPositionInRadians_ZerotoTwoPi() {
-        return (-this.getPositionInRadians_PitoPi() % (2.0 * Math.PI) + 2.0 * Math.PI) % (2.0 * Math.PI);
-    }
-
-    public boolean isAtPosition() {
-        return Math.abs(this.getTurretTargetPosition() - this.getPosition()) < 0.2;
-    }
-
-    public double getDistanceFromPosition() {
-        return this.getTurretTargetPosition() - this.getPosition();
-    }
-
-    public void zero() {
-        this.turretMotor.setPosition(0);
-    }
-
     @Override
     public void periodic() {
-        if (this.positionMode) {
-            this.latestStatus = this.setControl(positionControl.withPosition(this.targetPosition));
-        } else {
-            double outputVoltage = this.getDistanceFromPosition() + 0.25;
-            if (outputVoltage > 6) {
-                outputVoltage = 6;
-            } else if (outputVoltage < -6) {
-                outputVoltage = -6;
-            }
-            if (!(Math.abs(this.getTurretTargetPosition() - this.getPosition()) < 0.5)) {
-                this.latestStatus = this.setControl(voltageControl.withOutput(outputVoltage));
-            } else {
-                this.latestStatus = this.setControl(voltageControl.withOutput(0));
-            }
-        }
+        this.latestStatus = this.setControl(positionControl.withPosition(this.getContinuousTurretSetpoint()));
+        Logger.recordOutput("Turret/TargetPosition", this.getTurretTargetAngle().getDegrees());
+        Logger.recordOutput("Turret/CurrentPosition", this.getTurretAngle().getDegrees());
+        Logger.recordOutput("Turret/CurrentAbsolutePosition", this.getTurretAngleAbsolute().getDegrees());
+        Logger.recordOutput("Turret/TargetMotorPosition", this.getContinuousTurretSetpoint());
+        Logger.recordOutput("Turret/WithinTolerance", this.atAngle(10));
+
+
     }
 }
