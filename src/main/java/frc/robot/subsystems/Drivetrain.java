@@ -1,17 +1,11 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Volts;
-
 import java.util.Optional;
-import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
-import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 
-import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -22,24 +16,21 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.LimelightHelpers;
 import frc.robot.constants.RobotConstants;
 import frc.team254.vision.FiducialObservation;
@@ -76,7 +67,6 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
     public final NetworkTableInstance vision = NetworkTableInstance.getDefault();
 
     public final NetworkTable visionControlTable = vision.getTable("VisionControl");
-    public final BooleanPublisher ballVisionToggle = visionControlTable.getBooleanTopic("BallVisionToggle").publish();
 
     public final Consumer<VisionFieldPoseEstimate> visionEstimateConsumer = new Consumer<>() {
         @Override
@@ -88,75 +78,9 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
 
     VisionProcessor visionProcessor = new VisionProcessor(visionEstimateConsumer);
 
-    /* Swerve requests to apply during SysId characterization */
-    private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
-    private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
-    private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
-
     public final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds()
             .withDriveRequestType(SwerveModule.DriveRequestType.Velocity)
             .withSteerRequestType(SwerveModule.SteerRequestType.Position);
-
-    /*
-     * SysId routine for characterizing translation. This is used to find PID gains
-     * for the drive motors.
-     */
-    private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
-            new SysIdRoutine.Config(
-                    null, // Use default ramp rate (1 V/s)
-                    Volts.of(4), // Reduce dynamic step voltage to 4 V to prevent brownout
-                    null, // Use default timeout (10 s)
-                    // Log state with SignalLogger class
-                    state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())),
-            new SysIdRoutine.Mechanism(
-                    output -> setControl(m_translationCharacterization.withVolts(output)),
-                    null,
-                    this));
-
-    /*
-     * SysId routine for characterizing steer. This is used to find PID gains for
-     * the steer motors.
-     */
-    private final SysIdRoutine m_sysIdRoutineSteer = new SysIdRoutine(
-            new SysIdRoutine.Config(
-                    null, // Use default ramp rate (1 V/s)
-                    Volts.of(7), // Use dynamic voltage of 7 V
-                    null, // Use default timeout (10 s)
-                    // Log state with SignalLogger class
-                    state -> SignalLogger.writeString("SysIdSteer_State", state.toString())),
-            new SysIdRoutine.Mechanism(
-                    volts -> setControl(m_steerCharacterization.withVolts(volts)),
-                    null,
-                    this));
-
-    /*
-     * SysId routine for characterizing rotation.
-     * This is used to find PID gains for the FieldCentricFacingAngle
-     * HeadingController.
-     * See the documentation of SwerveRequest.SysIdSwerveRotation for info on
-     * importing the log to SysId.
-     */
-    private final SysIdRoutine m_sysIdRoutineRotation = new SysIdRoutine(
-            new SysIdRoutine.Config(
-                    /* This is in radians per second², but SysId only supports "volts per second" */
-                    Volts.of(Math.PI / 6).per(Second),
-                    /* This is in radians per second, but SysId only supports "volts" */
-                    Volts.of(Math.PI),
-                    null, // Use default timeout (10 s)
-                    // Log state with SignalLogger class
-                    state -> SignalLogger.writeString("SysIdRotation_State", state.toString())),
-            new SysIdRoutine.Mechanism(
-                    output -> {
-                        /* output is actually radians per second, but SysId only supports "volts" */
-                        setControl(m_rotationCharacterization.withRotationalRate(output.in(Volts)));
-                        /* also log the requested output for SysId */
-                        SignalLogger.writeDouble("Rotational_Rate", output.in(Volts));
-                    },
-                    null,
-                    this));
-
-    /* The SysId routine to test */
-    private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
 
     /**
      * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -190,28 +114,6 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
         return run(() -> this.setControl(request.get()));
     }
 
-    /**
-     * Runs the SysId Quasistatic test in the given direction for the routine
-     * specified by {@link #m_sysIdRoutineToApply}.
-     *
-     * @param direction Direction of the SysId Quasistatic test
-     * @return Command to run
-     */
-    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-        return m_sysIdRoutineToApply.quasistatic(direction);
-    }
-
-    /**
-     * Runs the SysId Dynamic test in the given direction for the routine
-     * specified by {@link #m_sysIdRoutineToApply}.
-     *
-     * @param direction Direction of the SysId Dynamic test
-     * @return Command to run
-     */
-    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-        return m_sysIdRoutineToApply.dynamic(direction);
-    }
-
     public void addVisionMeasurement(VisionFieldPoseEstimate visionFieldPoseEstimate) {
         if (visionFieldPoseEstimate.getVisionMeasurementStdDevs() == null) {
             super.addVisionMeasurement(
@@ -227,9 +129,9 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
 
     public void periodic() {
 
-        Logger.recordOutput("peri/test", true);
-
         visionPeriodic();
+
+        Logger.recordOutput("Autoaim/DistanceToHub", this.getDistanceToHub());
 
         /*
          * // * Periodically try to apply the operator perspective.
@@ -243,16 +145,16 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
          * event occurs during testing.
          * //
          */
-        // if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
-        // DriverStation.getAlliance().ifPresent(allianceColor -> {
-        // setOperatorPerspectiveForward(
-        // allianceColor == Alliance.Red
-        // ? kRedAlliancePerspectiveRotation
-        // : kBlueAlliancePerspectiveRotation
-        // );
-        // m_hasAppliedOperatorPerspective = true;
-        // });
-        // }
+        if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
+            DriverStation.getAlliance().ifPresent(allianceColor -> {
+                setOperatorPerspectiveForward(
+                allianceColor == Alliance.Red
+                ? kRedAlliancePerspectiveRotation
+                : kBlueAlliancePerspectiveRotation
+                );
+                m_hasAppliedOperatorPerspective = true;
+            });
+        }
     }
 
     private void startSimThread() {
@@ -326,16 +228,6 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
 
     public void ConfigureAutobuilder() {
 
-    }
-
-    public Rotation2d getAngleToScore() {
-        if (RobotConstants.isRedAlliance.getAsBoolean()) {
-            return new Rotation2d(Math.atan2(redHubPose.getY() - this.getState().Pose.getY(),
-                    redHubPose.getX() - this.getState().Pose.getX()));
-        } else {
-            return new Rotation2d(Math.atan2(blueHubPose.getY() - this.getState().Pose.getY(),
-                    blueHubPose.getX() - this.getState().Pose.getX()));
-        }
     }
 
     public Rotation2d getAngleToScoreWhileMoving(double timeOfFlight) {
@@ -417,29 +309,14 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
         visionProcessor.driveYawAngularVelocity.addSample(timestamp, this.getState().Speeds.omegaRadiansPerSecond);
         visionProcessor.measuredRobotRelativeChassisSpeeds.set(this.getState().Speeds);
         visionProcessor.robotPose.addSample(timestamp, this.getState().Pose);
-        // boolean turretCameraSeesTarget = turretCameraTable.getEntry("tv").getDouble(0) == 1.0;
-        // Logger.recordOutput("Drivetrain/turretSeesCameraTargetCamera", turretCameraSeesTarget);
-        // if (turretCameraSeesTarget) { // does it see target?
-        //     var megatag = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-turret");
-        //     var megatag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-turret");
-        //     Logger.recordOutput("Drivtrain/megatag1llpose", megatag.pose);
-        //     Logger.recordOutput("Drivtrain/megatag2llpose", megatag2.pose);
-        //     if (megatag != null && megatag2 != null && this.turretAtPositionSupplier.getAsBoolean()){
-        //         visionProcessor.updateVision(
-        //             turretCameraSeesTarget,
-        //             FiducialObservation.fromLimelight(megatag.rawFiducials),
-        //             MegatagPoseEstimate.fromLimelight(megatag),
-        //             MegatagPoseEstimate.fromLimelight(megatag2),
-        //             "Vision/Gamma");
-        //     }
-        // }
+        
         boolean leftCameraSeesTarget = leftCameraTable.getEntry("tv").getDouble(0) == 1.0;
         Logger.recordOutput("Drivetrain/leftCameraSeesTarget", leftCameraSeesTarget);
         if (leftCameraSeesTarget) { // does it see target?
             var megatag = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-left");
             var megatag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-left");
-            Logger.recordOutput("Drivtrain/megatag1llposeLeft", megatag.pose);
-            Logger.recordOutput("Drivtrain/megatag2llposeLeft", megatag2.pose);
+            Logger.recordOutput("Drivetrain/megatag1llposeLeft", megatag.pose);
+            Logger.recordOutput("Drivetrain/megatag2llposeLeft", megatag2.pose);
             if (megatag != null && megatag2 != null){
                 visionProcessor.updateVision(
                     leftCameraSeesTarget,
@@ -454,8 +331,8 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
         if (rightCameraSeesTarget) { // does it see target?
             var megatag = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-right");
             var megatag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-right");
-            Logger.recordOutput("Drivtrain/megatag1llposeRight", megatag.pose);
-            Logger.recordOutput("Drivtrain/megatag2llposeRight", megatag2.pose);
+            Logger.recordOutput("Drivetrain/megatag1llposeRight", megatag.pose);
+            Logger.recordOutput("Drivetrain/megatag2llposeRight", megatag2.pose);
             if (megatag != null && megatag2 != null){
                 visionProcessor.updateVision(
                     rightCameraSeesTarget,
@@ -468,25 +345,11 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
     }
 
     private void setLLSettings() {
-        Rotation2d gyroAngle = this.getState().Pose.getRotation();
-        double gyroAngularVelocity = Math.toDegrees(this.getState().Speeds.omegaRadiansPerSecond);
+        
         try {
             LimelightHelpers.SetIMUMode("limelight-turret", 1);
             LimelightHelpers.SetIMUMode("limelight-right", 1);
             LimelightHelpers.SetIMUMode("limelight-left", 1);
-
-
-            // Translation2d limelightToCenterOfTurret = new Translation2d(
-            //         0.072151,
-            //         new Rotation2d(this.turretAngleSupplier.getAsDouble()));
-
-            // LimelightHelpers.setCameraPose_RobotSpace("limelight-turret",
-            //         limelightToCenterOfTurret.getY(),
-            //         limelightToCenterOfTurret.getX(),
-            //         0.7406386,
-            //         0,
-            //         0,
-            //         Math.toDegrees(this.turretAngleSupplier.getAsDouble()));
 
             LimelightHelpers.setCameraPose_RobotSpace("limelight-left", 
                 0, 

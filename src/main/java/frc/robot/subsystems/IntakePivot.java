@@ -42,6 +42,10 @@ public class IntakePivot extends SubsystemBase {
         return this.targetPosition;
     }
 
+    public double getIntakePivotPosition() {
+        return this.intakePivotMotor.getPosition().getValueAsDouble();
+    }
+
     public boolean atPosition(double position) {
         return Math.abs(this.intakePivotMotor.getPosition().getValueAsDouble() - position) < 1;
     }
@@ -53,5 +57,7 @@ public class IntakePivot extends SubsystemBase {
     @Override
     public void periodic() {
         this.latestStatus = this.setControl(positionControl.withPosition(this.targetPosition));
+        Logger.recordOutput("IntakePivot/TargetPosition", this.getIntakePivotTargetPosition());
+        Logger.recordOutput("IntakePivot/Position", this.getIntakePivotPosition());
     }
 }

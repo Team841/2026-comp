@@ -12,14 +12,12 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.TunerConstants;
 import frc.robot.constants.RobotConstants;
@@ -146,26 +144,13 @@ public class RobotContainer {
     private void configureBindings() {
         drivetrain.setDefaultCommand(
             drivetrain.applyRequest(() ->
-                {if (DriverStation.getAlliance().isPresent()) {
-                            if (DriverStation.getAlliance().get() == Alliance.Red) {
-                                return drive.withVelocityX(joystick.getLeftY() * MaxSpeed) 
-                                    .withVelocityY(joystick.getLeftX() * MaxSpeed) 
-                                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate); 
-                            } else {
-                                return drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) 
-                                    .withVelocityY(-joystick.getLeftX() * MaxSpeed) 
-                                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate); 
-                            }
-                        } else {
-                            return drive.withVelocityX(0) 
-                                .withVelocityY(0) 
-                                .withRotationalRate(0); 
-                        }}
-            )
+                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) 
+                .withVelocityY(-joystick.getLeftX() * MaxSpeed) 
+                .withRotationalRate(-joystick.getRightX() * MaxAngularRate)) 
         );
 
-        turret.setDefaultCommand(snapTurretToHub());
-        hood.setDefaultCommand(snapHoodToHub());
+        turret.setDefaultCommand(snapTurretToHub().withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+        hood.setDefaultCommand(snapHoodToHub().withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
         joystick.leftBumper().whileTrue(spinUpShooterForHubShot()).onFalse(new InstantCommand(() -> shooter.setVelocity(0)));
         joystick.leftBumper().whileTrue(new RepeatCommand(
@@ -187,6 +172,10 @@ public class RobotContainer {
 
         joystick.leftTrigger().onTrue(new InstantCommand(() -> intake.setDutyCycle(-0.5), intake)).onFalse(new InstantCommand(() -> intake.stopMotor(), intake));
         joystick.leftTrigger().onTrue(new InstantCommand(() -> intakePivot.setPosition(-16.5), intakePivot)).onFalse(new InstantCommand(() -> intakePivot.setPosition(-14), intakePivot));
+        joystick.rightStick().whileTrue(new RepeatCommand(new InstantCommand(() -> turret.setPosition(new Rotation2d(2.7)), turret)));
+        joystick.rightStick().whileTrue(new RepeatCommand(new InstantCommand(() -> hood.setPosition(-4.1), hood)));
+        joystick.rightStick().whileTrue(new InstantCommand(() -> shooter.setVelocity(-5), shooter)).onFalse(new InstantCommand(() -> shooter.setVelocity(0)));
+
 
         joystick.leftStick().onTrue(new InstantCommand(() -> intakePivot.setPosition(-3), intakePivot));
         joystick.povLeft().onTrue(new InstantCommand(() -> dyeRotor.setDutyCycle(-0.1))).onFalse(new InstantCommand(() -> dyeRotor.stopMotor()));

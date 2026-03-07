@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
@@ -56,14 +58,19 @@ public class Hood extends SubsystemBase {
         return this.targetPosition;
     }
 
+    public double getHoodPosition() {
+        return this.hoodMotor.getPosition().getValueAsDouble();
+    }
+
     public void zero() {
         this.hoodMotor.setPosition(0);
     }
 
     @Override
     public void periodic() {
-        // This method will be called once per scheduler run
         this.latestStatus = this.setControl(positionControl.withPosition(this.targetPosition));
+        Logger.recordOutput("Hood/TargetPosition", this.getHoodTargetPosition());
+        Logger.recordOutput("Hood/Position", this.getHoodPosition());
     }
 
     public enum HoodHeight {
