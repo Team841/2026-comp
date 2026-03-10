@@ -286,6 +286,17 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
         }
     }
 
+    public double getDistanceToDriverStationWall() {
+
+        double fieldLength = 16.54175; 
+
+        if (!RobotConstants.isRedAlliance.getAsBoolean()) {
+            return this.getState().Pose.getX(); 
+        } else {
+            return fieldLength - this.getState().Pose.getX(); 
+        }
+    }
+
     public static double getDistanceBetweenPoses(Pose2d pose1, Pose2d pose2) {
         return Math.sqrt(
                 ((Math.abs(pose1.getX() - pose2.getX())) * (Math.abs(pose1.getX() - pose2.getX()))) +
@@ -347,7 +358,6 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
     private void setLLSettings() {
         
         try {
-            LimelightHelpers.SetIMUMode("limelight-turret", 1);
             LimelightHelpers.SetIMUMode("limelight-right", 1);
             LimelightHelpers.SetIMUMode("limelight-left", 1);
 

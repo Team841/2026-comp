@@ -26,6 +26,8 @@ public class Shooter extends SubsystemBase {
 
 	private InterpolatingDoubleTreeMap shooterSpeedsMap;
 
+	private InterpolatingDoubleTreeMap passingShooterSpeedsMap;
+
 	private InterpolatingDoubleTreeMap timeOfFlightMap;
 
 	private double targetVelocity = 0;
@@ -45,6 +47,10 @@ public class Shooter extends SubsystemBase {
 		this.shooterSpeedsMap.put(4.0, ShooterSpeed.M4.getRPS());
 		this.shooterSpeedsMap.put(5.0, ShooterSpeed.M5.getRPS());
 
+		this.passingShooterSpeedsMap = new InterpolatingDoubleTreeMap();
+		this.passingShooterSpeedsMap.put(0.0, PassingShooterSpeed.M0.getRPS());
+		this.passingShooterSpeedsMap.put(16.0, PassingShooterSpeed.M16.getRPS());
+
 		this.timeOfFlightMap = new InterpolatingDoubleTreeMap();
 		this.timeOfFlightMap.put(1.0, TimeOfFlight.M1.getSeconds());
 		this.timeOfFlightMap.put(2.0, TimeOfFlight.M2.getSeconds());
@@ -60,6 +66,10 @@ public class Shooter extends SubsystemBase {
 
 	public double getShooterSpeedFromDistanceMeters(double distance) {
 		return this.shooterSpeedsMap.get(distance);
+	}
+
+	public double getShooterPassingSpeedFromDistanceMeters(double distance) {
+		return this.passingShooterSpeedsMap.get(distance);
 	}
 
 	public double getTimeOfFlightFromDistanceMeters(double distance) {
@@ -86,7 +96,7 @@ public class Shooter extends SubsystemBase {
 	}
 
 	public boolean atfullSpeed() {
-		return Math.abs(this.targetVelocity - this.getShooterVelocity()) < 2 && this.targetVelocity != 0;
+		return Math.abs(this.targetVelocity - this.getShooterVelocity()) < 3 && this.targetVelocity != 0;
 	}
 
 	public double getShooterVelocity() {
@@ -115,12 +125,35 @@ public class Shooter extends SubsystemBase {
 		M1(-24 * 3/2),
 		M2(-27 * 3/2),
 		M3(-30 * 3/2),
-		M4(-33 * 3/2),
-		M5(-36 * 3/2);
+		M4(-35 * 3/2),
+		M5(-38 * 3/2);
 
 		private final double rps;
 
 		ShooterSpeed(double rps) {
+			this.rps = rps;
+		}
+
+		public double getRPS() {
+			return rps;
+		}
+	}
+
+	public enum PassingShooterSpeed {
+
+		M0(-1),
+		M2(-16),
+		M4(-30),
+		M6(-45),
+		M8(-59),
+		M10(-74),
+		M12(-88),
+		M14(-103),
+		M16(-110);
+
+		private final double rps;
+
+		PassingShooterSpeed(double rps) {
 			this.rps = rps;
 		}
 
