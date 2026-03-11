@@ -16,9 +16,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants.TunerConstants;
 import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.Drivetrain;
@@ -50,6 +53,15 @@ public class RobotContainer {
     public final IntakePivot intakePivot;
     public final Shooter shooter;
     public final Turret turret;
+
+    private RobotMode currentMode = RobotMode.NEUTRAL;
+    private Command activeCommand = null;
+
+    public enum RobotMode {
+        NEUTRAL,
+        AUTOAIM_FIRE,
+        PASS_SHOT
+    }
 
     public RobotContainer(Drivetrain drivetrain, DyeRotor dyeRotor, Hood hood, Intake intake, IntakePivot intakePivot, Shooter shooter, Turret turret) {
         this.drivetrain = drivetrain;
@@ -88,7 +100,7 @@ public class RobotContainer {
     }
 
     public Command snapTurretToHub() {
-        return new InstantCommand(
+        return new RunCommand(
             () -> turret.setPosition(
                 drivetrain.getAngleToScoreWhileMoving(
                     shooter.getTimeOfFlightFromDistanceMeters(
@@ -118,19 +130,51 @@ public class RobotContainer {
     public Command snapToPass() {
         return Commands.run(
             () -> {
-                double angle;
-                
-                if (RobotConstants.isRedAlliance.getAsBoolean()) {
-                    angle = wrapToPi(-drivetrain.getState().Pose.getRotation().getRadians());
-                } else {
-                    angle = wrapToPi(-drivetrain.getState().Pose.getRotation().getRadians() - Math.PI);
-                }
-
                 turret.setPosition(drivetrain.getAngleToPass());
                 hood.setPosition(-4.1);
                 shooter.setVelocity(shooter.getShooterPassingSpeedFromDistanceMeters(drivetrain.getDistanceToDriverStationWall()));
             }, 
             turret, hood, shooter);
+    }
+
+    public Command runDyeRotorForHubShot() {
+        return Commands.run(
+            () -> {
+                if (turret.atAngle(10) && shooter.atfullSpeed()) {
+                    dyeRotor.setDutyCycle(0.8);
+                } else {
+                    dyeRotor.setDutyCycle(0);
+                }
+            }, 
+            dyeRotor);
+    }
+
+    public Command runDyeRotorForPassShot() {
+        return Commands.run(
+            () -> {
+                if (turret.atAngle(10) && shooter.atfullSpeed()) {
+                    dyeRotor.setDutyCycle(0.8);
+                } else {
+                    dyeRotor.setDutyCycle(0);
+                }
+            }, 
+            dyeRotor);
+    }
+
+    public Command autoAimAndFire() {
+        return new ParallelCommandGroup(
+            spinUpShooterForHubShot(),
+            snapHoodToHub(),
+            snapTurretToHub(),
+            runDyeRotorForHubShot()
+        );
+    }
+
+    public Command autoPassAndFire() {
+        return new ParallelCommandGroup(
+            snapToPass(),
+            runDyeRotorForPassShot()
+        );
     }
 
     public static double wrapToPi(double angle) {
@@ -141,6 +185,45 @@ public class RobotContainer {
         return angle - Math.PI;
     }
 
+    public void setMode(RobotMode newMode) {
+
+        if (newMode == currentMode) return;
+
+        if (activeCommand != null) {
+            activeCommand.cancel();
+        }
+
+        currentMode = newMode;
+
+        switch (currentMode) {
+
+            case NEUTRAL:
+                activeCommand = new InstantCommand(() -> {shooter.setVelocity(0); dyeRotor.stopMotor();}, shooter);
+                break;
+
+            case AUTOAIM_FIRE:
+                activeCommand = autoAimAndFire();
+                break;
+
+            case PASS_SHOT:
+                activeCommand = autoPassAndFire();
+                break;
+        }
+
+        if (activeCommand != null) {
+            activeCommand.schedule();
+        }
+    }
+
+    public void toggleMode(RobotMode newMode) {
+
+        if (currentMode == newMode) {
+            setMode(RobotMode.NEUTRAL);
+        } else {
+            setMode(newMode);
+        }
+    }
+
     private void configureBindings() {
         drivetrain.setDefaultCommand(
             drivetrain.applyRequest(() ->
@@ -149,18 +232,19 @@ public class RobotContainer {
                 .withRotationalRate(-joystick.getRightX() * MaxAngularRate)) 
         );
 
-        turret.setDefaultCommand(snapTurretToHub().withInterruptBehavior(InterruptionBehavior.kCancelSelf));
-        hood.setDefaultCommand(snapHoodToHub().withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+        // turret.setDefaultCommand(snapTurretToHub().withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+        // hood.setDefaultCommand(snapHoodToHub().withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
-        joystick.leftBumper().whileTrue(spinUpShooterForHubShot()).onFalse(new InstantCommand(() -> shooter.setVelocity(0)));
-        joystick.leftBumper().whileTrue(new RepeatCommand(
-            new ConditionalCommand(
-                new InstantCommand(() -> dyeRotor.setDutyCycle(0.8)), 
-                new InstantCommand(() -> dyeRotor.stopMotor()), 
-                () -> shooter.atfullSpeed() && turret.atAngle(15))
-        )).onFalse(new InstantCommand(() -> dyeRotor.stopMotor()));
-
-        joystick.rightBumper().whileTrue(snapToPass()).onFalse(new InstantCommand(() -> shooter.setVelocity(0), shooter));
+        joystick.rightTrigger().onTrue(new InstantCommand(() -> toggleMode(RobotMode.AUTOAIM_FIRE)));
+        joystick.rightBumper().onTrue(new InstantCommand(() -> toggleMode(RobotMode.PASS_SHOT)));
+        
+        joystick.leftTrigger().onTrue(new InstantCommand(() -> intake.setDutyCycle(-0.5), intake)).onFalse(new InstantCommand(() -> intake.stopMotor(), intake));
+        joystick.leftTrigger().onTrue(new InstantCommand(() -> intakePivot.setPosition(-16.5), intakePivot)).onFalse(new InstantCommand(() -> intakePivot.setPosition(-14), intakePivot));
+       
+        joystick.rightStick().onTrue(new InstantCommand(() -> intakePivot.setPosition(-3), intakePivot));
+        joystick.leftBumper().onTrue(new InstantCommand(() -> dyeRotor.setDutyCycle(-0.3))).onFalse(new InstantCommand(() -> dyeRotor.stopMotor()));
+        
+        joystick.start().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         cojoystick.leftBumper().whileTrue(rotateTurretToJoystick(() -> cojoystick.getLeftX(), () -> -cojoystick.getLeftY()));
         cojoystick.leftBumper().whileTrue(rotateHoodToJoystick(() -> -cojoystick.getRightY()));
@@ -169,19 +253,6 @@ public class RobotContainer {
         cojoystick.b().onTrue(new InstantCommand(() -> shooter.requestVelocity(-45)));
         cojoystick.x().onTrue(new InstantCommand(() -> shooter.requestVelocity(-55)));
         cojoystick.y().onTrue(new InstantCommand(() -> shooter.requestVelocity(-90)));
-
-        joystick.leftTrigger().onTrue(new InstantCommand(() -> intake.setDutyCycle(-0.5), intake)).onFalse(new InstantCommand(() -> intake.stopMotor(), intake));
-        joystick.leftTrigger().onTrue(new InstantCommand(() -> intakePivot.setPosition(-16.5), intakePivot)).onFalse(new InstantCommand(() -> intakePivot.setPosition(-14), intakePivot));
-        joystick.rightStick().whileTrue(new RepeatCommand(new InstantCommand(() -> turret.setPosition(new Rotation2d(2.4)), turret)));
-        joystick.rightStick().whileTrue(new RepeatCommand(new InstantCommand(() -> hood.setPosition(-4.1), hood)));
-        joystick.rightStick().whileTrue(new InstantCommand(() -> shooter.setVelocity(-5), shooter)).onFalse(new InstantCommand(() -> shooter.setVelocity(0)));
-
-        joystick.leftStick().onTrue(new InstantCommand(() -> intakePivot.setPosition(-3), intakePivot));
-        joystick.povLeft().onTrue(new InstantCommand(() -> dyeRotor.setDutyCycle(-0.1))).onFalse(new InstantCommand(() -> dyeRotor.stopMotor()));
-        
-        joystick.rightTrigger().onTrue(new InstantCommand(() -> dyeRotor.setDutyCycle(0.8), dyeRotor)).onFalse(new InstantCommand(() -> dyeRotor.stopMotor(), dyeRotor));
-
-        joystick.start().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
