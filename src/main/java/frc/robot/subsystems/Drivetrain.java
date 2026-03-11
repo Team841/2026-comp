@@ -60,6 +60,12 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
     private static final Pose2d blueHubPose = new Pose2d(4.626, 4.035, new Rotation2d());
     private static final Pose2d redHubPose = new Pose2d(11.914, 4.035, new Rotation2d());
 
+    private static final Pose2d bluePassShotHighPose = new Pose2d(5.2, 5.1, new Rotation2d());
+    private static final Pose2d bluePassShotLowPose = new Pose2d(5.2, 2.9, new Rotation2d());
+
+    private static final Pose2d redPassShotHighPose = new Pose2d(11.4, 5.1, new Rotation2d());
+    private static final Pose2d redPassShotLowPose = new Pose2d(11.4, 2.9, new Rotation2d());
+
     NetworkTable turretCameraTable = NetworkTableInstance.getDefault().getTable("limelight-turret");
     NetworkTable leftCameraTable = NetworkTableInstance.getDefault().getTable("limelight-left");
     NetworkTable rightCameraTable = NetworkTableInstance.getDefault().getTable("limelight-right");
@@ -228,6 +234,38 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
 
     public void ConfigureAutobuilder() {
 
+    }
+
+    public Rotation2d getAngleToPass() {
+        if (this.getState().Pose.getY() < 3.2 || this.getState().Pose.getY() > 4.8) {
+            if (RobotConstants.isRedAlliance.getAsBoolean()) {
+                return this.getState().Pose.getRotation().unaryMinus();
+            } else {
+                return this.getState().Pose.getRotation().minus(Rotation2d.k180deg).unaryMinus();
+            }
+        } else {
+            if (this.getState().Pose.getY() > 4) {
+                if (RobotConstants.isRedAlliance.getAsBoolean()) {
+                    return new Rotation2d(
+                        Math.atan2(redPassShotHighPose.getY() - this.getState().Pose.getY(), redPassShotHighPose.getX() - this.getState().Pose.getX())
+                    ).minus(this.getState().Pose.getRotation());
+                } else {
+                    return new Rotation2d(
+                        Math.atan2(bluePassShotHighPose.getY() - this.getState().Pose.getY(), bluePassShotHighPose.getX() - this.getState().Pose.getX())
+                    ).minus(this.getState().Pose.getRotation());
+                }
+            } else {
+                if (RobotConstants.isRedAlliance.getAsBoolean()) {
+                    return new Rotation2d(
+                        Math.atan2(redPassShotLowPose.getY() - this.getState().Pose.getY(), redPassShotLowPose.getX() - this.getState().Pose.getX())
+                    ).minus(this.getState().Pose.getRotation());
+                } else {
+                    return new Rotation2d(
+                        Math.atan2(bluePassShotLowPose.getY() - this.getState().Pose.getY(), bluePassShotLowPose.getX() - this.getState().Pose.getX())
+                    ).minus(this.getState().Pose.getRotation());
+                }
+            }
+        }
     }
 
     public Rotation2d getAngleToScoreWhileMoving(double timeOfFlight) {

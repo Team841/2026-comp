@@ -126,7 +126,7 @@ public class RobotContainer {
                     angle = wrapToPi(-drivetrain.getState().Pose.getRotation().getRadians() - Math.PI);
                 }
 
-                turret.setPosition(new Rotation2d(angle));
+                turret.setPosition(drivetrain.getAngleToPass());
                 hood.setPosition(-4.1);
                 shooter.setVelocity(shooter.getShooterPassingSpeedFromDistanceMeters(drivetrain.getDistanceToDriverStationWall()));
             }, 
