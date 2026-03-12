@@ -64,6 +64,7 @@ public class Robot extends LoggedRobot {
         if (!AutoBuilder.isConfigured()){
             drivetrain.ConfigureAutobuilder();
         }
+        
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
     }

@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.*;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -35,7 +36,7 @@ import frc.robot.subsystems.Turret;
 
 public class RobotContainer {
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(999).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+    private double MaxAngularRate = RotationsPerSecond.of(0.8).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -77,6 +78,13 @@ public class RobotContainer {
         this.shooter = shooter;
         this.turret = turret;
 
+        NamedCommands.registerCommand("IntakeDownAndSpin", intakeDownAndSpin());
+        NamedCommands.registerCommand("IntakeUpAndStop", intakeUpAndStop());
+        NamedCommands.registerCommand("IntakeUpFullAndStop", intakeUpFullAndStop());
+
+        NamedCommands.registerCommand("AutoAimAndFire", autoAimAndFire().withTimeout(5));
+        NamedCommands.registerCommand("SpinUpShooterEarly", spinUpShooterEarly());
+
         configureBindings();
     }
 
@@ -102,6 +110,33 @@ public class RobotContainer {
 
                     hood.setPositionFromPercentage((controlY + 1) / 2);
                 });
+    }
+
+    public Command intakeDownAndSpin() {
+        return new InstantCommand(() -> {
+            intakePivot.setPosition(-17);
+            intake.setDutyCycle(-0.5);
+        }, intake, intakePivot);
+    }
+
+    public Command intakeUpAndStop() {
+        return new InstantCommand(() -> {
+            intakePivot.setPosition(-10);
+            intake.stopMotor();
+        }, intake, intakePivot);
+    }
+
+    public Command intakeUpFullAndStop() {
+        return new InstantCommand(() -> {
+            intakePivot.setPosition(-3);
+            intake.stopMotor();
+        }, intake, intakePivot);
+    }
+
+    public Command spinUpShooterEarly() {
+        return new InstantCommand(() -> {
+            shooter.setVelocity(-30);
+        }, shooter);
     }
 
     public Command snapTurretToHub() {
