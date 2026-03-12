@@ -10,7 +10,11 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import com.ctre.phoenix6.SignalLogger;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.FollowPathCommand;
 
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -25,6 +29,8 @@ import frc.robot.subsystems.Turret;
 
 public class Robot extends LoggedRobot {
     private Command m_autonomousCommand;
+
+    private final SendableChooser<Command> autoChooser;
 
     private final RobotContainer robotContainer;
     private final Turret turret = new Turret();
@@ -54,6 +60,12 @@ public class Robot extends LoggedRobot {
         TunerConstants.BackRight);
 
         robotContainer = new RobotContainer(drivetrain, dyeRotor, hood, intake, intakePivot, shooter, turret);
+
+        if (!AutoBuilder.isConfigured()){
+            drivetrain.ConfigureAutobuilder();
+        }
+        autoChooser = AutoBuilder.buildAutoChooser();
+        SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 
     @Override
@@ -72,7 +84,7 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void autonomousInit() {
-        m_autonomousCommand = robotContainer.getAutonomousCommand();
+        m_autonomousCommand = autoChooser.getSelected();
 
         if (m_autonomousCommand != null) {
             CommandScheduler.getInstance().schedule(m_autonomousCommand);
