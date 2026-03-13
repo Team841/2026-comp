@@ -45,7 +45,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "NZIntakeSweepAggressive"
+            "pathName": "RightSideNZIntakeSweepAggressive"
           }
         },
         {
@@ -79,7 +79,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "AutoAimAndFire"
+                  "name": "AutoAimAndFire10Sec"
                 }
               },
               {

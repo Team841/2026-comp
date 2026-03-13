@@ -83,7 +83,14 @@ public class RobotContainer {
         NamedCommands.registerCommand("IntakeUpFullAndStop", intakeUpFullAndStop());
         NamedCommands.registerCommand("IntakeForOutpost", new InstantCommand(() -> intakePivot.setPosition(-9.5)));
 
-        NamedCommands.registerCommand("AutoAimAndFire", autoAimAndFire().withTimeout(10));
+        NamedCommands.registerCommand("AutoAimAndFire10Sec", autoAimAndFire().withTimeout(10)
+                                                            .finallyDo(() -> {shooter.setVelocity(0);
+                                                                            dyeRotor.stopMotor();}));
+               
+        NamedCommands.registerCommand("AutoAimAndFire3Sec", autoAimAndFire().withTimeout(3)
+                                                            .finallyDo(() -> {shooter.setVelocity(0);
+                                                                            dyeRotor.stopMotor();}));
+
         NamedCommands.registerCommand("AutoPassAndFire", autoPassAndFire().withTimeout(5));
 
         NamedCommands.registerCommand("SpinUpShooterEarly", spinUpShooterEarly());
