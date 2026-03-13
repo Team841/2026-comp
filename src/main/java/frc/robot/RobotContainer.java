@@ -81,9 +81,14 @@ public class RobotContainer {
         NamedCommands.registerCommand("IntakeDownAndSpin", intakeDownAndSpin());
         NamedCommands.registerCommand("IntakeUpAndStop", intakeUpAndStop());
         NamedCommands.registerCommand("IntakeUpFullAndStop", intakeUpFullAndStop());
+        NamedCommands.registerCommand("IntakeForOutpost", new InstantCommand(() -> intakePivot.setPosition(-9.5)));
 
-        NamedCommands.registerCommand("AutoAimAndFire", autoAimAndFire().withTimeout(5));
+        NamedCommands.registerCommand("AutoAimAndFire", autoAimAndFire().withTimeout(10));
+        NamedCommands.registerCommand("AutoPassAndFire", autoPassAndFire().withTimeout(5));
+
         NamedCommands.registerCommand("SpinUpShooterEarly", spinUpShooterEarly());
+        
+        NamedCommands.registerCommand("ForceResetPose", new InstantCommand(() -> drivetrain.forceCameraPose(), drivetrain));
 
         configureBindings();
     }
@@ -272,10 +277,10 @@ public class RobotContainer {
                 .withRotationalRate(-joystick.getRightX() * MaxAngularRate)) 
         );
 
-        joystick.back().whileTrue(
-            new InstantCommand(() -> drivetrain.applyRequest(() -> point.withModuleDirection(new Rotation2d()))).withTimeout(0.2)
-            .andThen(drivetrain.applyRequest(() -> speed.withSpeeds(new ChassisSpeeds(0.2, 0, 0))))
-        ).onFalse(drivetrain.applyRequest(() -> drive.withVelocityX(0).withVelocityY(0)));
+        // joystick.back().whileTrue(
+        //     new InstantCommand(() -> drivetrain.applyRequest(() -> point.withModuleDirection(new Rotation2d()))).withTimeout(0.2)
+        //     .andThen(drivetrain.applyRequest(() -> speed.withSpeeds(new ChassisSpeeds(0.2, 0, 0))))
+        // ).onFalse(drivetrain.applyRequest(() -> drive.withVelocityX(0).withVelocityY(0)));
 
         // turret.setDefaultCommand(snapTurretToHub().withInterruptBehavior(InterruptionBehavior.kCancelSelf));
         // hood.setDefaultCommand(snapHoodToHub().withInterruptBehavior(InterruptionBehavior.kCancelSelf));
@@ -290,6 +295,7 @@ public class RobotContainer {
         joystick.leftBumper().onTrue(new InstantCommand(() -> dyeRotor.setDutyCycle(-0.3))).onFalse(new InstantCommand(() -> dyeRotor.stopMotor()));
         
         joystick.start().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        joystick.back().onTrue(new InstantCommand(() -> drivetrain.forceCameraPose(), drivetrain));
 
         cojoystick.leftBumper().whileTrue(rotateTurretToJoystick(() -> cojoystick.getLeftX(), () -> -cojoystick.getLeftY()));
         cojoystick.leftBumper().whileTrue(rotateHoodToJoystick(() -> -cojoystick.getRightY()));

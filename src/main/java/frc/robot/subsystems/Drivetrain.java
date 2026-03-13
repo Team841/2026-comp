@@ -61,6 +61,8 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean m_hasAppliedOperatorPerspective = false;
 
+    private boolean forcePoseReset = false;
+
     private static final Pose2d blueHubPose = new Pose2d(4.626, 4.035, new Rotation2d());
     private static final Pose2d redHubPose = new Pose2d(11.914, 4.035, new Rotation2d());
 
@@ -81,7 +83,12 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
     public final Consumer<VisionFieldPoseEstimate> visionEstimateConsumer = new Consumer<>() {
         @Override
         public void accept(VisionFieldPoseEstimate visionFieldPoseEstimate) {
-            addVisionMeasurement(visionFieldPoseEstimate);
+            if (forcePoseReset) {
+                resetPose(visionFieldPoseEstimate.getVisionRobotPoseMeters());
+                forcePoseReset = false;
+            } else {
+                addVisionMeasurement(visionFieldPoseEstimate);
+            }
             return;
         }
     };
@@ -382,6 +389,10 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
 
     public static Rotation2d wrapTo2Pi(Rotation2d angle) {
         return new Rotation2d(((angle.getRadians() % (2.0 * Math.PI)) + (2.0 * Math.PI)) % (2.0 * Math.PI));
+    }
+
+    public void forceCameraPose() {
+        forcePoseReset = true;
     }
 
     public void visionPeriodic() {

@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "DriveForward"
+                  "pathName": "RightSideBumpToNZ"
                 }
               },
               {
@@ -21,7 +21,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 2.0
+                        "waitTime": 0.375
                       }
                     },
                     {
@@ -29,29 +29,47 @@
                       "data": {
                         "name": "IntakeDownAndSpin"
                       }
-                    },
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 2.5
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "IntakeUpAndStop"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "SpinUpShooterEarly"
-                      }
                     }
                   ]
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ForceResetPose"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "NZIntakeSweepAggressive"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeUpAndStop"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SpinUpShooterEarly"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RightSideBumpToHZ"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ForceResetPose"
           }
         },
         {
@@ -69,15 +87,21 @@
                 "data": {
                   "commands": [
                     {
+                      "type": "path",
+                      "data": {
+                        "pathName": "RightSideReturnToOutpost"
+                      }
+                    },
+                    {
                       "type": "wait",
                       "data": {
-                        "waitTime": 1.0
+                        "waitTime": 0.3
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "IntakeUpFullAndStop"
+                        "name": "IntakeForOutpost"
                       }
                     }
                   ]
