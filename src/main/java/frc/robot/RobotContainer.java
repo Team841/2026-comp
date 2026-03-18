@@ -172,10 +172,26 @@ public class RobotContainer {
     public Command spinUpShooterForHubShot() {
         return Commands.run(
                 () -> {
-                    double distanceToHub = drivetrain.getDistanceToHubWhileMoving(
-                            shooter.getTimeOfFlightFromDistanceMeters(
-                                    drivetrain.getDistanceToHub()));
-                    shooter.setVelocity(shooter.getShooterSpeedFromDistanceMeters(distanceToHub));
+                    double distanceToHubIterated = 
+                        drivetrain.getDistanceToHubWhileMoving(
+                                shooter.getTimeOfFlightFromDistanceMeters(
+                                    drivetrain.getDistanceToHubWhileMoving(
+                                        shooter.getTimeOfFlightFromDistanceMeters(
+                                            drivetrain.getDistanceToHubWhileMoving(
+                                                shooter.getTimeOfFlightFromDistanceMeters(
+                                                    drivetrain.getDistanceToHubWhileMoving(
+                                                        shooter.getTimeOfFlightFromDistanceMeters(
+                                                            drivetrain.getDistanceToHubWhileMoving(
+                                                                shooter.getTimeOfFlightFromDistanceMeters(
+                                                                    drivetrain.getDistanceToHubWhileMoving(
+                                                                        shooter.getTimeOfFlightFromDistanceMeters(
+                                                                            drivetrain.getDistanceToHubWhileMoving(
+                                                                                shooter.getTimeOfFlightFromDistanceMeters(
+                                                                                    drivetrain.getDistanceToHubWhileMoving(
+                                                                                        shooter.getTimeOfFlightFromDistanceMeters(
+                                                                                            drivetrain.getDistanceToHub()
+                        ))))))))))))))));
+                    shooter.setVelocity(shooter.getShooterSpeedFromDistanceMeters(distanceToHubIterated));
                 },
                 shooter);
     }
