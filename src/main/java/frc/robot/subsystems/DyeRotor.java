@@ -16,7 +16,7 @@ public class DyeRotor extends SubsystemBase {
     private TalonFX rotorMotor = new TalonFX(SuperstructureConstants.IDs.dyeRotorMotorID, "rio");
 
     public DyeRotor() {
-        rotorMotor.getConfigurator().apply(new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake)));
+        rotorMotor.getConfigurator().apply(SuperstructureConstants.DyeRotorConstants.dyeRotorMotorConfigs);
     }
 
     public void setDutyCycle(double speed) {

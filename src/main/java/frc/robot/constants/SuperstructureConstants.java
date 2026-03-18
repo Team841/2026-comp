@@ -4,12 +4,15 @@ import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 
 public class SuperstructureConstants {
 
@@ -29,7 +32,8 @@ public class SuperstructureConstants {
             .withKI(0)
             .withKD(0)
             .withKV(0.12)
-            .withKS(0);
+            .withKA(0.04)
+            .withKS(0.1);
 
         public static final TalonFXConfiguration shooterMotorConfigs = new TalonFXConfiguration()
             .withSlot0(shooterConfigs)
@@ -161,5 +165,11 @@ public class SuperstructureConstants {
                     .withReverseSoftLimitEnable(true)
                     .withForwardSoftLimitThreshold(0)
                     .withReverseSoftLimitThreshold(-16.5));
+    }
+
+    public class DyeRotorConstants {
+        public static final TalonFXConfiguration dyeRotorMotorConfigs = new TalonFXConfiguration()
+            .withOpenLoopRamps(new OpenLoopRampsConfigs().withDutyCycleOpenLoopRampPeriod(0.2))
+            .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake));
     }
 }

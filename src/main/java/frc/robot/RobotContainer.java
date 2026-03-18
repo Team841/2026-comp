@@ -60,13 +60,14 @@ public class RobotContainer {
     public final Shooter shooter;
     public final Turret turret;
 
-    private RobotMode currentMode = RobotMode.NEUTRAL;
+    public RobotMode currentMode = RobotMode.NEUTRAL;
     private Command activeCommand = null;
 
     public enum RobotMode {
         NEUTRAL,
         AUTOAIM_FIRE,
-        PASS_SHOT
+        PASS_SHOT,
+        SPINUP_SHOOTER
     }
 
     public RobotContainer(Drivetrain drivetrain, DyeRotor dyeRotor, Hood hood, Intake intake, IntakePivot intakePivot, Shooter shooter, Turret turret) {
@@ -260,6 +261,9 @@ public class RobotContainer {
             case PASS_SHOT:
                 activeCommand = autoPassAndFire();
                 break;
+
+            case SPINUP_SHOOTER:
+                activeCommand = spinUpShooterForHubShot();
         }
 
         if (activeCommand != null) {
@@ -294,6 +298,8 @@ public class RobotContainer {
 
         joystick.rightTrigger().onTrue(new InstantCommand(() -> toggleMode(RobotMode.AUTOAIM_FIRE)));
         joystick.rightBumper().onTrue(new InstantCommand(() -> toggleMode(RobotMode.PASS_SHOT)));
+        joystick.x().onTrue(new InstantCommand(() -> setMode(RobotMode.NEUTRAL)));
+        joystick.povRight().onTrue(new InstantCommand(() -> toggleMode(RobotMode.SPINUP_SHOOTER)));
         
         joystick.leftTrigger().onTrue(new InstantCommand(() -> intake.setDutyCycle(-0.5), intake)).onFalse(new InstantCommand(() -> intake.stopMotor(), intake));
         joystick.leftTrigger().onTrue(new InstantCommand(() -> intakePivot.setPosition(-16.5), intakePivot)).onFalse(new InstantCommand(() -> intakePivot.setPosition(-14), intakePivot));
@@ -303,6 +309,8 @@ public class RobotContainer {
         
         joystick.start().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
         joystick.back().onTrue(new InstantCommand(() -> drivetrain.forceCameraPose(), drivetrain));
+
+        joystick.povLeft().whileTrue(new RepeatCommand(new InstantCommand(() -> drivetrain.forceCameraPose())));
 
         cojoystick.leftBumper().whileTrue(rotateTurretToJoystick(() -> cojoystick.getLeftX(), () -> -cojoystick.getLeftY()));
         cojoystick.leftBumper().whileTrue(rotateHoodToJoystick(() -> -cojoystick.getRightY()));
