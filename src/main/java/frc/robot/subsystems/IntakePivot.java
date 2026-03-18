@@ -47,7 +47,7 @@ public class IntakePivot extends SubsystemBase {
     }
 
     public boolean atPosition(double position) {
-        return Math.abs(this.intakePivotMotor.getPosition().getValueAsDouble() - position) < 1;
+        return Math.abs(this.intakePivotMotor.getPosition().getValueAsDouble() - position) < 2;
     }
 
     public void zero() {

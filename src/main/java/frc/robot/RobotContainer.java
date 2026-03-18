@@ -156,15 +156,18 @@ public class RobotContainer {
         return new RunCommand(
             () -> turret.setPosition(
                 drivetrain.getAngleToScoreWhileMoving(
-                    shooter.getTimeOfFlightFromDistanceMeters(
-                        drivetrain.getDistanceToHub()
-        ))), turret);
+                    getIteratedTof()
+        )), turret);
     }
 
     public Command snapHoodToHub() {
         return Commands.run(
             () -> {
-                hood.setPosition(hood.getHoodHeightFromMetersToHub(drivetrain.getDistanceToHubWhileMoving(shooter.getTimeOfFlightFromDistanceMeters(drivetrain.getDistanceToHub()))));
+                hood.setPosition(
+                    hood.getHoodHeightFromMetersToHub(
+                        drivetrain.getDistanceToHubWhileMoving(
+                            getIteratedTof()
+                        )));
             }, 
             hood);
     }
@@ -173,7 +176,19 @@ public class RobotContainer {
         return Commands.run(
                 () -> {
                     double distanceToHubIterated = 
-                        drivetrain.getDistanceToHubWhileMoving(
+                        drivetrain.getDistanceToHubWhileMoving(getIteratedTof());
+                    shooter.setVelocity(shooter.getShooterSpeedFromDistanceMeters(distanceToHubIterated));
+                },
+                shooter);
+    }
+
+    public double getIteratedTof() {
+        return shooter.getTimeOfFlightFromDistanceMeters(
+            drivetrain.getDistanceToHubWhileMoving(
+                shooter.getTimeOfFlightFromDistanceMeters(
+                    drivetrain.getDistanceToHubWhileMoving(
+                        shooter.getTimeOfFlightFromDistanceMeters(
+                            drivetrain.getDistanceToHubWhileMoving(
                                 shooter.getTimeOfFlightFromDistanceMeters(
                                     drivetrain.getDistanceToHubWhileMoving(
                                         shooter.getTimeOfFlightFromDistanceMeters(
@@ -185,15 +200,8 @@ public class RobotContainer {
                                                                 shooter.getTimeOfFlightFromDistanceMeters(
                                                                     drivetrain.getDistanceToHubWhileMoving(
                                                                         shooter.getTimeOfFlightFromDistanceMeters(
-                                                                            drivetrain.getDistanceToHubWhileMoving(
-                                                                                shooter.getTimeOfFlightFromDistanceMeters(
-                                                                                    drivetrain.getDistanceToHubWhileMoving(
-                                                                                        shooter.getTimeOfFlightFromDistanceMeters(
-                                                                                            drivetrain.getDistanceToHub()
-                        ))))))))))))))));
-                    shooter.setVelocity(shooter.getShooterSpeedFromDistanceMeters(distanceToHubIterated));
-                },
-                shooter);
+                                                                            drivetrain.getDistanceToHub()
+                        )))))))))))))))));
     }
 
     public Command snapToPass() {
@@ -317,7 +325,7 @@ public class RobotContainer {
         joystick.x().onTrue(new InstantCommand(() -> setMode(RobotMode.NEUTRAL)));
         joystick.povRight().onTrue(new InstantCommand(() -> toggleMode(RobotMode.SPINUP_SHOOTER)));
         
-        joystick.leftTrigger().onTrue(new InstantCommand(() -> intake.setDutyCycle(-0.5), intake)).onFalse(new InstantCommand(() -> intake.stopMotor(), intake));
+        joystick.leftTrigger().onTrue(new RepeatCommand(new InstantCommand(() -> intake.setDutyCycle(-0.5), intake).onlyIf(() -> intakePivot.atPosition(-16.5)))).onFalse(new InstantCommand(() -> intake.stopMotor(), intake));
         joystick.leftTrigger().onTrue(new InstantCommand(() -> intakePivot.setPosition(-16.5), intakePivot)).onFalse(new InstantCommand(() -> intakePivot.setPosition(-14), intakePivot));
        
         joystick.rightStick().onTrue(new InstantCommand(() -> intakePivot.setPosition(-3), intakePivot));
