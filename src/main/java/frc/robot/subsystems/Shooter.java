@@ -142,14 +142,14 @@ public class Shooter extends SubsystemBase {
 	public enum PassingShooterSpeed {
 
 		M0(-1),
-		M2(-16),
-		M4(-30),
-		M6(-45),
-		M8(-59),
-		M10(-74),
-		M12(-88),
-		M14(-103),
-		M16(-110);
+		M2(-14),
+		M4(-25),
+		M6(-37),
+		M8(-46),
+		M10(-54),
+		M12(-67),
+		M14(-80),
+		M16(-95);
 
 		private final double rps;
 
