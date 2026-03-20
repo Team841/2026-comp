@@ -46,9 +46,15 @@ public class Shooter extends SubsystemBase {
 		this.shooterSpeedsMap.put(3.0, ShooterSpeed.M3.getRPS());
 		this.shooterSpeedsMap.put(4.0, ShooterSpeed.M4.getRPS());
 		this.shooterSpeedsMap.put(5.0, ShooterSpeed.M5.getRPS());
+		this.shooterSpeedsMap.put(6.0, ShooterSpeed.M6.getRPS());
+		this.shooterSpeedsMap.put(7.0, ShooterSpeed.M7.getRPS());
 
 		this.passingShooterSpeedsMap = new InterpolatingDoubleTreeMap();
 		this.passingShooterSpeedsMap.put(0.0, PassingShooterSpeed.M0.getRPS());
+		this.passingShooterSpeedsMap.put(4.0, PassingShooterSpeed.M4.getRPS());
+		this.passingShooterSpeedsMap.put(8.0, PassingShooterSpeed.M8.getRPS());
+		this.passingShooterSpeedsMap.put(10.0, PassingShooterSpeed.M10.getRPS());
+		this.passingShooterSpeedsMap.put(12.0, PassingShooterSpeed.M12.getRPS());
 		this.passingShooterSpeedsMap.put(16.0, PassingShooterSpeed.M16.getRPS());
 
 		this.timeOfFlightMap = new InterpolatingDoubleTreeMap();
@@ -126,7 +132,9 @@ public class Shooter extends SubsystemBase {
 		M2(-27 * 3/2),
 		M3(-30 * 3/2),
 		M4(-35 * 3/2),
-		M5(-38 * 3/2);
+		M5(-38 * 3/2),
+		M6(-41 * 3/2),
+		M7(-43 * 3/2);
 
 		private final double rps;
 
@@ -168,7 +176,9 @@ public class Shooter extends SubsystemBase {
 		M2(1),
 		M3(1.2),
 		M4(1.4),
-		M5(1.7);
+		M5(1.6),
+		M6(1.8),
+		M7(2);
 
 		private final double sec;
 
