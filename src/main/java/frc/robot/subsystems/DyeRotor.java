@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -29,6 +31,6 @@ public class DyeRotor extends SubsystemBase {
 
     @Override
     public void periodic() {
-
+        Logger.recordOutput("DyeRotor/MotorStatorCurrent", this.rotorMotor.getStatorCurrent().getValueAsDouble());
     }
 }

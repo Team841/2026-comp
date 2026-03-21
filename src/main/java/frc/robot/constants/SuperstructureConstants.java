@@ -12,8 +12,6 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
-
 public class SuperstructureConstants {
 
     public class IDs {
@@ -170,6 +168,7 @@ public class SuperstructureConstants {
     public class DyeRotorConstants {
         public static final TalonFXConfiguration dyeRotorMotorConfigs = new TalonFXConfiguration()
             .withOpenLoopRamps(new OpenLoopRampsConfigs().withDutyCycleOpenLoopRampPeriod(0.2))
-            .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake));
+            .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake))
+            .withCurrentLimits(new CurrentLimitsConfigs().withStatorCurrentLimit(50).withStatorCurrentLimitEnable(true));
     }
 }

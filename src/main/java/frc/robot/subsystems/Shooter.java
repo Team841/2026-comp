@@ -130,7 +130,7 @@ public class Shooter extends SubsystemBase {
 
 		M1(-24 * 3/2),
 		M2(-27 * 3/2),
-		M3(-30 * 3/2),
+		M3(-31 * 3/2),
 		M4(-35 * 3/2),
 		M5(-38 * 3/2),
 		M6(-41 * 3/2),

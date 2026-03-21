@@ -44,6 +44,7 @@ public class RobotContainer {
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+    private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.ApplyRobotSpeeds speed = new SwerveRequest.ApplyRobotSpeeds();
 
 
@@ -324,6 +325,8 @@ public class RobotContainer {
         joystick.rightBumper().onTrue(new InstantCommand(() -> toggleMode(RobotMode.PASS_SHOT)));
         joystick.x().onTrue(new InstantCommand(() -> setMode(RobotMode.NEUTRAL)));
         joystick.povRight().onTrue(new InstantCommand(() -> toggleMode(RobotMode.SPINUP_SHOOTER)));
+
+        joystick.y().whileTrue(drivetrain.applyRequest(() -> brake));
         
         joystick.leftTrigger().onTrue(new RepeatCommand(new InstantCommand(() -> intake.setDutyCycle(-0.5), intake).onlyIf(() -> intakePivot.atPosition(-16.5)))).onFalse(new InstantCommand(() -> intake.stopMotor(), intake));
         joystick.leftTrigger().onTrue(new InstantCommand(() -> intakePivot.setPosition(-16.5), intakePivot)).onFalse(new InstantCommand(() -> intakePivot.setPosition(-14), intakePivot));
