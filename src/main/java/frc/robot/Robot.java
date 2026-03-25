@@ -10,6 +10,7 @@ import frc.robot.subsystems.vision.VisionIOLimelights;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.rlog.RLOGServer;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -51,8 +52,9 @@ public class Robot extends LoggedRobot {
     public Robot() {
 //        Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
 
-        Logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
-        Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+//        Logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
+//        Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+        Logger.addDataReceiver(new RLOGServer());
 
         SignalLogger.enableAutoLogging(false);
 

@@ -48,11 +48,13 @@ public class Vision extends SubsystemBase {
         }
 
         if (!reject){
-            filterLL(inputs.leftPoseEstimateMT1.pose(), inputs.leftPoseEstimateMT1.tagCount(), inputs.leftPoseEstimateMT1.avgTagArea(), inputs.leftPoseEstimateMT1.timestampSeconds());
-            filterLL(inputs.leftPoseEstimateMT2.pose(), inputs.leftPoseEstimateMT2.tagCount(), inputs.leftPoseEstimateMT2.avgTagArea(), inputs.leftPoseEstimateMT2.timestampSeconds());
+            try{
+                filterLL(inputs.leftPoseEstimateMT1.pose(), inputs.leftPoseEstimateMT1.tagCount(), inputs.leftPoseEstimateMT1.avgTagArea(), inputs.leftPoseEstimateMT1.timestampSeconds());
+                filterLL(inputs.leftPoseEstimateMT2.pose(), inputs.leftPoseEstimateMT2.tagCount(), inputs.leftPoseEstimateMT2.avgTagArea(), inputs.leftPoseEstimateMT2.timestampSeconds());
 
-            filterLL(inputs.rightPoseEstimateMT1.pose(), inputs.rightPoseEstimateMT1.tagCount(), inputs.rightPoseEstimateMT1.avgTagArea(), inputs.rightPoseEstimateMT1.timestampSeconds());
-            filterLL(inputs.rightPoseEstimateMT2.pose(), inputs.rightPoseEstimateMT2.tagCount(), inputs.rightPoseEstimateMT2.avgTagArea(), inputs.rightPoseEstimateMT2.timestampSeconds());
+                filterLL(inputs.rightPoseEstimateMT1.pose(), inputs.rightPoseEstimateMT1.tagCount(), inputs.rightPoseEstimateMT1.avgTagArea(), inputs.rightPoseEstimateMT1.timestampSeconds());
+                filterLL(inputs.rightPoseEstimateMT2.pose(), inputs.rightPoseEstimateMT2.tagCount(), inputs.rightPoseEstimateMT2.avgTagArea(), inputs.rightPoseEstimateMT2.timestampSeconds());
+            } catch (Exception ignored) { }
         }
 
         Logger.recordOutput("Vision/latencyPeriodicSec", Timer.getTimestamp() - timestamp);

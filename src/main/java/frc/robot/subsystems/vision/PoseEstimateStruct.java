@@ -7,8 +7,68 @@ import frc.robot.LimelightHelpers;
 
 import java.nio.ByteBuffer;
 
-public record PoseEstimateStruct(Pose2d pose, double timestampSeconds, double latency, int tagCount, double tagSpan, double avgTagDist, double avgTagArea, int isMegaTag2)
-        implements StructSerializable {
+public final class PoseEstimateStruct implements StructSerializable {
+
+    private final Pose2d pose;
+    private final double timestampSeconds;
+    private final double latency;
+    private final int tagCount;
+    private final double tagSpan;
+    private final double avgTagDist;
+    private final double avgTagArea;
+    private final int isMegaTag2;
+
+    public PoseEstimateStruct(
+            Pose2d pose,
+            double timestampSeconds,
+            double latency,
+            int tagCount,
+            double tagSpan,
+            double avgTagDist,
+            double avgTagArea,
+            int isMegaTag2
+    ) {
+        this.pose = pose;
+        this.timestampSeconds = timestampSeconds;
+        this.latency = latency;
+        this.tagCount = tagCount;
+        this.tagSpan = tagSpan;
+        this.avgTagDist = avgTagDist;
+        this.avgTagArea = avgTagArea;
+        this.isMegaTag2 = isMegaTag2;
+    }
+
+    public Pose2d pose() {
+        return pose;
+    }
+
+    public double timestampSeconds() {
+        return timestampSeconds;
+    }
+
+    public double latency() {
+        return latency;
+    }
+
+    public int tagCount() {
+        return tagCount;
+    }
+
+    public double tagSpan() {
+        return tagSpan;
+    }
+
+    public double avgTagDist() {
+        return avgTagDist;
+    }
+
+    public double avgTagArea() {
+        return avgTagArea;
+    }
+
+    public int isMegaTag2() {
+        return isMegaTag2;
+    }
 
     public static PoseEstimateStruct fromPoseEstimate(LimelightHelpers.PoseEstimate estimate) {
         return new PoseEstimateStruct(

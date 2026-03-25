@@ -7,8 +7,61 @@ import frc.robot.LimelightHelpers;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-public record RawFiducialStruct(int id, double txnc, double tync, double ta, double distToCamera, double distToRobot, double ambiguity)
-        implements StructSerializable {
+public final class RawFiducialStruct implements StructSerializable {
+
+    private final int id;
+    private final double txnc;
+    private final double tync;
+    private final double ta;
+    private final double distToCamera;
+    private final double distToRobot;
+    private final double ambiguity;
+
+    public RawFiducialStruct(
+            int id,
+            double txnc,
+            double tync,
+            double ta,
+            double distToCamera,
+            double distToRobot,
+            double ambiguity
+    ) {
+        this.id = id;
+        this.txnc = txnc;
+        this.tync = tync;
+        this.ta = ta;
+        this.distToCamera = distToCamera;
+        this.distToRobot = distToRobot;
+        this.ambiguity = ambiguity;
+    }
+
+    public int id() {
+        return id;
+    }
+
+    public double txnc() {
+        return txnc;
+    }
+
+    public double tync() {
+        return tync;
+    }
+
+    public double ta() {
+        return ta;
+    }
+
+    public double distToCamera() {
+        return distToCamera;
+    }
+
+    public double distToRobot() {
+        return distToRobot;
+    }
+
+    public double ambiguity() {
+        return ambiguity;
+    }
 
     public static final RawFiducialStruct[] blankArray = new RawFiducialStruct[0];
 
@@ -65,7 +118,7 @@ public record RawFiducialStruct(int id, double txnc, double tync, double ta, dou
 
                 @Override
                 public void pack(ByteBuffer bb, RawFiducialStruct value) {
-                    bb.putDouble(value.id);
+                    bb.putInt(value.id);
                     bb.putDouble(value.txnc);
                     bb.putDouble(value.tync);
                     bb.putDouble(value.ta);
