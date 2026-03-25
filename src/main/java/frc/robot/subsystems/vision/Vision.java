@@ -33,7 +33,7 @@ public class Vision extends SubsystemBase {
         SwerveDrivetrain.SwerveDriveState lastDriveState = this.drivetrain.getState();
         inputs.robotYawDegrees = lastDriveState.Pose.getRotation().getDegrees();
         inputs.robotYawRateDegreesPerSecond = lastDriveState.Speeds.omegaRadiansPerSecond;
-        inputs.robotRollDegrees = this.drivetrain.getPigeon2().getYaw().getValue().in(Units.Degree);
+        inputs.robotRollDegrees = this.drivetrain.getPigeon2().getRoll().getValue().in(Units.Degree);
         inputs.robotRollRateDegreesPerSecond = 0;
         inputs.robotPitchDegrees = this.drivetrain.getPigeon2().getPitch().getValue().in(Units.Degree);
         inputs.robotPitchRateDegreesPerSecond = 0;
@@ -49,11 +49,15 @@ public class Vision extends SubsystemBase {
 
         if (!reject){
             try{
-                filterLL(inputs.leftPoseEstimateMT1.pose(), inputs.leftPoseEstimateMT1.tagCount(), inputs.leftPoseEstimateMT1.avgTagArea(), inputs.leftPoseEstimateMT1.timestampSeconds());
-                filterLL(inputs.leftPoseEstimateMT2.pose(), inputs.leftPoseEstimateMT2.tagCount(), inputs.leftPoseEstimateMT2.avgTagArea(), inputs.leftPoseEstimateMT2.timestampSeconds());
+                if (inputs.leftHasTarget){
+                    filterLL(inputs.leftPoseEstimateMT1.pose(), inputs.leftPoseEstimateMT1.tagCount(), inputs.leftPoseEstimateMT1.avgTagArea(), inputs.leftPoseEstimateMT1.timestampSeconds());
+                    filterLL(inputs.leftPoseEstimateMT2.pose(), inputs.leftPoseEstimateMT2.tagCount(), inputs.leftPoseEstimateMT2.avgTagArea(), inputs.leftPoseEstimateMT2.timestampSeconds());
+                }
 
-                filterLL(inputs.rightPoseEstimateMT1.pose(), inputs.rightPoseEstimateMT1.tagCount(), inputs.rightPoseEstimateMT1.avgTagArea(), inputs.rightPoseEstimateMT1.timestampSeconds());
-                filterLL(inputs.rightPoseEstimateMT2.pose(), inputs.rightPoseEstimateMT2.tagCount(), inputs.rightPoseEstimateMT2.avgTagArea(), inputs.rightPoseEstimateMT2.timestampSeconds());
+                if (inputs.rightHasTarget) {
+                    filterLL(inputs.rightPoseEstimateMT1.pose(), inputs.rightPoseEstimateMT1.tagCount(), inputs.rightPoseEstimateMT1.avgTagArea(), inputs.rightPoseEstimateMT1.timestampSeconds());
+                    filterLL(inputs.rightPoseEstimateMT2.pose(), inputs.rightPoseEstimateMT2.tagCount(), inputs.rightPoseEstimateMT2.avgTagArea(), inputs.rightPoseEstimateMT2.timestampSeconds());
+                }
             } catch (Exception ignored) { }
         }
 
@@ -61,7 +65,7 @@ public class Vision extends SubsystemBase {
     }
 
     private void filterLL(Pose2d pose, int tagCount, double avgTagArea, double timestampSeconds){
-        if (!(tagCount == 0)){
+        if (tagCount > 0){
             if (tagCount == 1){
                 this.drivetrain.addVisionMeasurement(
                         pose,
@@ -70,20 +74,20 @@ public class Vision extends SubsystemBase {
                 );
 
                 this.drivetrain.addVisionMeasurement(
-                        inputs.leftPoseEstimateMT2.pose(),
+                        pose,
                         timestampSeconds,
                         standardVisionDevs1tag.times(avgTagArea)
                 );
             }
             else {
                 this.drivetrain.addVisionMeasurement(
-                        inputs.leftPoseEstimateMT1.pose(),
+                        pose,
                         timestampSeconds,
                         standardVisionDevs2OrMore.times(avgTagArea)
                 );
 
                 this.drivetrain.addVisionMeasurement(
-                        inputs.leftPoseEstimateMT2.pose(),
+                        pose,
                         timestampSeconds,
                         standardVisionDevs2OrMore.times(avgTagArea)
                 );
