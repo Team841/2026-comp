@@ -70,6 +70,7 @@ public class VisionIOLimelights implements VisionIO{
             LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(RobotConstants.Vision.leftName);
             inputs.leftPoseEstimateMT1 = mt1;
             inputs.leftPoseEstimateMT2 = mt2;
+            inputs.leftRawFiducial = mt1.rawFiducials();
         }
 
 //        if (inputs.turretHasTarget) {
@@ -83,6 +84,7 @@ public class VisionIOLimelights implements VisionIO{
             LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(RobotConstants.Vision.rightName);
             inputs.rightPoseEstimateMT1 = mt1;
             inputs.rightPoseEstimateMT2 = mt2;
+            inputs.rightRawFiducial = mt1.rawFiducials();
         }
     }
 }

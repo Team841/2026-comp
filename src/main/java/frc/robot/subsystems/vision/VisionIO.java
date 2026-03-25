@@ -12,6 +12,9 @@ public interface VisionIO {
         public boolean leftHasTarget;
         public boolean rightHasTarget;
 
+        public LimelightHelpers.RawFiducial[] leftRawFiducial = new LimelightHelpers.RawFiducial[]{};
+        public LimelightHelpers.RawFiducial[] rightRawFiducial = new LimelightHelpers.RawFiducial[]{};
+
         public LimelightHelpers.PoseEstimate leftPoseEstimateMT1 = new LimelightHelpers.PoseEstimate(false);
         public LimelightHelpers.PoseEstimate leftPoseEstimateMT2 = new LimelightHelpers.PoseEstimate(true);
         public LimelightHelpers.PoseEstimate rightPoseEstimateMT1 = new LimelightHelpers.PoseEstimate(false);
