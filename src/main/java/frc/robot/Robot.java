@@ -52,9 +52,9 @@ public class Robot extends LoggedRobot {
     public Robot() {
 //        Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
 
-//        Logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
-//        Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
-        Logger.addDataReceiver(new RLOGServer());
+        Logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
+        Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+//        Logger.addDataReceiver(new RLOGServer());
 
         SignalLogger.enableAutoLogging(false);
 
