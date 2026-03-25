@@ -87,17 +87,17 @@ public final class PoseEstimateStruct implements StructSerializable {
 
                 @Override
                 public String getTypeName() {
-                    return "class:PoseEstimateStruct";
+                    return "PoseEstimateStruct";
                 }
 
                 @Override
                 public int getSize() {
-                    return Pose2d.struct.getSize() + 3 * Double.BYTES + 2 * Integer.BYTES;
+                    return Pose2d.struct.getSize() + 5 * Double.BYTES + 2 * Integer.BYTES;
                 }
 
                 @Override
                 public String getSchema() {
-                    return "Pose2d pose; double timestampSeconds; double latency; int tagCount; double tagSpan; double avgTagDist; double avgTagArea; int isMegaTag2;";
+                    return "Pose2d pose;double timestampSeconds;double latency;int tagCount;double tagSpan;double avgTagDist;double avgTagArea;int isMegaTag2";
                 }
 
                 @Override

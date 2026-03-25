@@ -89,7 +89,7 @@ public final class RawFiducialStruct implements StructSerializable {
 
                 @Override
                 public String getTypeName() {
-                    return "class:RawFiducialStruct";
+                    return "RawFiducialStruct";
                 }
 
                 @Override
@@ -99,7 +99,7 @@ public final class RawFiducialStruct implements StructSerializable {
 
                 @Override
                 public String getSchema() {
-                    return "int id; double txnc; double tync; double ta; double distToCamera; double distToRobot; double ambiguity;";
+                    return "int id;double txnc;double tync;double ta;double distToCamera;double distToRobot;double ambiguity";
                 }
 
                 @Override
