@@ -12,18 +12,10 @@ public interface VisionIO {
         public boolean leftHasTarget;
         public boolean rightHasTarget;
 
-        // public RawFiducialStruct[] turretFiducials = new RawFiducialStruct[0];
-        public RawFiducialStruct[] leftFiducials = new RawFiducialStruct[0];
-        public RawFiducialStruct[] rightFiducials = new RawFiducialStruct[0];
-
-        // public PoseEstimateStruct turretPoseEstimateMT1 = new PoseEstimateStruct(Pose2d.kZero, 0, 0, 0, 0, 0, 0, 0);
-        // public PoseEstimateStruct TurretPoseEstimateMT2 = new PoseEstimateStruct(Pose2d.kZero, 0, 0, 0, 0, 0, 0, 0);
-
-        public PoseEstimateStruct leftPoseEstimateMT1 = new PoseEstimateStruct(Pose2d.kZero, 0, 0, 0, 0, 0, 0, 0);
-        public PoseEstimateStruct leftPoseEstimateMT2 = new PoseEstimateStruct(Pose2d.kZero, 0, 0, 0, 0, 0, 0, 0);
-
-        public PoseEstimateStruct rightPoseEstimateMT1 = new PoseEstimateStruct(Pose2d.kZero, 0, 0, 0, 0, 0, 0, 0);
-        public PoseEstimateStruct rightPoseEstimateMT2 = new PoseEstimateStruct(Pose2d.kZero, 0, 0, 0, 0, 0, 0, 0);
+        public LimelightHelpers.PoseEstimate leftPoseEstimateMT1 = new LimelightHelpers.PoseEstimate(false);
+        public LimelightHelpers.PoseEstimate leftPoseEstimateMT2 = new LimelightHelpers.PoseEstimate(true);
+        public LimelightHelpers.PoseEstimate rightPoseEstimateMT1 = new LimelightHelpers.PoseEstimate(false);
+        public LimelightHelpers.PoseEstimate rightPoseEstimateMT2 = new LimelightHelpers.PoseEstimate(true);
 
         public double robotYawDegrees;
         public double robotYawRateDegreesPerSecond;

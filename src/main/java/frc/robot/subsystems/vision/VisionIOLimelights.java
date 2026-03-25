@@ -6,10 +6,6 @@ import frc.robot.LimelightHelpers;
 import frc.robot.constants.RobotConstants;
 
 public class VisionIOLimelights implements VisionIO{
-//    NetworkTable turretTable = NetworkTableInstance.getDefault().getTable(RobotConstants.Vision.turretName);
-//    NetworkTable leftTable = NetworkTableInstance.getDefault().getTable(RobotConstants.Vision.leftName);
-//    NetworkTable rightTable = NetworkTableInstance.getDefault().getTable(RobotConstants.Vision.rightName);
-
     VisionIOInputs inputCache = new VisionIOInputs();
 
     public VisionIOLimelights(){
@@ -72,25 +68,21 @@ public class VisionIOLimelights implements VisionIO{
         if (inputs.leftHasTarget) {
             LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(RobotConstants.Vision.leftName);
             LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(RobotConstants.Vision.leftName);
-            inputs.leftPoseEstimateMT1 = PoseEstimateStruct.fromPoseEstimate(mt1);
-            inputs.leftPoseEstimateMT2 = PoseEstimateStruct.fromPoseEstimate(mt2);
-            inputs.leftFiducials = RawFiducialStruct.fromRawFiducial(mt1.rawFiducials);
+            inputs.leftPoseEstimateMT1 = mt1;
+            inputs.leftPoseEstimateMT2 = mt2;
         }
 
 //        if (inputs.turretHasTarget) {
 //            LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(RobotConstants.Vision.turretName);
 //            LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(RobotConstants.Vision.turretName);
-//            inputs.turretPoseEstimateMT1 = PoseEstimateStruct.fromPoseEstimate(mt1);
-//            inputs.getTurretPoseEstimateMT2 = PoseEstimateStruct.fromPoseEstimate(mt2);
-//            inputs.turretFiducials = RawFiducialStruct.fromRawFiducial(mt1.rawFiducials);
+//            // todo: setup
 //        }
 
         if (inputs.rightHasTarget) {
             LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(RobotConstants.Vision.rightName);
             LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(RobotConstants.Vision.rightName);
-            inputs.rightPoseEstimateMT1 = PoseEstimateStruct.fromPoseEstimate(mt1);
-            inputs.rightPoseEstimateMT2 = PoseEstimateStruct.fromPoseEstimate(mt2);
-            inputs.rightFiducials = RawFiducialStruct.fromRawFiducial(mt1.rawFiducials);
+            inputs.rightPoseEstimateMT1 = mt1;
+            inputs.rightPoseEstimateMT2 = mt2;
         }
     }
 }
