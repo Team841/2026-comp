@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOLimelights;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
@@ -42,9 +45,11 @@ public class Robot extends LoggedRobot {
     private final IntakePivot intakePivot = new IntakePivot();
     private final Shooter shooter = new Shooter();
 
+    public final VisionIO visionIO;
+    public final Vision vision;
 
     public Robot() {
-        Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
+//        Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
 
         Logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
         Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
@@ -60,7 +65,10 @@ public class Robot extends LoggedRobot {
         TunerConstants.BackLeft, 
         TunerConstants.BackRight);
 
-        robotContainer = new RobotContainer(drivetrain, dyeRotor, hood, intake, intakePivot, shooter, turret);
+        this.visionIO = new VisionIOLimelights();
+        this.vision = new Vision(visionIO, drivetrain);
+
+        robotContainer = new RobotContainer(drivetrain, dyeRotor, hood, intake, intakePivot, shooter, turret, visionIO, vision);
 
         if (!AutoBuilder.isConfigured()){
             drivetrain.ConfigureAutobuilder();

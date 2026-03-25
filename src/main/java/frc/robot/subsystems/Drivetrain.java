@@ -37,10 +37,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.LimelightHelpers;
 import frc.robot.constants.RobotConstants;
-import frc.team254.vision.FiducialObservation;
-import frc.team254.vision.MegatagPoseEstimate;
-import frc.team254.vision.VisionFieldPoseEstimate;
-import frc.team254.vision.VisionProcessor;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
@@ -80,20 +76,20 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
 
     public final NetworkTable visionControlTable = vision.getTable("VisionControl");
 
-    public final Consumer<VisionFieldPoseEstimate> visionEstimateConsumer = new Consumer<>() {
-        @Override
-        public void accept(VisionFieldPoseEstimate visionFieldPoseEstimate) {
-            if (forcePoseReset) {
-                resetPose(visionFieldPoseEstimate.getVisionRobotPoseMeters());
-                forcePoseReset = false;
-            } else {
-                addVisionMeasurement(visionFieldPoseEstimate);
-            }
-            return;
-        }
-    };
+//    public final Consumer<VisionFieldPoseEstimate> visionEstimateConsumer = new Consumer<>() {
+//        @Override
+//        public void accept(VisionFieldPoseEstimate visionFieldPoseEstimate) {
+//            if (forcePoseReset) {
+//                resetPose(visionFieldPoseEstimate.getVisionRobotPoseMeters());
+//                forcePoseReset = false;
+//            } else {
+//                addVisionMeasurement(visionFieldPoseEstimate);
+//            }
+//            return;
+//        }
+//    };
 
-    VisionProcessor visionProcessor = new VisionProcessor(visionEstimateConsumer);
+//    VisionProcessor visionProcessor = new VisionProcessor(visionEstimateConsumer);
 
     public final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds()
             .withDriveRequestType(SwerveModule.DriveRequestType.Velocity)
@@ -132,18 +128,18 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
         return run(() -> this.setControl(request.get()));
     }
 
-    public void addVisionMeasurement(VisionFieldPoseEstimate visionFieldPoseEstimate) {
-        if (visionFieldPoseEstimate.getVisionMeasurementStdDevs() == null) {
-            super.addVisionMeasurement(
-                    visionFieldPoseEstimate.getVisionRobotPoseMeters(),
-                    Utils.fpgaToCurrentTime(visionFieldPoseEstimate.getTimestampSeconds()));
-        } else {
-            super.addVisionMeasurement(
-                    visionFieldPoseEstimate.getVisionRobotPoseMeters(),
-                    Utils.fpgaToCurrentTime(visionFieldPoseEstimate.getTimestampSeconds()),
-                    visionFieldPoseEstimate.getVisionMeasurementStdDevs());
-        }
-    }
+//    public void addVisionMeasurement(VisionFieldPoseEstimate visionFieldPoseEstimate) {
+//        if (visionFieldPoseEstimate.getVisionMeasurementStdDevs() == null) {
+//            super.addVisionMeasurement(
+//                    visionFieldPoseEstimate.getVisionRobotPoseMeters(),
+//                    Utils.fpgaToCurrentTime(visionFieldPoseEstimate.getTimestampSeconds()));
+//        } else {
+//            super.addVisionMeasurement(
+//                    visionFieldPoseEstimate.getVisionRobotPoseMeters(),
+//                    Utils.fpgaToCurrentTime(visionFieldPoseEstimate.getTimestampSeconds()),
+//                    visionFieldPoseEstimate.getVisionMeasurementStdDevs());
+//        }
+//    }
 
     public void periodic() {
 
@@ -398,43 +394,43 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
     public void visionPeriodic() {
         setLLSettings();
 
-        double timestamp = Timer.getTimestamp();
-        visionProcessor.driveYawAngularVelocity.addSample(timestamp, this.getState().Speeds.omegaRadiansPerSecond);
-        visionProcessor.measuredRobotRelativeChassisSpeeds.set(this.getState().Speeds);
-        visionProcessor.robotPose.addSample(timestamp, this.getState().Pose);
-        
-        boolean leftCameraSeesTarget = leftCameraTable.getEntry("tv").getDouble(0) == 1.0;
-        Logger.recordOutput("Drivetrain/leftCameraSeesTarget", leftCameraSeesTarget);
-        if (leftCameraSeesTarget) { // does it see target?
-            var megatag = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-left");
-            var megatag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-left");
-            Logger.recordOutput("Drivetrain/megatag1llposeLeft", megatag.pose);
-            Logger.recordOutput("Drivetrain/megatag2llposeLeft", megatag2.pose);
-            if (megatag != null && megatag2 != null){
-                visionProcessor.updateVision(
-                    leftCameraSeesTarget,
-                    FiducialObservation.fromLimelight(megatag.rawFiducials),
-                    MegatagPoseEstimate.fromLimelight(megatag),
-                    MegatagPoseEstimate.fromLimelight(megatag2),
-                    "Vision/left");
-            }
-        }
-        boolean rightCameraSeesTarget = rightCameraTable.getEntry("tv").getDouble(0) == 1.0;
-        Logger.recordOutput("Drivetrain/rightCameraSeesTarget", rightCameraSeesTarget);
-        if (rightCameraSeesTarget) { // does it see target?
-            var megatag = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-right");
-            var megatag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-right");
-            Logger.recordOutput("Drivetrain/megatag1llposeRight", megatag.pose);
-            Logger.recordOutput("Drivetrain/megatag2llposeRight", megatag2.pose);
-            if (megatag != null && megatag2 != null){
-                visionProcessor.updateVision(
-                    rightCameraSeesTarget,
-                    FiducialObservation.fromLimelight(megatag.rawFiducials),
-                    MegatagPoseEstimate.fromLimelight(megatag),
-                    MegatagPoseEstimate.fromLimelight(megatag2),
-                    "Vision/right");
-            }
-        }
+//        double timestamp = Timer.getTimestamp();
+//        visionProcessor.driveYawAngularVelocity.addSample(timestamp, this.getState().Speeds.omegaRadiansPerSecond);
+//        visionProcessor.measuredRobotRelativeChassisSpeeds.set(this.getState().Speeds);
+//        visionProcessor.robotPose.addSample(timestamp, this.getState().Pose);
+//
+//        boolean leftCameraSeesTarget = leftCameraTable.getEntry("tv").getDouble(0) == 1.0;
+//        Logger.recordOutput("Drivetrain/leftCameraSeesTarget", leftCameraSeesTarget);
+//        if (leftCameraSeesTarget) { // does it see target?
+//            var megatag = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-left");
+//            var megatag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-left");
+//            Logger.recordOutput("Drivetrain/megatag1llposeLeft", megatag.pose);
+//            Logger.recordOutput("Drivetrain/megatag2llposeLeft", megatag2.pose);
+//            if (megatag != null && megatag2 != null){
+//                visionProcessor.updateVision(
+//                    leftCameraSeesTarget,
+//                    FiducialObservation.fromLimelight(megatag.rawFiducials),
+//                    MegatagPoseEstimate.fromLimelight(megatag),
+//                    MegatagPoseEstimate.fromLimelight(megatag2),
+//                    "Vision/left");
+//            }
+//        }
+//        boolean rightCameraSeesTarget = rightCameraTable.getEntry("tv").getDouble(0) == 1.0;
+//        Logger.recordOutput("Drivetrain/rightCameraSeesTarget", rightCameraSeesTarget);
+//        if (rightCameraSeesTarget) { // does it see target?
+//            var megatag = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-right");
+//            var megatag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-right");
+//            Logger.recordOutput("Drivetrain/megatag1llposeRight", megatag.pose);
+//            Logger.recordOutput("Drivetrain/megatag2llposeRight", megatag2.pose);
+//            if (megatag != null && megatag2 != null){
+//                visionProcessor.updateVision(
+//                    rightCameraSeesTarget,
+//                    FiducialObservation.fromLimelight(megatag.rawFiducials),
+//                    MegatagPoseEstimate.fromLimelight(megatag),
+//                    MegatagPoseEstimate.fromLimelight(megatag2),
+//                    "Vision/right");
+//            }
+//        }
     }
 
     private void setLLSettings() {

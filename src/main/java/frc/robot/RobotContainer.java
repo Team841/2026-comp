@@ -33,6 +33,8 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIO;
 
 public class RobotContainer {
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -61,6 +63,9 @@ public class RobotContainer {
     public final Shooter shooter;
     public final Turret turret;
 
+    public final VisionIO visionIO;
+    public final Vision vision;
+
     public RobotMode currentMode = RobotMode.NEUTRAL;
     private Command activeCommand = null;
 
@@ -71,7 +76,7 @@ public class RobotContainer {
         SPINUP_SHOOTER
     }
 
-    public RobotContainer(Drivetrain drivetrain, DyeRotor dyeRotor, Hood hood, Intake intake, IntakePivot intakePivot, Shooter shooter, Turret turret) {
+    public RobotContainer(Drivetrain drivetrain, DyeRotor dyeRotor, Hood hood, Intake intake, IntakePivot intakePivot, Shooter shooter, Turret turret, VisionIO visionIO, Vision vision) {
         this.drivetrain = drivetrain;
         this.dyeRotor = dyeRotor;
         this.hood = hood;
@@ -79,6 +84,8 @@ public class RobotContainer {
         this.intakePivot = intakePivot;
         this.shooter = shooter;
         this.turret = turret;
+        this.visionIO = visionIO;
+        this.vision = vision;
 
         NamedCommands.registerCommand("IntakeDownAndSpin", intakeDownAndSpin());
         NamedCommands.registerCommand("IntakeUpAndStop", intakeUpAndStop());
