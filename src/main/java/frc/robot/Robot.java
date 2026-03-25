@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelights;
@@ -52,9 +53,11 @@ public class Robot extends LoggedRobot {
     public Robot() {
 //        Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
 
-        Logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
+//        Logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
         Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
-//        Logger.addDataReceiver(new RLOGServer());
+        Logger.addDataReceiver(new RLOGServer());
+
+        DriverStation.silenceJoystickConnectionWarning(true);
 
         SignalLogger.enableAutoLogging(false);
 
@@ -79,7 +82,7 @@ public class Robot extends LoggedRobot {
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
-        Threads.setCurrentThreadPriority(true, 5);
+//        Threads.setCurrentThreadPriority(true, 5);
     }
 
     @Override
