@@ -215,9 +215,9 @@ public class RobotContainer {
     public Command snapToPass() {
         return Commands.run(
             () -> {
-                turret.setPosition(drivetrain.getAngleToPass());
+                turret.setPosition(drivetrain.getAngleToPassWhileMoving(getIteratedTof()));
                 hood.setPosition(-4.1);
-                shooter.setVelocity(shooter.getShooterPassingSpeedFromDistanceMeters(drivetrain.getDistanceToDriverStationWall()));
+                    shooter.setVelocity(shooter.getShooterPassingSpeedFromDistanceMeters(drivetrain.getDistanceToDriverStationWall()));
             }, 
             turret, hood, shooter);
     }
@@ -237,7 +237,7 @@ public class RobotContainer {
     public Command runDyeRotorForPassShot() {
         return Commands.run(
             () -> {
-                if (turret.atAngle(10) && shooter.atfullSpeed()) {
+                if (turret.atAngle(10) && shooter.atfullSpeed() && drivetrain.goodToPass()) {
                     dyeRotor.setDutyCycle(0.8);
                 } else {
                     dyeRotor.setDutyCycle(0);

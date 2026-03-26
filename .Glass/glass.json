@@ -3,6 +3,12 @@
     "transitory": {
       "AdvantageKit": {
         "RealOutputs": {
+          "Vision": {
+            "open": true
+          },
+          "open": true
+        },
+        "Vision": {
           "open": true
         },
         "open": true
