@@ -82,7 +82,7 @@ public class Robot extends LoggedRobot {
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
-//        Threads.setCurrentThreadPriority(true, 5);
+       Threads.setCurrentThreadPriority(true, 5);
     }
 
     @Override
