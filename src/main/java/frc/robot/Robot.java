@@ -4,9 +4,14 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOLimelights;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.rlog.RLOGServer;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -42,12 +47,17 @@ public class Robot extends LoggedRobot {
     private final IntakePivot intakePivot = new IntakePivot();
     private final Shooter shooter = new Shooter();
 
+    public final VisionIO visionIO;
+    public final Vision vision;
 
     public Robot() {
-        Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
+//        Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
 
         Logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
         Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+        // Logger.addDataReceiver(new RLOGServer());
+
+        DriverStation.silenceJoystickConnectionWarning(true);
 
         SignalLogger.enableAutoLogging(false);
 
@@ -60,7 +70,10 @@ public class Robot extends LoggedRobot {
         TunerConstants.BackLeft, 
         TunerConstants.BackRight);
 
-        robotContainer = new RobotContainer(drivetrain, dyeRotor, hood, intake, intakePivot, shooter, turret);
+        this.visionIO = new VisionIOLimelights();
+        this.vision = new Vision(visionIO, drivetrain);
+
+        robotContainer = new RobotContainer(drivetrain, dyeRotor, hood, intake, intakePivot, shooter, turret, visionIO, vision);
 
         if (!AutoBuilder.isConfigured()){
             drivetrain.ConfigureAutobuilder();
@@ -69,7 +82,7 @@ public class Robot extends LoggedRobot {
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
-        Threads.setCurrentThreadPriority(true, 5);
+       Threads.setCurrentThreadPriority(true, 5);
     }
 
     @Override

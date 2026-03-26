@@ -37,10 +37,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.LimelightHelpers;
 import frc.robot.constants.RobotConstants;
-import frc.team254.vision.FiducialObservation;
-import frc.team254.vision.MegatagPoseEstimate;
-import frc.team254.vision.VisionFieldPoseEstimate;
-import frc.team254.vision.VisionProcessor;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
@@ -63,15 +59,6 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
 
     private boolean forcePoseReset = false;
 
-    private static final Pose2d blueHubPose = new Pose2d(4.626, 4.035, new Rotation2d());
-    private static final Pose2d redHubPose = new Pose2d(11.914, 4.035, new Rotation2d());
-
-    private static final Pose2d bluePassShotHighPose = new Pose2d(5.2, 5.1, new Rotation2d());
-    private static final Pose2d bluePassShotLowPose = new Pose2d(5.2, 2.9, new Rotation2d());
-
-    private static final Pose2d redPassShotHighPose = new Pose2d(11.4, 5.1, new Rotation2d());
-    private static final Pose2d redPassShotLowPose = new Pose2d(11.4, 2.9, new Rotation2d());
-
     NetworkTable turretCameraTable = NetworkTableInstance.getDefault().getTable("limelight-turret");
     NetworkTable leftCameraTable = NetworkTableInstance.getDefault().getTable("limelight-left");
     NetworkTable rightCameraTable = NetworkTableInstance.getDefault().getTable("limelight-right");
@@ -80,20 +67,20 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
 
     public final NetworkTable visionControlTable = vision.getTable("VisionControl");
 
-    public final Consumer<VisionFieldPoseEstimate> visionEstimateConsumer = new Consumer<>() {
-        @Override
-        public void accept(VisionFieldPoseEstimate visionFieldPoseEstimate) {
-            if (forcePoseReset) {
-                resetPose(visionFieldPoseEstimate.getVisionRobotPoseMeters());
-                forcePoseReset = false;
-            } else {
-                addVisionMeasurement(visionFieldPoseEstimate);
-            }
-            return;
-        }
-    };
+//    public final Consumer<VisionFieldPoseEstimate> visionEstimateConsumer = new Consumer<>() {
+//        @Override
+//        public void accept(VisionFieldPoseEstimate visionFieldPoseEstimate) {
+//            if (forcePoseReset) {
+//                resetPose(visionFieldPoseEstimate.getVisionRobotPoseMeters());
+//                forcePoseReset = false;
+//            } else {
+//                addVisionMeasurement(visionFieldPoseEstimate);
+//            }
+//            return;
+//        }
+//    };
 
-    VisionProcessor visionProcessor = new VisionProcessor(visionEstimateConsumer);
+//    VisionProcessor visionProcessor = new VisionProcessor(visionEstimateConsumer);
 
     public final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds()
             .withDriveRequestType(SwerveModule.DriveRequestType.Velocity)
@@ -132,18 +119,18 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
         return run(() -> this.setControl(request.get()));
     }
 
-    public void addVisionMeasurement(VisionFieldPoseEstimate visionFieldPoseEstimate) {
-        if (visionFieldPoseEstimate.getVisionMeasurementStdDevs() == null) {
-            super.addVisionMeasurement(
-                    visionFieldPoseEstimate.getVisionRobotPoseMeters(),
-                    Utils.fpgaToCurrentTime(visionFieldPoseEstimate.getTimestampSeconds()));
-        } else {
-            super.addVisionMeasurement(
-                    visionFieldPoseEstimate.getVisionRobotPoseMeters(),
-                    Utils.fpgaToCurrentTime(visionFieldPoseEstimate.getTimestampSeconds()),
-                    visionFieldPoseEstimate.getVisionMeasurementStdDevs());
-        }
-    }
+//    public void addVisionMeasurement(VisionFieldPoseEstimate visionFieldPoseEstimate) {
+//        if (visionFieldPoseEstimate.getVisionMeasurementStdDevs() == null) {
+//            super.addVisionMeasurement(
+//                    visionFieldPoseEstimate.getVisionRobotPoseMeters(),
+//                    Utils.fpgaToCurrentTime(visionFieldPoseEstimate.getTimestampSeconds()));
+//        } else {
+//            super.addVisionMeasurement(
+//                    visionFieldPoseEstimate.getVisionRobotPoseMeters(),
+//                    Utils.fpgaToCurrentTime(visionFieldPoseEstimate.getTimestampSeconds()),
+//                    visionFieldPoseEstimate.getVisionMeasurementStdDevs());
+//        }
+//    }
 
     public void periodic() {
 
@@ -276,36 +263,49 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
         }
     }
 
-    public Rotation2d getAngleToPass() {
-        if (this.getState().Pose.getY() < 3.2 || this.getState().Pose.getY() > 4.8) {
-            if (RobotConstants.isRedAlliance.getAsBoolean()) {
-                return this.getState().Pose.getRotation().unaryMinus();
+    public Rotation2d getAngleToPassWhileMoving(double timeOfFlight) {
+        ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(
+                this.getState().Speeds, this.getState().Pose.getRotation());
+
+        Translation2d robotTranslationOverTime = new Translation2d(
+                fieldRelativeSpeeds.vxMetersPerSecond * timeOfFlight,
+                fieldRelativeSpeeds.vyMetersPerSecond * timeOfFlight);
+
+        Rotation2d robotToPassLocationAngle;
+
+        if (RobotConstants.isRedAlliance.getAsBoolean()) {
+            if (this.getState().Pose.getY() > (4.027)) {
+                robotToPassLocationAngle = new Rotation2d(
+                    Math.atan2(
+                            RobotConstants.AutoAim.redPassShotHighPose.getY() - robotTranslationOverTime.getY() - this.getState().Pose.getY(),
+                            RobotConstants.AutoAim.redPassShotHighPose.getX() - robotTranslationOverTime.getX() - this.getState().Pose.getX()));
             } else {
-                return this.getState().Pose.getRotation().minus(Rotation2d.k180deg).unaryMinus();
+                robotToPassLocationAngle = new Rotation2d(
+                    Math.atan2(
+                            RobotConstants.AutoAim.redPassShotLowPose.getY() - robotTranslationOverTime.getY() - this.getState().Pose.getY(),
+                            RobotConstants.AutoAim.redPassShotLowPose.getX() - robotTranslationOverTime.getX() - this.getState().Pose.getX()));
             }
         } else {
-            if (this.getState().Pose.getY() > 4) {
-                if (RobotConstants.isRedAlliance.getAsBoolean()) {
-                    return new Rotation2d(
-                        Math.atan2(redPassShotHighPose.getY() - this.getState().Pose.getY(), redPassShotHighPose.getX() - this.getState().Pose.getX())
-                    ).minus(this.getState().Pose.getRotation());
-                } else {
-                    return new Rotation2d(
-                        Math.atan2(bluePassShotHighPose.getY() - this.getState().Pose.getY(), bluePassShotHighPose.getX() - this.getState().Pose.getX())
-                    ).minus(this.getState().Pose.getRotation());
-                }
+            if (this.getState().Pose.getY() > (4.027)) {
+                robotToPassLocationAngle = new Rotation2d(
+                    Math.atan2(
+                            RobotConstants.AutoAim.bluePassShotHighPose.getY() - robotTranslationOverTime.getY() - this.getState().Pose.getY(),
+                            RobotConstants.AutoAim.bluePassShotHighPose.getX() - robotTranslationOverTime.getX() - this.getState().Pose.getX()));
             } else {
-                if (RobotConstants.isRedAlliance.getAsBoolean()) {
-                    return new Rotation2d(
-                        Math.atan2(redPassShotLowPose.getY() - this.getState().Pose.getY(), redPassShotLowPose.getX() - this.getState().Pose.getX())
-                    ).minus(this.getState().Pose.getRotation());
-                } else {
-                    return new Rotation2d(
-                        Math.atan2(bluePassShotLowPose.getY() - this.getState().Pose.getY(), bluePassShotLowPose.getX() - this.getState().Pose.getX())
-                    ).minus(this.getState().Pose.getRotation());
-                }
+                robotToPassLocationAngle = new Rotation2d(
+                    Math.atan2(
+                            RobotConstants.AutoAim.bluePassShotLowPose.getY() - robotTranslationOverTime.getY() - this.getState().Pose.getY(),
+                            RobotConstants.AutoAim.bluePassShotLowPose.getX() - robotTranslationOverTime.getX() - this.getState().Pose.getX()));
             }
         }
+
+        Rotation2d turretToPassLocationAngle = robotToPassLocationAngle.minus(this.getState().Pose.getRotation());
+
+        return turretToPassLocationAngle.minus(new Rotation2d(fieldRelativeSpeeds.omegaRadiansPerSecond * 0.1));
+    }
+
+    public boolean goodToPass() {
+        return this.getState().Pose.getY() < 3.3 || this.getState().Pose.getY() > 4.7;
     }
 
     public Rotation2d getAngleToScoreWhileMoving(double timeOfFlight) {
@@ -321,13 +321,13 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
         if (RobotConstants.isRedAlliance.getAsBoolean()) {
             robotToHubAngle = new Rotation2d(
                     Math.atan2(
-                            redHubPose.getY() - robotTranslationOverTime.getY() - this.getState().Pose.getY(),
-                            redHubPose.getX() - robotTranslationOverTime.getX() - this.getState().Pose.getX()));
+                            RobotConstants.AutoAim.redHubPose.getY() - robotTranslationOverTime.getY() - this.getState().Pose.getY(),
+                            RobotConstants.AutoAim.redHubPose.getX() - robotTranslationOverTime.getX() - this.getState().Pose.getX()));
         } else {
             robotToHubAngle = new Rotation2d(
                     Math.atan2(
-                            blueHubPose.getY() - robotTranslationOverTime.getY() - this.getState().Pose.getY(),
-                            blueHubPose.getX() - robotTranslationOverTime.getX() - this.getState().Pose.getX()));
+                            RobotConstants.AutoAim.blueHubPose.getY() - robotTranslationOverTime.getY() - this.getState().Pose.getY(),
+                            RobotConstants.AutoAim.blueHubPose.getX() - robotTranslationOverTime.getX() - this.getState().Pose.getX()));
         }
 
         Rotation2d turretToHubAngle = robotToHubAngle.minus(this.getState().Pose.getRotation());
@@ -338,9 +338,9 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
     public double getDistanceToHub() {
 
         if (RobotConstants.isRedAlliance.getAsBoolean()) {
-            return getDistanceBetweenPoses(this.getState().Pose, redHubPose);
+            return getDistanceBetweenPoses(this.getState().Pose, RobotConstants.AutoAim.redHubPose);
         } else {
-            return getDistanceBetweenPoses(this.getState().Pose, blueHubPose);
+            return getDistanceBetweenPoses(this.getState().Pose, RobotConstants.AutoAim.blueHubPose);
         }
     }
 
@@ -355,11 +355,11 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
 
         if (RobotConstants.isRedAlliance.getAsBoolean()) {
             return getDistanceBetweenPoses(
-                    new Pose2d(redHubPose.getTranslation().minus(robotTranslationOverTime), new Rotation2d()),
+                    new Pose2d(RobotConstants.AutoAim.redHubPose.getTranslation().minus(robotTranslationOverTime), new Rotation2d()),
                     this.getState().Pose);
         } else {
             return getDistanceBetweenPoses(
-                    new Pose2d(blueHubPose.getTranslation().minus(robotTranslationOverTime), new Rotation2d()),
+                    new Pose2d(RobotConstants.AutoAim.blueHubPose.getTranslation().minus(robotTranslationOverTime), new Rotation2d()),
                     this.getState().Pose);
         }
     }
@@ -398,43 +398,43 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
     public void visionPeriodic() {
         setLLSettings();
 
-        double timestamp = Timer.getTimestamp();
-        visionProcessor.driveYawAngularVelocity.addSample(timestamp, this.getState().Speeds.omegaRadiansPerSecond);
-        visionProcessor.measuredRobotRelativeChassisSpeeds.set(this.getState().Speeds);
-        visionProcessor.robotPose.addSample(timestamp, this.getState().Pose);
-        
-        boolean leftCameraSeesTarget = leftCameraTable.getEntry("tv").getDouble(0) == 1.0;
-        Logger.recordOutput("Drivetrain/leftCameraSeesTarget", leftCameraSeesTarget);
-        if (leftCameraSeesTarget) { // does it see target?
-            var megatag = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-left");
-            var megatag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-left");
-            Logger.recordOutput("Drivetrain/megatag1llposeLeft", megatag.pose);
-            Logger.recordOutput("Drivetrain/megatag2llposeLeft", megatag2.pose);
-            if (megatag != null && megatag2 != null){
-                visionProcessor.updateVision(
-                    leftCameraSeesTarget,
-                    FiducialObservation.fromLimelight(megatag.rawFiducials),
-                    MegatagPoseEstimate.fromLimelight(megatag),
-                    MegatagPoseEstimate.fromLimelight(megatag2),
-                    "Vision/left");
-            }
-        }
-        boolean rightCameraSeesTarget = rightCameraTable.getEntry("tv").getDouble(0) == 1.0;
-        Logger.recordOutput("Drivetrain/rightCameraSeesTarget", rightCameraSeesTarget);
-        if (rightCameraSeesTarget) { // does it see target?
-            var megatag = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-right");
-            var megatag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-right");
-            Logger.recordOutput("Drivetrain/megatag1llposeRight", megatag.pose);
-            Logger.recordOutput("Drivetrain/megatag2llposeRight", megatag2.pose);
-            if (megatag != null && megatag2 != null){
-                visionProcessor.updateVision(
-                    rightCameraSeesTarget,
-                    FiducialObservation.fromLimelight(megatag.rawFiducials),
-                    MegatagPoseEstimate.fromLimelight(megatag),
-                    MegatagPoseEstimate.fromLimelight(megatag2),
-                    "Vision/right");
-            }
-        }
+//        double timestamp = Timer.getTimestamp();
+//        visionProcessor.driveYawAngularVelocity.addSample(timestamp, this.getState().Speeds.omegaRadiansPerSecond);
+//        visionProcessor.measuredRobotRelativeChassisSpeeds.set(this.getState().Speeds);
+//        visionProcessor.robotPose.addSample(timestamp, this.getState().Pose);
+//
+//        boolean leftCameraSeesTarget = leftCameraTable.getEntry("tv").getDouble(0) == 1.0;
+//        Logger.recordOutput("Drivetrain/leftCameraSeesTarget", leftCameraSeesTarget);
+//        if (leftCameraSeesTarget) { // does it see target?
+//            var megatag = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-left");
+//            var megatag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-left");
+//            Logger.recordOutput("Drivetrain/megatag1llposeLeft", megatag.pose);
+//            Logger.recordOutput("Drivetrain/megatag2llposeLeft", megatag2.pose);
+//            if (megatag != null && megatag2 != null){
+//                visionProcessor.updateVision(
+//                    leftCameraSeesTarget,
+//                    FiducialObservation.fromLimelight(megatag.rawFiducials),
+//                    MegatagPoseEstimate.fromLimelight(megatag),
+//                    MegatagPoseEstimate.fromLimelight(megatag2),
+//                    "Vision/left");
+//            }
+//        }
+//        boolean rightCameraSeesTarget = rightCameraTable.getEntry("tv").getDouble(0) == 1.0;
+//        Logger.recordOutput("Drivetrain/rightCameraSeesTarget", rightCameraSeesTarget);
+//        if (rightCameraSeesTarget) { // does it see target?
+//            var megatag = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-right");
+//            var megatag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-right");
+//            Logger.recordOutput("Drivetrain/megatag1llposeRight", megatag.pose);
+//            Logger.recordOutput("Drivetrain/megatag2llposeRight", megatag2.pose);
+//            if (megatag != null && megatag2 != null){
+//                visionProcessor.updateVision(
+//                    rightCameraSeesTarget,
+//                    FiducialObservation.fromLimelight(megatag.rawFiducials),
+//                    MegatagPoseEstimate.fromLimelight(megatag),
+//                    MegatagPoseEstimate.fromLimelight(megatag2),
+//                    "Vision/right");
+//            }
+//        }
     }
 
     private void setLLSettings() {
