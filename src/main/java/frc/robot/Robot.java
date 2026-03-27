@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.DyeRotor;
-import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.Shooter;

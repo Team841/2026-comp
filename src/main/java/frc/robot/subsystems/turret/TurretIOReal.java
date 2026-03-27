@@ -10,6 +10,7 @@ import frc.robot.LimelightHelpers;
 import frc.robot.constants.RobotConstants;
 import frc.robot.constants.SuperstructureConstants;
 
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -21,7 +22,9 @@ public class TurretIOReal extends TurretIO {
     TurretIOInputs inputCache = new TurretIOInputs();
 
     private TalonFX turretMotor;
-    private MotionMagicExpoVoltage positionControl = new MotionMagicExpoVoltage(0);
+    private TalonFX hoodMotor;
+    private MotionMagicExpoVoltage turretPositionControl = new MotionMagicExpoVoltage(0);
+    private MotionMagicExpoVoltage hoodPositionControl = new MotionMagicExpoVoltage(0);
 
     public TurretThread turretThread;
     protected final ReadWriteLock inwardLock = new ReentrantReadWriteLock();
@@ -31,12 +34,17 @@ public class TurretIOReal extends TurretIO {
     protected Rotation2d currentAngle = new Rotation2d();
     protected double[] cameraPose = RobotConstants.Vision.turretPose;
     protected Pose2d latestCameraPose = new Pose2d();
+    protected AtomicReference<TurretModes> turretMode = new AtomicReference<>(TurretModes.AUTOAIM_FIRE);
 
     public TurretIOReal(){
         this.turretThread = new TurretThread();
 
         this.turretMotor = new TalonFX(SuperstructureConstants.IDs.turretMotorID, "rio");
         this.turretMotor.getConfigurator().apply(SuperstructureConstants.TurretConstants.turretMotorConfigs);
+
+        this.hoodMotor = new TalonFX(SuperstructureConstants.IDs.hoodMotorID, "rio");
+        this.hoodMotor.getConfigurator().apply(SuperstructureConstants.HoodConstants.hoodMotorConfigs);
+        this.zeroHood();
     }
 
     public double avgWrappedAngle(double a1, double a2){
@@ -47,6 +55,10 @@ public class TurretIOReal extends TurretIO {
             diff += 2 * Math.PI;
         double avg_theta = a1 + 0.5 * diff;
         return avg_theta % (2 * Math.PI);
+    }
+
+    public void zeroHood(){
+        this.hoodMotor.setPosition(0);
     }
 
     @Override
