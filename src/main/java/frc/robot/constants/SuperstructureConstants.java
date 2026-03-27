@@ -148,8 +148,8 @@ public class SuperstructureConstants {
                     .withRotorToSensorRatio(1))
             .withMotionMagic(
                 new MotionMagicConfigs()
-                    .withMotionMagicCruiseVelocity(30)
-                    .withMotionMagicAcceleration(20)
+                    .withMotionMagicCruiseVelocity(50)
+                    .withMotionMagicAcceleration(30)
                     .withMotionMagicJerk(5)
                     .withMotionMagicExpo_kA(0.12)
                     .withMotionMagicExpo_kV(0.1))
@@ -162,7 +162,7 @@ public class SuperstructureConstants {
                     .withForwardSoftLimitEnable(true)
                     .withReverseSoftLimitEnable(true)
                     .withForwardSoftLimitThreshold(0)
-                    .withReverseSoftLimitThreshold(-16.5));
+                    .withReverseSoftLimitThreshold(-22.9));
     }
 
     public class DyeRotorConstants {
