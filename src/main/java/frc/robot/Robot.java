@@ -11,12 +11,10 @@ import frc.robot.subsystems.vision.VisionIOLimelights;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
-import org.littletonrobotics.junction.rlog.RLOGServer;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.FollowPathCommand;
 
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -31,15 +29,14 @@ import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Turret;
 
 public class Robot extends LoggedRobot {
     private Command m_autonomousCommand;
 
     private final SendableChooser<Command> autoChooser;
 
-    private final RobotContainer robotContainer;
-    private final Turret turret = new Turret();
+//    private final RobotContainer robotContainer;
+//    private final Turret turret = new Turret();
     private final Drivetrain drivetrain;
     private final DyeRotor dyeRotor = new DyeRotor();
     private final Hood hood = new Hood();
@@ -73,7 +70,7 @@ public class Robot extends LoggedRobot {
         this.visionIO = new VisionIOLimelights();
         this.vision = new Vision(visionIO, drivetrain);
 
-        robotContainer = new RobotContainer(drivetrain, dyeRotor, hood, intake, intakePivot, shooter, turret, visionIO, vision);
+//        robotContainer = new RobotContainer(drivetrain, dyeRotor, hood, intake, intakePivot, shooter, turret, visionIO, vision);
 
         if (!AutoBuilder.isConfigured()){
             drivetrain.ConfigureAutobuilder();
@@ -88,7 +85,7 @@ public class Robot extends LoggedRobot {
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run(); 
-        Logger.recordOutput("RobotState/RobotMode", robotContainer.currentMode);
+//        Logger.recordOutput("RobotState/RobotMode", robotContainer.currentMode);
     }
 
     @Override
