@@ -135,14 +135,14 @@ public class RobotContainer {
 
     public Command intakeDownAndSpin() {
         return new InstantCommand(() -> {
-            intakePivot.setPosition(-17);
-            intake.setDutyCycle(-0.5);
+            intakePivot.setPosition(-22.9);
+            intake.setDutyCycle(0.6);
         }, intake, intakePivot);
     }
 
     public Command intakeUpAndStop() {
         return new InstantCommand(() -> {
-            intakePivot.setPosition(-10);
+            intakePivot.setPosition(-20);
             intake.stopMotor();
         }, intake, intakePivot);
     }
@@ -335,10 +335,10 @@ public class RobotContainer {
 
         joystick.y().whileTrue(drivetrain.applyRequest(() -> brake));
         
-        joystick.leftTrigger().onTrue(new RepeatCommand(new InstantCommand(() -> intake.setDutyCycle(-0.5), intake).onlyIf(() -> intakePivot.atPosition(-16.5)))).onFalse(new InstantCommand(() -> intake.stopMotor(), intake));
-        joystick.leftTrigger().onTrue(new InstantCommand(() -> intakePivot.setPosition(-16.5), intakePivot)).onFalse(new InstantCommand(() -> intakePivot.setPosition(-14), intakePivot));
+        joystick.leftTrigger().onTrue(new RepeatCommand(new InstantCommand(() -> intake.setDutyCycle(0.6), intake).onlyIf(() -> intakePivot.atPosition(-22.9)))).onFalse(new InstantCommand(() -> intake.stopMotor(), intake));
+        joystick.leftTrigger().onTrue(new InstantCommand(() -> intakePivot.setPosition(-22.9), intakePivot)).onFalse(new InstantCommand(() -> intakePivot.setPosition(-20), intakePivot));
        
-        joystick.rightStick().onTrue(new InstantCommand(() -> intakePivot.setPosition(-3), intakePivot));
+        joystick.a().onTrue(new InstantCommand(() -> intakePivot.setPosition(-3), intakePivot));
         joystick.leftBumper().onTrue(new InstantCommand(() -> dyeRotor.setDutyCycle(-0.3))).onFalse(new InstantCommand(() -> dyeRotor.stopMotor()));
         
         joystick.start().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
