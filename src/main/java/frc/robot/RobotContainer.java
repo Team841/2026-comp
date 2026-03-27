@@ -226,7 +226,7 @@ public class RobotContainer {
         return Commands.run(
             () -> {
                 if (turret.atAngle(10) && shooter.atfullSpeed()) {
-                    dyeRotor.setDutyCycle(0.8);
+                    dyeRotor.setDutyCycle(1);
                 } else {
                     dyeRotor.setDutyCycle(0);
                 }
@@ -238,7 +238,7 @@ public class RobotContainer {
         return Commands.run(
             () -> {
                 if (turret.atAngle(10) && shooter.atfullSpeed() && drivetrain.goodToPass()) {
-                    dyeRotor.setDutyCycle(0.8);
+                    dyeRotor.setDutyCycle(1);
                 } else {
                     dyeRotor.setDutyCycle(0);
                 }

@@ -102,7 +102,7 @@ public class Shooter extends SubsystemBase {
 	}
 
 	public boolean atfullSpeed() {
-		return Math.abs(this.targetVelocity - this.getShooterVelocity()) < 2 && this.targetVelocity != 0;
+		return Math.abs(this.targetVelocity - this.getShooterVelocity()) < 3 && this.targetVelocity != 0;
 	}
 
 	public double getShooterVelocity() {
