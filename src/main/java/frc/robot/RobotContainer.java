@@ -354,6 +354,8 @@ public class RobotContainer {
         cojoystick.x().onTrue(new InstantCommand(() -> shooter.requestVelocity(-55)));
         cojoystick.y().onTrue(new InstantCommand(() -> shooter.requestVelocity(-90)));
 
+        cojoystick.start().onTrue(new InstantCommand(HubShiftUtil::initialize));
+
         drivetrain.registerTelemetry(logger::telemeterize);
     }
 

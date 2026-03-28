@@ -53,9 +53,9 @@ public class Robot extends LoggedRobot {
     public Robot() {
 //        Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
 
-        Logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
+//        Logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
         Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
-        // Logger.addDataReceiver(new RLOGServer());
+         Logger.addDataReceiver(new RLOGServer());
 
         DriverStation.silenceJoystickConnectionWarning(true);
 
@@ -89,10 +89,19 @@ public class Robot extends LoggedRobot {
     public void robotPeriodic() {
         CommandScheduler.getInstance().run(); 
         Logger.recordOutput("RobotState/RobotMode", robotContainer.currentMode);
+        var latestShiftInfo = HubShiftUtil.getOfficialShiftInfo();
+        Logger.recordOutput("HubShift/Official", latestShiftInfo);
+
+        SmartDashboard.putString("Current Shift", latestShiftInfo.currentShift().toString());
+//        SmartDashboard.putNumber("Elapsed Time", latestShiftInfo.elapsedTime());
+        SmartDashboard.putNumber("Remaining Time", latestShiftInfo.remainingTime());
+        SmartDashboard.putBoolean("Shift Active", latestShiftInfo.active());
     }
 
     @Override
-    public void disabledInit() {}
+    public void disabledInit() {
+        HubShiftUtil.initialize();
+    }
 
     @Override
     public void disabledPeriodic() {}
@@ -107,6 +116,8 @@ public class Robot extends LoggedRobot {
         if (m_autonomousCommand != null) {
             CommandScheduler.getInstance().schedule(m_autonomousCommand);
         }
+
+        HubShiftUtil.initialize();
     }
 
     @Override
@@ -120,6 +131,8 @@ public class Robot extends LoggedRobot {
         if (m_autonomousCommand != null) {
             CommandScheduler.getInstance().cancel(m_autonomousCommand);
         }
+
+        HubShiftUtil.initialize();
     }
 
     @Override
