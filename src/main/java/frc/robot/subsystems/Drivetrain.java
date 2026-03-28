@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import frc.robot.subsystems.turret.TelemetryCache;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.Utils;
@@ -106,6 +107,7 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
                 drivetrainConstants, modules
             );
             ConfigureAutobuilder();
+            this.registerTelemetry(TelemetryCache.telemetryConsumer);
     }
 
     /**
