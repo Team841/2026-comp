@@ -149,7 +149,7 @@ public class RobotContainer {
 
     public Command intakeUpFullAndStop() {
         return new InstantCommand(() -> {
-            intakePivot.setPosition(-3);
+            intakePivot.setPosition(-11);
             intake.stopMotor();
         }, intake, intakePivot);
     }
@@ -338,7 +338,7 @@ public class RobotContainer {
         joystick.leftTrigger().onTrue(new RepeatCommand(new InstantCommand(() -> intake.setVelocity(60), intake).onlyIf(() -> intakePivot.atPosition(-22.9)))).onFalse(new InstantCommand(() -> intake.stopMotor(), intake));
         joystick.leftTrigger().onTrue(new InstantCommand(() -> intakePivot.setPosition(-22.9), intakePivot)).onFalse(new InstantCommand(() -> intakePivot.setPosition(-20), intakePivot));
        
-        joystick.a().onTrue(new InstantCommand(() -> intakePivot.setPosition(-3), intakePivot));
+        joystick.a().onTrue(new InstantCommand(() -> intakePivot.setPosition(-11), intakePivot));
         joystick.leftBumper().onTrue(new InstantCommand(() -> dyeRotor.setDutyCycle(-0.3))).onFalse(new InstantCommand(() -> dyeRotor.stopMotor()));
         
         joystick.start().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
