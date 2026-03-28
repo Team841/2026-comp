@@ -71,7 +71,7 @@ public class Robot extends LoggedRobot {
         TunerConstants.BackRight);
 
         this.visionIO = new VisionIOLimelights();
-        this.vision = new Vision(visionIO, drivetrain);
+        this.vision = new Vision(visionIO, drivetrain, turret);
 
         robotContainer = new RobotContainer(drivetrain, dyeRotor, hood, intake, intakePivot, shooter, turret, visionIO, vision);
 

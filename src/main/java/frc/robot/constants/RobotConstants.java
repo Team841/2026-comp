@@ -21,7 +21,9 @@ public class RobotConstants {
 
         public static final double[] leftPose = {0, -0.305, 0.53467, -12, 0, 90};
         public static final double[] rightPose = {0, 0.305, 0.53467, 12, 0, 270};
-        public static final double[] turretPose = {0, 0, 0, 0, 0, 0};
+        public static double[] turretPose = {0, 0, 0, 0, 0, 0};
+
+        public static final double turretCameraToTurretCenter = 0.072151;
     }
 
     public static class AutoAim {

@@ -9,6 +9,8 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Turret;
+
 import org.littletonrobotics.junction.Logger;
 
 public class Vision extends SubsystemBase {
@@ -17,14 +19,16 @@ public class Vision extends SubsystemBase {
     private final VisionIOInputsAutoLogged inputs = new VisionIOInputsAutoLogged();
 
     private final Drivetrain drivetrain;
+    private final Turret turret;
 
     public static final Vector<N3> standardVisionDevs2OrMore = VecBuilder.fill(0.3, 0.3, 0.3);
     public static final Vector<N3> standardVisionDevs1tag = VecBuilder.fill(0.75, 0.75, 0.75);
 
 
-    public Vision(VisionIO io, Drivetrain drivetrain) {
+    public Vision(VisionIO io, Drivetrain drivetrain, Turret turret) {
         this.io = io;
         this.drivetrain = drivetrain;
+        this.turret = turret;
     }
 
     @Override
@@ -37,6 +41,7 @@ public class Vision extends SubsystemBase {
         inputs.robotRollRateDegreesPerSecond = 0;
         inputs.robotPitchDegrees = this.drivetrain.getPigeon2().getPitch().getValue().in(Units.Degree);
         inputs.robotPitchRateDegreesPerSecond = 0;
+        inputs.turretAngle = turret.getTurretAngleAbsolute();
 
         io.updateInputs(inputs);
         Logger.processInputs("Vision", inputs);
@@ -57,6 +62,11 @@ public class Vision extends SubsystemBase {
                 if (inputs.rightHasTarget) {
                     filterLL(inputs.rightPoseEstimateMT1.pose(), inputs.rightPoseEstimateMT1.tagCount(), inputs.rightPoseEstimateMT1.avgTagArea(), inputs.rightPoseEstimateMT1.timestampSeconds());
                     filterLL(inputs.rightPoseEstimateMT2.pose(), inputs.rightPoseEstimateMT2.tagCount(), inputs.rightPoseEstimateMT2.avgTagArea(), inputs.rightPoseEstimateMT2.timestampSeconds());
+                }
+
+                if (inputs.turretHasTarget) {
+                    filterLL(inputs.turretPoseEstimateMT1.pose(), inputs.turretPoseEstimateMT1.tagCount(), inputs.turretPoseEstimateMT1.avgTagArea(), inputs.turretPoseEstimateMT1.timestampSeconds());
+                    // filterLL(inputs.turretPoseEstimateMT2.pose(), inputs.turretPoseEstimateMT2.tagCount(), inputs.turretPoseEstimateMT2.avgTagArea(), inputs.turretPoseEstimateMT2.timestampSeconds());
                 }
             } catch (Exception ignored) { }
         }
