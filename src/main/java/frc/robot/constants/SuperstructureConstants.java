@@ -165,9 +165,35 @@ public class SuperstructureConstants {
                     .withReverseSoftLimitThreshold(-22.9));
     }
 
+    public class IntakeRollerConstants {
+        public static final Slot0Configs intakeRollerConfigs = new Slot0Configs()
+            .withKP(0.3)
+            .withKI(0)
+            .withKD(0)
+            .withKV(0.12)
+            .withKA(0.04)
+            .withKS(0.1);
+
+        public static final TalonFXConfiguration intakeRollerMotorConfigs = new TalonFXConfiguration()
+            .withSlot0(intakeRollerConfigs)
+            .withFeedback(
+                new FeedbackConfigs()
+                    .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+                    .withRotorToSensorRatio(1))
+            .withMotionMagic(
+                new MotionMagicConfigs()
+                    .withMotionMagicCruiseVelocity(110)
+                    .withMotionMagicAcceleration(1000)
+                    .withMotionMagicJerk(200)
+                    .withMotionMagicExpo_kA(0.12)
+                    .withMotionMagicExpo_kV(0.1))
+            .withMotorOutput(new MotorOutputConfigs()
+                .withNeutralMode(NeutralModeValue.Brake));
+    }
+
     public class DyeRotorConstants {
         public static final TalonFXConfiguration dyeRotorMotorConfigs = new TalonFXConfiguration()
-            .withOpenLoopRamps(new OpenLoopRampsConfigs().withDutyCycleOpenLoopRampPeriod(0.2))
+            .withOpenLoopRamps(new OpenLoopRampsConfigs().withDutyCycleOpenLoopRampPeriod(0.3))
             .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake))
             .withCurrentLimits(new CurrentLimitsConfigs().withStatorCurrentLimit(50).withStatorCurrentLimitEnable(true));
     }
