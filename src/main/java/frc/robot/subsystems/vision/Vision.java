@@ -56,12 +56,12 @@ public class Vision extends SubsystemBase {
             try{
                 if (inputs.leftHasTarget){
                     filterLL(inputs.leftPoseEstimateMT1.pose(), inputs.leftPoseEstimateMT1.tagCount(), inputs.leftPoseEstimateMT1.avgTagArea(), inputs.leftPoseEstimateMT1.timestampSeconds());
-                    filterLL(inputs.leftPoseEstimateMT2.pose(), inputs.leftPoseEstimateMT2.tagCount(), inputs.leftPoseEstimateMT2.avgTagArea(), inputs.leftPoseEstimateMT2.timestampSeconds());
+                    // filterLL(inputs.leftPoseEstimateMT2.pose(), inputs.leftPoseEstimateMT2.tagCount(), inputs.leftPoseEstimateMT2.avgTagArea(), inputs.leftPoseEstimateMT2.timestampSeconds());
                 }
 
                 if (inputs.rightHasTarget) {
                     filterLL(inputs.rightPoseEstimateMT1.pose(), inputs.rightPoseEstimateMT1.tagCount(), inputs.rightPoseEstimateMT1.avgTagArea(), inputs.rightPoseEstimateMT1.timestampSeconds());
-                    filterLL(inputs.rightPoseEstimateMT2.pose(), inputs.rightPoseEstimateMT2.tagCount(), inputs.rightPoseEstimateMT2.avgTagArea(), inputs.rightPoseEstimateMT2.timestampSeconds());
+                    // filterLL(inputs.rightPoseEstimateMT2.pose(), inputs.rightPoseEstimateMT2.tagCount(), inputs.rightPoseEstimateMT2.avgTagArea(), inputs.rightPoseEstimateMT2.timestampSeconds());
                 }
 
                 if (inputs.turretHasTarget) {
@@ -77,17 +77,17 @@ public class Vision extends SubsystemBase {
     private void filterLL(Pose2d pose, int tagCount, double avgTagArea, double timestampSeconds){
         if (tagCount > 0){
             if (tagCount == 1){
-                this.drivetrain.addVisionMeasurement(
-                        pose,
-                        timestampSeconds,
-                        standardVisionDevs1tag.times(avgTagArea)
-                );
+                // this.drivetrain.addVisionMeasurement(
+                //         pose,
+                //         timestampSeconds,
+                //         standardVisionDevs1tag.times(avgTagArea)
+                // );
 
-                this.drivetrain.addVisionMeasurement(
-                        pose,
-                        timestampSeconds,
-                        standardVisionDevs1tag.times(avgTagArea)
-                );
+                // this.drivetrain.addVisionMeasurement(
+                //         pose,
+                //         timestampSeconds,
+                //         standardVisionDevs1tag.times(avgTagArea)
+                // );
             }
             else {
                 this.drivetrain.addVisionMeasurement(

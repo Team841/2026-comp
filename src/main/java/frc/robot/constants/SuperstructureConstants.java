@@ -19,7 +19,8 @@ public class SuperstructureConstants {
         public static final int hoodMotorID = 15;
         public static final int leftShooterMotorID = 18;
         public static final int rightShooterMotorID = 20;
-        public static final int intakeRollerMotorID = 17;
+        public static final int intakeRollerLeftMotorID = 17;
+        public static final int intakeRollerRightMotorID = 22;
         public static final int intakePivotMotorID = 19;
         public static final int dyeRotorMotorID = 21;
     }

@@ -7,61 +7,38 @@ package frc.robot.subsystems;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.ControlRequest;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SuperstructureConstants;
 
 public class Intake extends SubsystemBase {
-    private TalonFX intakeMotor = new TalonFX(SuperstructureConstants.IDs.intakeRollerMotorID, "rio");
+    private TalonFX intakeMotorLeft = new TalonFX(SuperstructureConstants.IDs.intakeRollerLeftMotorID, "rio");
+    private TalonFX intakeMotorRight = new TalonFX(SuperstructureConstants.IDs.intakeRollerRightMotorID, "rio");
 
-    private MotionMagicVelocityVoltage velocityControl = new MotionMagicVelocityVoltage(0);
-
-    private double targetVelocity = 0;
-
-    StatusCode[] latestStatus;
+    private Follower follower = new Follower(SuperstructureConstants.IDs.intakeRollerLeftMotorID, MotorAlignmentValue.Opposed);
 
     public Intake() {
-        intakeMotor.getConfigurator().apply(SuperstructureConstants.IntakeRollerConstants.intakeRollerMotorConfigs);
+        this.intakeMotorLeft.getConfigurator().apply(new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake).withInverted(InvertedValue.CounterClockwise_Positive)));
+        this.intakeMotorRight.getConfigurator().apply(new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake).withInverted(InvertedValue.CounterClockwise_Positive)));
+        this.intakeMotorRight.setControl(follower);
     }
 
-    public void setVelocity(double rps) {
-        this.targetVelocity = rps;
+    public void setDutyCycle(double speed) {
+        this.intakeMotorLeft.set(speed);
     }
 
     public void stopMotor() {
-        this.targetVelocity = 0;
-        this.intakeMotor.stopMotor();
+        this.intakeMotorLeft.stopMotor();
     }
 
-    public StatusCode[] setControl(ControlRequest control) {
-        return new StatusCode[] {
-            this.intakeMotor.setControl(control)
-        };
-    }
 
-    public boolean atfullSpeed() {
-        return intakeMotor.getVelocity().getValueAsDouble() >= this.targetVelocity - 1
-                && intakeMotor.getVelocity().getValueAsDouble() <= this.targetVelocity + 3;
-    }
-
-    public double getIntakeVelocity() {
-        return this.intakeMotor.getRotorVelocity().getValueAsDouble();
-    }
-
-    public double getIntakeTargetVelocity() {
-        return this.targetVelocity;
-    }
-
-    @Override
-    public void periodic() {
-        if (this.targetVelocity == 0) {
-            this.stopMotor();
-        } else {
-            this.latestStatus = this.setControl(velocityControl.withVelocity(this.targetVelocity));
-        }
-    }
 }
