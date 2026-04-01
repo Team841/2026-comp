@@ -79,25 +79,26 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "AutoAimAndFire5Sec"
+                  "name": "AutoAimAndFire7Sec"
                 }
               },
               {
-                "type": "wait",
+                "type": "sequential",
                 "data": {
-                  "waitTime": 2.0
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeUpFullAndStop"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 1.0
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 3.5
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "IntakeUpFullAndStop"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -174,7 +175,7 @@
         {
           "type": "named",
           "data": {
-            "name": "AutoAimAndFire3Sec"
+            "name": "AutoAimAndFire7Sec"
           }
         }
       ]

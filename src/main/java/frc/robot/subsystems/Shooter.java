@@ -172,9 +172,9 @@ public class Shooter extends SubsystemBase {
 
 	public enum TimeOfFlight {
 
-		M1(0.8),
-		M2(1),
-		M3(1.2),
+		M1(0.7),
+		M2(0.9),
+		M3(1.1),
 		M4(1.4),
 		M5(1.6),
 		M6(1.8),

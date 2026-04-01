@@ -96,7 +96,7 @@ public class RobotContainer {
                                                             .finallyDo(() -> {shooter.setVelocity(0);
                                                                             dyeRotor.stopMotor();}));
                
-        NamedCommands.registerCommand("AutoAimAndFire5Sec", autoAimAndFire().withTimeout(5)
+        NamedCommands.registerCommand("AutoAimAndFire7Sec", autoAimAndFire().withTimeout(6)
                                                             .finallyDo(() -> {shooter.setVelocity(0);
                                                                             dyeRotor.stopMotor();}));
 
@@ -344,7 +344,7 @@ public class RobotContainer {
        
         joystick.b().onTrue(new InstantCommand(() -> intake.setDutyCycle(-0.6))).onFalse(new InstantCommand(() -> intake.stopMotor()));
 
-        joystick.a().onTrue(new InstantCommand(() -> intakePivot.setPosition(-11), intakePivot));
+        joystick.a().onTrue(new InstantCommand(() -> intakePivot.setPosition(-6), intakePivot));
         joystick.leftBumper().onTrue(new InstantCommand(() -> dyeRotor.setDutyCycle(-0.3))).onFalse(new InstantCommand(() -> dyeRotor.stopMotor()));
         
         joystick.start().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
