@@ -1,0 +1,74 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LeftSideBumpToNZ"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PassFireEnable"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeDownAndSpin"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": []
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "LeftSideNZIntakeSweepPassing"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutoPassAndFire"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeUpAndStop"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LeftSideBumpToHZ"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoAimEnable"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": true
+}

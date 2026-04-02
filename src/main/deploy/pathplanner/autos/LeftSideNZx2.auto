@@ -37,12 +37,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "ForceResetPose"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "LeftSideNZIntakeSweepAggressive"
@@ -64,12 +58,6 @@
           "type": "path",
           "data": {
             "pathName": "LeftSideBumpToHZ"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ForceResetPose"
           }
         },
         {
@@ -137,12 +125,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "ForceResetPose"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "LeftSideNZIntakeSweepClose"
@@ -164,12 +146,6 @@
           "type": "path",
           "data": {
             "pathName": "LeftSideBumpToHZ"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ForceResetPose"
           }
         },
         {

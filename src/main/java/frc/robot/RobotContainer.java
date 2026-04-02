@@ -73,7 +73,8 @@ public class RobotContainer {
         NEUTRAL,
         AUTOAIM_FIRE,
         PASS_SHOT,
-        SPINUP_SHOOTER
+        SPINUP_SHOOTER,
+        POOP
     }
 
     public RobotContainer(Drivetrain drivetrain, DyeRotor dyeRotor, Hood hood, Intake intake, IntakePivot intakePivot, Shooter shooter, Turret turret, VisionIO visionIO, Vision vision) {
@@ -102,14 +103,8 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("AutoPassAndFire", autoPassAndFire().withTimeout(5));
 
-        NamedCommands.registerCommand("AutoAimEnable", new InstantCommand(() -> setMode(RobotMode.AUTOAIM_FIRE)).withTimeout(0.1));
-        NamedCommands.registerCommand("ShootDisable", new InstantCommand(() -> setMode(RobotMode.NEUTRAL)).withTimeout(0.1));
-        NamedCommands.registerCommand("PassFireEnable", new InstantCommand(() -> setMode(RobotMode.PASS_SHOT)).withTimeout(0.1));
-
         NamedCommands.registerCommand("SpinUpShooterEarly", spinUpShooterEarly());
         
-        NamedCommands.registerCommand("ForceResetPose", new InstantCommand(() -> drivetrain.forceCameraPose(), drivetrain));
-
         configureBindings();
     }
 
@@ -238,6 +233,18 @@ public class RobotContainer {
             dyeRotor);
     }
 
+    public Command runDyeRotorForPoopShot() {
+        return Commands.run(
+            () -> {
+                if (shooter.atfullSpeed()) {
+                    dyeRotor.setDutyCycle(1);
+                } else {
+                    dyeRotor.setDutyCycle(0);
+                }
+            }, 
+            dyeRotor);
+    }
+
     public Command runDyeRotorForPassShot() {
         return Commands.run(
             () -> {
@@ -256,6 +263,15 @@ public class RobotContainer {
             snapHoodToHub(),
             snapTurretToHub(),
             runDyeRotorForHubShot()
+        );
+    }
+
+    public Command poop() {
+        return new ParallelCommandGroup(
+            new InstantCommand(() -> shooter.setVelocity(-20), shooter),
+            new InstantCommand(() -> hood.setPosition(-4.1), hood),
+            new InstantCommand(() -> turret.setPosition(Rotation2d.k180deg), turret),
+            runDyeRotorForPoopShot()
         );
     }
 
@@ -300,11 +316,18 @@ public class RobotContainer {
 
             case SPINUP_SHOOTER:
                 activeCommand = spinUpShooterForHubShot();
+                break;
+
+            case POOP:
+                activeCommand = poop();
+                break;
         }
 
         if (activeCommand != null) {
             activeCommand.schedule();
         }
+
+        return;
     }
 
     public void toggleMode(RobotMode newMode) {
@@ -336,6 +359,7 @@ public class RobotContainer {
         joystick.rightBumper().onTrue(new InstantCommand(() -> toggleMode(RobotMode.PASS_SHOT)));
         joystick.x().onTrue(new InstantCommand(() -> setMode(RobotMode.NEUTRAL)));
         joystick.povRight().onTrue(new InstantCommand(() -> toggleMode(RobotMode.SPINUP_SHOOTER)));
+        joystick.povUp().onTrue(new InstantCommand(() -> toggleMode(RobotMode.POOP)));
 
         joystick.y().whileTrue(drivetrain.applyRequest(() -> brake));
         
@@ -363,24 +387,5 @@ public class RobotContainer {
         cojoystick.start().onTrue(new InstantCommand(HubShiftUtil::initialize));
 
         drivetrain.registerTelemetry(logger::telemeterize);
-    }
-
-    public Command getAutonomousCommand() {
-        // Simple drive forward auton
-        final var idle = new SwerveRequest.Idle();
-        return Commands.sequence(
-            // Reset our field centric heading to match the robot
-            // facing away from our alliance station wall (0 deg).
-            drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
-            // Then slowly drive forward (away from us) for 5 seconds.
-            drivetrain.applyRequest(() ->
-                drive.withVelocityX(0.5)
-                    .withVelocityY(0)
-                    .withRotationalRate(0)
-            )
-            .withTimeout(5.0),
-            // Finally idle for the rest of auton
-            drivetrain.applyRequest(() -> idle)
-        );
     }
 }
