@@ -11,19 +11,26 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "RightSideBumpToNZGeo1"
+                  "pathName": "Rx2_1_HZtoNZ"
                 }
               },
               {
-                "type": "wait",
+                "type": "sequential",
                 "data": {
-                  "waitTime": 0.375
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeDownAndSpin"
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.375
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "IntakeDownAndSpin"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -32,7 +39,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RightSideNZIntakeSweepGeo2"
+            "pathName": "Rx2_2_Sweep1"
           }
         },
         {
@@ -50,7 +57,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RightNZToHZG3eo"
+            "pathName": "Rx2_3and6_NZtoHZ"
           }
         },
         {
@@ -70,19 +77,81 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 3.0
+                        "waitTime": 3.5
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "IntakeUpAndStop"
+                        "name": "IntakeUpFullAndStop"
                       }
                     }
                   ]
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Rx2_4_HZtoNZ"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.0
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "IntakeDownAndSpin"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Rx2_5_Sweep2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeUpAndStop"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SpinUpShooterEarly"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Rx2_3and6_NZtoHZ"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoAimAndFire7Sec"
           }
         }
       ]

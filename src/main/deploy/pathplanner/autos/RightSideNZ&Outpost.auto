@@ -71,22 +71,15 @@
                 }
               },
               {
-                "type": "sequential",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "RightSideReturnToOutpost"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "IntakeDownAndSpin"
-                      }
-                    }
-                  ]
+                  "name": "IntakeDownAndSpin"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "RightSideReturnToOutpost"
                 }
               }
             ]
