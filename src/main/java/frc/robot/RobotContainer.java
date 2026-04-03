@@ -366,7 +366,7 @@ public class RobotContainer {
         joystick.leftTrigger().onTrue(new RepeatCommand(new InstantCommand(() -> intake.setDutyCycle(0.6), intake).onlyIf(() -> intakePivot.atPosition(-22.9)))).onFalse(new InstantCommand(() -> intake.stopMotor(), intake));
         joystick.leftTrigger().onTrue(new InstantCommand(() -> intakePivot.setPosition(-22.9), intakePivot)).onFalse(new InstantCommand(() -> intakePivot.setPosition(-20), intakePivot));
        
-        joystick.b().onTrue(new InstantCommand(() -> intake.setDutyCycle(-0.6))).onFalse(new InstantCommand(() -> intake.stopMotor()));
+        joystick.b().onTrue(new InstantCommand(() -> intake.setDutyCycle(-1))).onFalse(new InstantCommand(() -> intake.stopMotor()));
 
         joystick.a().onTrue(new InstantCommand(() -> intakePivot.setPosition(-6), intakePivot));
         joystick.leftBumper().onTrue(new InstantCommand(() -> dyeRotor.setDutyCycle(-0.3))).onFalse(new InstantCommand(() -> dyeRotor.stopMotor()));
