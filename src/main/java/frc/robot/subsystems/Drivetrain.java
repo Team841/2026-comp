@@ -397,6 +397,7 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
 
     public void visionPeriodic() {
         setLLSettings();
+        Logger.recordOutput("Drivetrain/RobotPose", this.getState().Pose);
 
 //        double timestamp = Timer.getTimestamp();
 //        visionProcessor.driveYawAngularVelocity.addSample(timestamp, this.getState().Speeds.omegaRadiansPerSecond);
