@@ -131,10 +131,10 @@ public class Shooter extends SubsystemBase {
 		M1(-36),
 		M2(-41.5),
 		M3(-46.5),
-		M4(-52),
-		M5(-55),
-		M6(-60),
-		M7(-63);
+		M4(-51),
+		M5(-54),
+		M6(-58),
+		M7(-61);
 
 		private final double rps;
 
