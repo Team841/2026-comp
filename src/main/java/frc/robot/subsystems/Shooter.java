@@ -131,10 +131,10 @@ public class Shooter extends SubsystemBase {
 		M1(-36),
 		M2(-41.5),
 		M3(-46.5),
-		M4(-52.5),
-		M5(-56),
-		M6(-61),
-		M7(-64);
+		M4(-52),
+		M5(-55),
+		M6(-60),
+		M7(-63);
 
 		private final double rps;
 
@@ -149,15 +149,15 @@ public class Shooter extends SubsystemBase {
 
 	public enum PassingShooterSpeed {
 
-		M0(-1),
-		M2(-14),
-		M4(-25),
-		M6(-37),
-		M8(-46),
-		M10(-54),
-		M12(-67),
-		M14(-80),
-		M16(-95);
+		M0(-4),
+		M2(-18),
+		M4(-29),
+		M6(-41),
+		M8(-50),
+		M10(-58),
+		M12(-71),
+		M14(-84),
+		M16(-99);
 
 		private final double rps;
 
