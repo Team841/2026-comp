@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.AudioConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.ControlRequest;
@@ -21,14 +22,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SuperstructureConstants;
 
 public class Intake extends SubsystemBase {
-    private TalonFX intakeMotorLeft = new TalonFX(SuperstructureConstants.IDs.intakeRollerLeftMotorID, "rio");
-    private TalonFX intakeMotorRight = new TalonFX(SuperstructureConstants.IDs.intakeRollerRightMotorID, "rio");
+    public TalonFX intakeMotorLeft = new TalonFX(SuperstructureConstants.IDs.intakeRollerLeftMotorID, "rio");
+    public TalonFX intakeMotorRight = new TalonFX(SuperstructureConstants.IDs.intakeRollerRightMotorID, "rio");
 
     private Follower follower = new Follower(SuperstructureConstants.IDs.intakeRollerLeftMotorID, MotorAlignmentValue.Opposed);
 
     public Intake() {
-        this.intakeMotorLeft.getConfigurator().apply(new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake).withInverted(InvertedValue.CounterClockwise_Positive)));
-        this.intakeMotorRight.getConfigurator().apply(new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake).withInverted(InvertedValue.CounterClockwise_Positive)));
+        this.intakeMotorLeft.getConfigurator().apply(new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake).withInverted(InvertedValue.CounterClockwise_Positive)).withAudio(new AudioConfigs().withAllowMusicDurDisable(true)));
+        this.intakeMotorRight.getConfigurator().apply(new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake).withInverted(InvertedValue.CounterClockwise_Positive)).withAudio(new AudioConfigs().withAllowMusicDurDisable(true)));
         this.intakeMotorRight.setControl(follower);
     }
 

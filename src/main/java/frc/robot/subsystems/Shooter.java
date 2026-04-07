@@ -18,8 +18,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SuperstructureConstants;
 
 public class Shooter extends SubsystemBase {
-	private TalonFX rightMotor = new TalonFX(SuperstructureConstants.IDs.rightShooterMotorID, "rio");
-	private TalonFX leftMotor = new TalonFX(SuperstructureConstants.IDs.leftShooterMotorID, "rio");
+	public TalonFX rightMotor = new TalonFX(SuperstructureConstants.IDs.rightShooterMotorID, "rio");
+	public TalonFX leftMotor = new TalonFX(SuperstructureConstants.IDs.leftShooterMotorID, "rio");
 
 	private MotionMagicVelocityVoltage velocityControl = new MotionMagicVelocityVoltage(0);
 	private Follower follower = new Follower(SuperstructureConstants.IDs.rightShooterMotorID, MotorAlignmentValue.Opposed);

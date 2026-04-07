@@ -17,7 +17,7 @@ import frc.robot.constants.SuperstructureConstants;
 
 public class Turret extends SubsystemBase {
 
-    private TalonFX turretMotor = new TalonFX(SuperstructureConstants.IDs.turretMotorID, "rio");
+    public TalonFX turretMotor = new TalonFX(SuperstructureConstants.IDs.turretMotorID, "rio");
 
     private MotionMagicExpoVoltage positionControl = new MotionMagicExpoVoltage(0);
 

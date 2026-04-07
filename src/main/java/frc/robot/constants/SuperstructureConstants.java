@@ -1,5 +1,6 @@
 package frc.robot.constants;
 
+import com.ctre.phoenix6.configs.AudioConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
@@ -46,7 +47,8 @@ public class SuperstructureConstants {
                     .withMotionMagicAcceleration(1000)
                     .withMotionMagicJerk(200)
                     .withMotionMagicExpo_kA(0.12)
-                    .withMotionMagicExpo_kV(0.1));
+                    .withMotionMagicExpo_kV(0.1))
+            .withAudio(new AudioConfigs().withAllowMusicDurDisable(true));
     }
 
     public class HoodConstants {
@@ -85,7 +87,8 @@ public class SuperstructureConstants {
                     .withForwardSoftLimitEnable(true)
                     .withReverseSoftLimitEnable(true)
                     .withForwardSoftLimitThreshold(0)
-                    .withReverseSoftLimitThreshold(-4.1));
+                    .withReverseSoftLimitThreshold(-4.1))
+            .withAudio(new AudioConfigs().withAllowMusicDurDisable(true));
     }
 
     public class TurretConstants {
@@ -124,7 +127,8 @@ public class SuperstructureConstants {
                     .withForwardSoftLimitEnable(true)
                     .withReverseSoftLimitEnable(true)
                     .withForwardSoftLimitThreshold(7.5)
-                    .withReverseSoftLimitThreshold(-7.5));
+                    .withReverseSoftLimitThreshold(-7.5))
+            .withAudio(new AudioConfigs().withAllowMusicDurDisable(true));
     }
 
     public class IntakePivotConstants {
@@ -163,7 +167,8 @@ public class SuperstructureConstants {
                     .withForwardSoftLimitEnable(true)
                     .withReverseSoftLimitEnable(true)
                     .withForwardSoftLimitThreshold(0)
-                    .withReverseSoftLimitThreshold(-22.9));
+                    .withReverseSoftLimitThreshold(-22.9))
+            .withAudio(new AudioConfigs().withAllowMusicDurDisable(true));
     }
 
     public class IntakeRollerConstants {
@@ -189,13 +194,15 @@ public class SuperstructureConstants {
                     .withMotionMagicExpo_kA(0.12)
                     .withMotionMagicExpo_kV(0.1))
             .withMotorOutput(new MotorOutputConfigs()
-                .withNeutralMode(NeutralModeValue.Brake));
+                .withNeutralMode(NeutralModeValue.Brake))
+            .withAudio(new AudioConfigs().withAllowMusicDurDisable(true));
     }
 
     public class DyeRotorConstants {
         public static final TalonFXConfiguration dyeRotorMotorConfigs = new TalonFXConfiguration()
             .withOpenLoopRamps(new OpenLoopRampsConfigs().withDutyCycleOpenLoopRampPeriod(0.3))
             .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake))
-            .withCurrentLimits(new CurrentLimitsConfigs().withStatorCurrentLimit(50).withStatorCurrentLimitEnable(true));
+            .withCurrentLimits(new CurrentLimitsConfigs().withStatorCurrentLimit(50).withStatorCurrentLimitEnable(true))
+            .withAudio(new AudioConfigs().withAllowMusicDurDisable(true));
     }
 }

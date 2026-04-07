@@ -14,6 +14,7 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.rlog.RLOGServer;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
+import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.FollowPathCommand;
@@ -50,6 +51,8 @@ public class Robot extends LoggedRobot {
     public final VisionIO visionIO;
     public final Vision vision;
 
+    private Orchestra orchestra = new Orchestra();
+
     public Robot() {
 //        Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
 
@@ -82,7 +85,20 @@ public class Robot extends LoggedRobot {
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
-       Threads.setCurrentThreadPriority(true, 5);
+        Threads.setCurrentThreadPriority(true, 5);
+
+        this.orchestra.addInstrument(this.dyeRotor.rotorMotor);
+        this.orchestra.addInstrument(this.intake.intakeMotorLeft);
+        this.orchestra.addInstrument(this.intake.intakeMotorRight);
+        this.orchestra.addInstrument(this.hood.hoodMotor);
+        this.orchestra.addInstrument(this.intakePivot.intakePivotMotor);
+        this.orchestra.addInstrument(this.shooter.rightMotor);
+        this.orchestra.addInstrument(this.shooter.leftMotor);
+        this.orchestra.addInstrument(this.turret.turretMotor);
+
+        this.orchestra.loadMusic("rickroll.chrp");
+
+        this.orchestra.play();
     }
 
     @Override
@@ -104,7 +120,8 @@ public class Robot extends LoggedRobot {
     }
 
     @Override
-    public void disabledPeriodic() {}
+    public void disabledPeriodic() {
+    }
 
     @Override
     public void disabledExit() {}

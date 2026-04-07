@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import org.littletonrobotics.junction.Logger;
 
+import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
@@ -17,7 +18,7 @@ import frc.robot.constants.SuperstructureConstants;
 
 public class Hood extends SubsystemBase {
 
-    private TalonFX hoodMotor = new TalonFX(SuperstructureConstants.IDs.hoodMotorID, "rio");
+    public TalonFX hoodMotor = new TalonFX(SuperstructureConstants.IDs.hoodMotorID, "rio");
 
     private MotionMagicExpoVoltage positionControl = new MotionMagicExpoVoltage(0);
 

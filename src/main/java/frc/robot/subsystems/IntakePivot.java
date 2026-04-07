@@ -16,7 +16,7 @@ import frc.robot.constants.SuperstructureConstants;
 
 public class IntakePivot extends SubsystemBase {
 
-    private TalonFX intakePivotMotor = new TalonFX(SuperstructureConstants.IDs.intakePivotMotorID, "rio");
+    public TalonFX intakePivotMotor = new TalonFX(SuperstructureConstants.IDs.intakePivotMotorID, "rio");
 
     private MotionMagicExpoVoltage positionControl = new MotionMagicExpoVoltage(0);
 

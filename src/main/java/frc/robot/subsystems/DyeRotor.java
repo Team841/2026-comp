@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SuperstructureConstants;
 
 public class DyeRotor extends SubsystemBase {
-    private TalonFX rotorMotor = new TalonFX(SuperstructureConstants.IDs.dyeRotorMotorID, "rio");
+    public TalonFX rotorMotor = new TalonFX(SuperstructureConstants.IDs.dyeRotorMotorID, "rio");
 
     public DyeRotor() {
         rotorMotor.getConfigurator().apply(SuperstructureConstants.DyeRotorConstants.dyeRotorMotorConfigs);
