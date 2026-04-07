@@ -15,12 +15,16 @@ public class RobotConstants {
     
     public static class Vision {
 
-        public static final String leftName = "limelight-left";
+        public static final String backLeftName = "limelight-bleft";
+        public static final String frontLeftName = "limelight-fleft";
+        public static final String backRightName = "limelight-bright";
+        public static final String frontRightName = "limelight-fright";
         public static final String turretName = "limelight-turret";
-        public static final String rightName = "limelight-right";
 
-        public static final double[] leftPose = {0, -0.305, 0.53467, -12, 0, 90};
-        public static final double[] rightPose = {0, 0.305, 0.53467, 12, 0, 270};
+        public static final double[] backLeftPose = {-0.16, -0.26, 0.51, -12, 9, 127.5};
+        public static final double[] backRightPose = {-0.16, 0.26, 0.51, 12, 9, -127.5};
+        public static final double[] frontLeftPose = {-0.056, -0.26, 0.51, 9, 12, 52.5};
+        public static final double[] frontRightPose = {-0.056, 0.26, 0.51, -9, 12, -52.5};
         public static double[] turretPose = {0, 0, 0, 0, 0, 0};
 
         public static final double turretCameraToTurretCenter = 0.072151;

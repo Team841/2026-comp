@@ -20,16 +20,20 @@ public class VisionIOLimelights implements VisionIO{
 
             Logger.recordOutput("Vision/TurretCameraPose", RobotConstants.Vision.turretPose);
             
-            LimelightHelpers.setLimelightNTDoubleArray(RobotConstants.Vision.leftName, "camerapose_robotspace_set", RobotConstants.Vision.leftPose);
+            LimelightHelpers.setLimelightNTDoubleArray(RobotConstants.Vision.frontLeftName, "camerapose_robotspace_set", RobotConstants.Vision.frontLeftPose);
+            LimelightHelpers.setLimelightNTDoubleArray(RobotConstants.Vision.backLeftName, "camerapose_robotspace_set", RobotConstants.Vision.backLeftPose);
             LimelightHelpers.setLimelightNTDoubleArray(RobotConstants.Vision.turretName, "camerapose_robotspace_set", RobotConstants.Vision.turretPose);
-            LimelightHelpers.setLimelightNTDoubleArray(RobotConstants.Vision.rightName, "camerapose_robotspace_set", RobotConstants.Vision.rightPose);
+            LimelightHelpers.setLimelightNTDoubleArray(RobotConstants.Vision.frontRightName, "camerapose_robotspace_set", RobotConstants.Vision.frontRightPose);
+            LimelightHelpers.setLimelightNTDoubleArray(RobotConstants.Vision.backRightName, "camerapose_robotspace_set", RobotConstants.Vision.backRightPose);
 
-            LimelightHelpers.SetIMUMode(RobotConstants.Vision.leftName, 4);
+            LimelightHelpers.SetIMUMode(RobotConstants.Vision.frontLeftName, 4);
+            LimelightHelpers.SetIMUMode(RobotConstants.Vision.backLeftName, 4);
             LimelightHelpers.SetIMUMode(RobotConstants.Vision.turretName, 3);
-            LimelightHelpers.SetIMUMode(RobotConstants.Vision.rightName, 4);
+            LimelightHelpers.SetIMUMode(RobotConstants.Vision.frontRightName, 4);
+            LimelightHelpers.SetIMUMode(RobotConstants.Vision.backRightName, 4);
 
             LimelightHelpers.SetRobotOrientation(
-                    RobotConstants.Vision.leftName,
+                    RobotConstants.Vision.frontLeftName,
                     inputs.robotYawDegrees,
                     inputs.robotYawRateDegreesPerSecond,
                     inputs.robotPitchDegrees,
@@ -38,15 +42,15 @@ public class VisionIOLimelights implements VisionIO{
                     inputs.robotRollRateDegreesPerSecond
             );
 
-            // LimelightHelpers.SetRobotOrientation(
-            //         RobotConstants.Vision.turretName,
-            //         inputs.robotYawDegrees,
-            //         inputs.robotYawRateDegreesPerSecond,
-            //         inputs.robotPitchDegrees,
-            //         inputs.robotPitchRateDegreesPerSecond,
-            //         inputs.robotRollDegrees,
-            //         inputs.robotRollRateDegreesPerSecond
-            // );
+            LimelightHelpers.SetRobotOrientation(
+                    RobotConstants.Vision.backLeftName,
+                    inputs.robotYawDegrees,
+                    inputs.robotYawRateDegreesPerSecond,
+                    inputs.robotPitchDegrees,
+                    inputs.robotPitchRateDegreesPerSecond,
+                    inputs.robotRollDegrees,
+                    inputs.robotRollRateDegreesPerSecond
+            );
             
             LimelightHelpers.SetRobotOrientation(
                     RobotConstants.Vision.turretName,
@@ -57,8 +61,19 @@ public class VisionIOLimelights implements VisionIO{
                     0,
                     0
             );
+
             LimelightHelpers.SetRobotOrientation(
-                    RobotConstants.Vision.rightName,
+                    RobotConstants.Vision.frontRightName,
+                    inputs.robotYawDegrees,
+                    inputs.robotYawRateDegreesPerSecond,
+                    inputs.robotPitchDegrees,
+                    inputs.robotPitchRateDegreesPerSecond,
+                    inputs.robotRollDegrees,
+                    inputs.robotRollRateDegreesPerSecond
+            );
+
+            LimelightHelpers.SetRobotOrientation(
+                    RobotConstants.Vision.backRightName,
                     inputs.robotYawDegrees,
                     inputs.robotYawRateDegreesPerSecond,
                     inputs.robotPitchDegrees,
@@ -76,16 +91,26 @@ public class VisionIOLimelights implements VisionIO{
         this.inputCache = inputs;
         setLLSettings(this.inputCache);
 
-        inputs.leftHasTarget = LimelightHelpers.getTV(RobotConstants.Vision.leftName);
+        inputs.frontLeftHasTarget = LimelightHelpers.getTV(RobotConstants.Vision.frontLeftName);
+        inputs.backLeftHasTarget = LimelightHelpers.getTV(RobotConstants.Vision.backLeftName);
         inputs.turretHasTarget = LimelightHelpers.getTV(RobotConstants.Vision.turretName);
-        inputs.rightHasTarget = LimelightHelpers.getTV(RobotConstants.Vision.rightName);
+        inputs.frontRightHasTarget = LimelightHelpers.getTV(RobotConstants.Vision.frontRightName);
+        inputs.backRightHasTarget = LimelightHelpers.getTV(RobotConstants.Vision.backRightName);
 
-        if (inputs.leftHasTarget) {
-            LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(RobotConstants.Vision.leftName);
-            LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(RobotConstants.Vision.leftName);
-            inputs.leftPoseEstimateMT1 = mt1;
-            inputs.leftPoseEstimateMT2 = mt2;
-            inputs.leftRawFiducial = mt1.rawFiducials();
+        if (inputs.frontLeftHasTarget) {
+            LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(RobotConstants.Vision.frontLeftName);
+            LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(RobotConstants.Vision.frontLeftName);
+            inputs.frontLeftPoseEstimateMT1 = mt1;
+            inputs.frontLeftPoseEstimateMT2 = mt2;
+            inputs.frontLeftRawFiducial = mt1.rawFiducials();
+        }
+
+        if (inputs.backLeftHasTarget) {
+            LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(RobotConstants.Vision.backLeftName);
+            LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(RobotConstants.Vision.backLeftName);
+            inputs.backLeftPoseEstimateMT1 = mt1;
+            inputs.backLeftPoseEstimateMT2 = mt2;
+            inputs.backLeftRawFiducial = mt1.rawFiducials();
         }
 
        if (inputs.turretHasTarget) {
@@ -96,12 +121,20 @@ public class VisionIOLimelights implements VisionIO{
             inputs.turretRawFiducial = mt1.rawFiducials();
        }
 
-        if (inputs.rightHasTarget) {
-            LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(RobotConstants.Vision.rightName);
-            LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(RobotConstants.Vision.rightName);
-            inputs.rightPoseEstimateMT1 = mt1;
-            inputs.rightPoseEstimateMT2 = mt2;
-            inputs.rightRawFiducial = mt1.rawFiducials();
+        if (inputs.frontRightHasTarget) {
+            LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(RobotConstants.Vision.frontRightName);
+            LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(RobotConstants.Vision.frontRightName);
+            inputs.frontRightPoseEstimateMT1 = mt1;
+            inputs.frontRightPoseEstimateMT2 = mt2;
+            inputs.frontRightRawFiducial = mt1.rawFiducials();
+        }
+
+        if (inputs.backRightHasTarget) {
+            LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(RobotConstants.Vision.backRightName);
+            LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(RobotConstants.Vision.backRightName);
+            inputs.backRightPoseEstimateMT1 = mt1;
+            inputs.backRightPoseEstimateMT2 = mt2;
+            inputs.backRightRawFiducial = mt1.rawFiducials();
         }
     }
 }

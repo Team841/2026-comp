@@ -10,17 +10,29 @@ public interface VisionIO {
     @AutoLog
     class VisionIOInputs {
         public boolean turretHasTarget;
-        public boolean leftHasTarget;
-        public boolean rightHasTarget;
+        public boolean frontLeftHasTarget;
+        public boolean frontRightHasTarget;
+        public boolean backLeftHasTarget;
+        public boolean backRightHasTarget;
 
-        public LimelightHelpers.RawFiducial[] leftRawFiducial = new LimelightHelpers.RawFiducial[]{};
-        public LimelightHelpers.RawFiducial[] rightRawFiducial = new LimelightHelpers.RawFiducial[]{};
+        public LimelightHelpers.RawFiducial[] frontLeftRawFiducial = new LimelightHelpers.RawFiducial[]{};
+        public LimelightHelpers.RawFiducial[] frontRightRawFiducial = new LimelightHelpers.RawFiducial[]{};
+        public LimelightHelpers.RawFiducial[] backLeftRawFiducial = new LimelightHelpers.RawFiducial[]{};
+        public LimelightHelpers.RawFiducial[] backRightRawFiducial = new LimelightHelpers.RawFiducial[]{};
         public LimelightHelpers.RawFiducial[] turretRawFiducial = new LimelightHelpers.RawFiducial[]{};
 
-        public LimelightHelpers.PoseEstimate leftPoseEstimateMT1 = new LimelightHelpers.PoseEstimate(false);
-        public LimelightHelpers.PoseEstimate leftPoseEstimateMT2 = new LimelightHelpers.PoseEstimate(true);
-        public LimelightHelpers.PoseEstimate rightPoseEstimateMT1 = new LimelightHelpers.PoseEstimate(false);
-        public LimelightHelpers.PoseEstimate rightPoseEstimateMT2 = new LimelightHelpers.PoseEstimate(true);
+        public LimelightHelpers.PoseEstimate frontLeftPoseEstimateMT1 = new LimelightHelpers.PoseEstimate(false);
+        public LimelightHelpers.PoseEstimate frontLeftPoseEstimateMT2 = new LimelightHelpers.PoseEstimate(true);
+
+        public LimelightHelpers.PoseEstimate frontRightPoseEstimateMT1 = new LimelightHelpers.PoseEstimate(false);
+        public LimelightHelpers.PoseEstimate frontRightPoseEstimateMT2 = new LimelightHelpers.PoseEstimate(true);
+
+        public LimelightHelpers.PoseEstimate backLeftPoseEstimateMT1 = new LimelightHelpers.PoseEstimate(false);
+        public LimelightHelpers.PoseEstimate backLeftPoseEstimateMT2 = new LimelightHelpers.PoseEstimate(true);
+
+        public LimelightHelpers.PoseEstimate backRightPoseEstimateMT1 = new LimelightHelpers.PoseEstimate(false);
+        public LimelightHelpers.PoseEstimate backRightPoseEstimateMT2 = new LimelightHelpers.PoseEstimate(true);
+
         public LimelightHelpers.PoseEstimate turretPoseEstimateMT1 = new LimelightHelpers.PoseEstimate(false);
         public LimelightHelpers.PoseEstimate turretPoseEstimateMT2 = new LimelightHelpers.PoseEstimate(true);
 

@@ -54,13 +54,23 @@ public class Vision extends SubsystemBase {
 
         if (!reject){
             try{
-                if (inputs.leftHasTarget){
-                    filterLL(inputs.leftPoseEstimateMT1.pose(), inputs.leftPoseEstimateMT1.tagCount(), inputs.leftPoseEstimateMT1.avgTagArea(), inputs.leftPoseEstimateMT1.timestampSeconds());
+                if (inputs.frontLeftHasTarget){
+                    filterLL(inputs.frontLeftPoseEstimateMT1.pose(), inputs.frontLeftPoseEstimateMT1.tagCount(), inputs.frontLeftPoseEstimateMT1.avgTagArea(), inputs.frontLeftPoseEstimateMT1.timestampSeconds());
                     // filterLL(inputs.leftPoseEstimateMT2.pose(), inputs.leftPoseEstimateMT2.tagCount(), inputs.leftPoseEstimateMT2.avgTagArea(), inputs.leftPoseEstimateMT2.timestampSeconds());
                 }
 
-                if (inputs.rightHasTarget) {
-                    filterLL(inputs.rightPoseEstimateMT1.pose(), inputs.rightPoseEstimateMT1.tagCount(), inputs.rightPoseEstimateMT1.avgTagArea(), inputs.rightPoseEstimateMT1.timestampSeconds());
+                if (inputs.backLeftHasTarget){
+                    filterLL(inputs.backLeftPoseEstimateMT1.pose(), inputs.backLeftPoseEstimateMT1.tagCount(), inputs.backLeftPoseEstimateMT1.avgTagArea(), inputs.backLeftPoseEstimateMT1.timestampSeconds());
+                    // filterLL(inputs.leftPoseEstimateMT2.pose(), inputs.leftPoseEstimateMT2.tagCount(), inputs.leftPoseEstimateMT2.avgTagArea(), inputs.leftPoseEstimateMT2.timestampSeconds());
+                }
+
+                if (inputs.frontRightHasTarget) {
+                    filterLL(inputs.frontRightPoseEstimateMT1.pose(), inputs.frontRightPoseEstimateMT1.tagCount(), inputs.frontRightPoseEstimateMT1.avgTagArea(), inputs.frontRightPoseEstimateMT1.timestampSeconds());
+                    // filterLL(inputs.rightPoseEstimateMT2.pose(), inputs.rightPoseEstimateMT2.tagCount(), inputs.rightPoseEstimateMT2.avgTagArea(), inputs.rightPoseEstimateMT2.timestampSeconds());
+                }
+
+                if (inputs.backRightHasTarget) {
+                    filterLL(inputs.backRightPoseEstimateMT1.pose(), inputs.backRightPoseEstimateMT1.tagCount(), inputs.backRightPoseEstimateMT1.avgTagArea(), inputs.backRightPoseEstimateMT1.timestampSeconds());
                     // filterLL(inputs.rightPoseEstimateMT2.pose(), inputs.rightPoseEstimateMT2.tagCount(), inputs.rightPoseEstimateMT2.avgTagArea(), inputs.rightPoseEstimateMT2.timestampSeconds());
                 }
 
@@ -82,20 +92,8 @@ public class Vision extends SubsystemBase {
                 //         timestampSeconds,
                 //         standardVisionDevs1tag.times(avgTagArea)
                 // );
-
-                // this.drivetrain.addVisionMeasurement(
-                //         pose,
-                //         timestampSeconds,
-                //         standardVisionDevs1tag.times(avgTagArea)
-                // );
             }
             else {
-                this.drivetrain.addVisionMeasurement(
-                        pose,
-                        timestampSeconds,
-                        standardVisionDevs2OrMore.times(avgTagArea)
-                );
-
                 this.drivetrain.addVisionMeasurement(
                         pose,
                         timestampSeconds,
