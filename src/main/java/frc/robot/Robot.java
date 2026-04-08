@@ -87,18 +87,18 @@ public class Robot extends LoggedRobot {
 
         Threads.setCurrentThreadPriority(true, 5);
 
-        this.orchestra.addInstrument(this.dyeRotor.rotorMotor);
-        this.orchestra.addInstrument(this.intake.intakeMotorLeft);
-        this.orchestra.addInstrument(this.intake.intakeMotorRight);
-        this.orchestra.addInstrument(this.hood.hoodMotor);
-        this.orchestra.addInstrument(this.intakePivot.intakePivotMotor);
-        this.orchestra.addInstrument(this.shooter.rightMotor);
-        this.orchestra.addInstrument(this.shooter.leftMotor);
-        this.orchestra.addInstrument(this.turret.turretMotor);
+        // this.orchestra.addInstrument(this.dyeRotor.rotorMotor);
+        // this.orchestra.addInstrument(this.intake.intakeMotorLeft);
+        // this.orchestra.addInstrument(this.intake.intakeMotorRight);
+        // this.orchestra.addInstrument(this.hood.hoodMotor);
+        // this.orchestra.addInstrument(this.intakePivot.intakePivotMotor);
+        // this.orchestra.addInstrument(this.shooter.rightMotor);
+        // this.orchestra.addInstrument(this.shooter.leftMotor);
+        // this.orchestra.addInstrument(this.turret.turretMotor);
 
-        this.orchestra.loadMusic("rickroll.chrp");
+        // this.orchestra.loadMusic("rickroll.chrp");
 
-        this.orchestra.play();
+        // this.orchestra.play();
     }
 
     @Override
