@@ -43,7 +43,7 @@
           }
         },
         {
-          "type": "race",
+          "type": "sequential",
           "data": {
             "commands": [
               {
@@ -55,7 +55,19 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "AutoAimAndFire10Sec"
+                  "name": "AutoAimAndFire4Sec"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "rightsweep1.1"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutoAimAndFire4Sec"
                 }
               }
             ]
@@ -70,7 +82,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "rightsweep1.1"
+            "pathName": "rightsweep1.2"
           }
         },
         {
