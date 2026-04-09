@@ -104,25 +104,38 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "sequential",
           "data": {
             "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "toOutpost"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AutoAimAndFire15Sec"
-                }
-              },
               {
                 "type": "named",
                 "data": {
                   "name": "IntakeDownAndSpin"
+                }
+              },
+              {
+                "type": "parallel",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "AutoAimAndFire15Sec"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "toOutpost"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeUpAndStop"
                 }
               }
             ]

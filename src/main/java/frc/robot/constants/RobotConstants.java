@@ -50,7 +50,7 @@ public class RobotConstants {
         public static final Pose2d redPassShotHighPose = new Pose2d(13.54175, 5.4, new Rotation2d());
         public static final Pose2d redPassShotLowPose = new Pose2d(13.54175, 2.6, new Rotation2d());
 
-        public static final Pose2d outpostBlue = new Pose2d(0.861, 0.737, Rotation2d.kZero);
-        public static final Pose2d outputRed = new Pose2d(15.769, 7.335, Rotation2d.kZero);
+        public static final Pose2d outpostBlue = new Pose2d(2.885, 0.933, Rotation2d.kZero);
+        public static final Pose2d outputRed = new Pose2d(14.392, 7.379, Rotation2d.kZero);
     }
 }
