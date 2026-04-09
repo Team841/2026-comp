@@ -7,16 +7,16 @@
   "poses":{
    "bumpCrossBackStart":{
     "x":{
-     "exp":"bumpSweep1End.x",
-     "val":5.862439155578613
+     "exp":"5.727291107177734 m",
+     "val":5.727291107177734
     },
     "y":{
-     "exp":"bumpSweep1End.y",
-     "val":2.815727472305298
+     "exp":"2.52030086517334 m",
+     "val":2.52030086517334
     },
     "heading":{
-     "exp":"bumpSweep1End.heading",
-     "val":-2.979877103316833
+     "exp":"-3.120318617537311 rad",
+     "val":-3.120318617537311
     }
    },
    "bumpCrossEnd":{

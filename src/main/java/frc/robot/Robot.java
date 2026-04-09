@@ -5,6 +5,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelights;
@@ -128,7 +130,9 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void autonomousInit() {
-        m_autonomousCommand = autoChooser.getSelected();
+        m_autonomousCommand = autoChooser.getSelected().finallyDo(() -> {
+            RobotConstants.currentAimMode = RobotConstants.autoAimMode.HUB;
+        });
 
         if (m_autonomousCommand != null) {
             CommandScheduler.getInstance().schedule(m_autonomousCommand);
