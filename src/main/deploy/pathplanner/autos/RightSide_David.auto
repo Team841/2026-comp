@@ -37,9 +37,40 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "CornerPassMode"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "rightsweep1.0"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutoAimAndFire10Sec"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreMode"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "rightsweep1"
+            "pathName": "rightsweep1.1"
           }
         },
         {
@@ -65,93 +96,24 @@
           "data": {
             "commands": [
               {
+                "type": "path",
+                "data": {
+                  "pathName": "toOutpost"
+                }
+              },
+              {
                 "type": "named",
                 "data": {
-                  "name": "AutoAimAndFire7Sec"
+                  "name": "AutoAimAndFire15Sec"
                 }
               },
               {
-                "type": "sequential",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 3.5
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "IntakeUpFullAndStop"
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "CrossBackToCrossStart"
+                  "name": "IntakeDownAndSpin"
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "bumpCrossRight"
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 1.0
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "IntakeDownAndSpin"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "rightsweep2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "IntakeUpAndStop"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "SpinUpShooterEarly"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "AutoAimAndFire7Sec"
           }
         }
       ]

@@ -101,6 +101,10 @@ public class RobotContainer {
                                                             .finallyDo(() -> {shooter.setVelocity(0);
                                                                             dyeRotor.stopMotor();}));
 
+        NamedCommands.registerCommand("AutoAimAndFire15Sec", autoAimAndFire().withTimeout(15)
+                .finallyDo(() -> {shooter.setVelocity(0);
+                    dyeRotor.stopMotor();}));
+
         NamedCommands.registerCommand("AutoPassAndFire", autoPassAndFire().withTimeout(5));
 
         NamedCommands.registerCommand("SpinUpShooterEarly", spinUpShooterEarly());

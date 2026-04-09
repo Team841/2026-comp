@@ -5,6 +5,20 @@
  "variables":{
   "expressions":{},
   "poses":{
+   "bumpCrossBackStart":{
+    "x":{
+     "exp":"bumpSweep1End.x",
+     "val":5.862439155578613
+    },
+    "y":{
+     "exp":"bumpSweep1End.y",
+     "val":2.815727472305298
+    },
+    "heading":{
+     "exp":"bumpSweep1End.heading",
+     "val":-2.979877103316833
+    }
+   },
    "bumpCrossEnd":{
     "x":{
      "exp":"5.877260684967041 m",
@@ -35,8 +49,8 @@
    },
    "bumpCrossbackEnd":{
     "x":{
-     "exp":"2.8605875968933105 m",
-     "val":2.8605875968933105
+     "exp":"3.412102699279785 m",
+     "val":3.412102699279785
     },
     "y":{
      "exp":"2.6079070568084717 m",
