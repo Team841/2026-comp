@@ -104,6 +104,9 @@ public class RobotContainer {
         NamedCommands.registerCommand("AutoPassAndFire", autoPassAndFire().withTimeout(5));
 
         NamedCommands.registerCommand("SpinUpShooterEarly", spinUpShooterEarly());
+
+        NamedCommands.registerCommand("ScoreMode", new InstantCommand(() -> RobotConstants.currentAimMode = RobotConstants.autoAimMode.HUB));
+        NamedCommands.registerCommand("CornerPassMode", new InstantCommand(() -> RobotConstants.currentAimMode = RobotConstants.autoAimMode.OutpostCorner));
         
         configureBindings();
     }
