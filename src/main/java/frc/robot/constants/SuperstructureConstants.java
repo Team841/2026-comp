@@ -202,7 +202,7 @@ public class SuperstructureConstants {
         public static final TalonFXConfiguration dyeRotorMotorConfigs = new TalonFXConfiguration()
             .withOpenLoopRamps(new OpenLoopRampsConfigs().withDutyCycleOpenLoopRampPeriod(0.3))
             .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake))
-            .withCurrentLimits(new CurrentLimitsConfigs().withStatorCurrentLimit(50).withStatorCurrentLimitEnable(true))
+            .withCurrentLimits(new CurrentLimitsConfigs().withStatorCurrentLimit(100).withStatorCurrentLimitEnable(true))
             .withAudio(new AudioConfigs().withAllowMusicDurDisable(true));
     }
 }
