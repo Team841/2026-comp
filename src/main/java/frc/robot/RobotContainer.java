@@ -74,7 +74,8 @@ public class RobotContainer {
         AUTOAIM_FIRE,
         PASS_SHOT,
         SPINUP_SHOOTER,
-        POOP
+        POOP,
+        STOP
     }
 
     public RobotContainer(Drivetrain drivetrain, DyeRotor dyeRotor, Hood hood, Intake intake, IntakePivot intakePivot, Shooter shooter, Turret turret, VisionIO visionIO, Vision vision) {
@@ -314,7 +315,15 @@ public class RobotContainer {
         switch (currentMode) {
 
             case NEUTRAL:
-                activeCommand = new InstantCommand(() -> {shooter.setVelocity(0); dyeRotor.stopMotor();}, shooter);
+                // activeCommand = new InstantCommand(() -> {shooter.setVelocity(0); dyeRotor.stopMotor();}, shooter);
+                activeCommand = Commands.run(
+                () -> {
+                    double distanceToHubIterated = 
+                        drivetrain.getDistanceToHubWhileMoving(getIteratedTof());
+                    shooter.setVelocity(shooter.getShooterSpeedFromDistanceMeters(distanceToHubIterated));
+                    dyeRotor.stopMotor();
+                },
+                shooter, dyeRotor);
                 break;
 
             case AUTOAIM_FIRE:
@@ -331,6 +340,13 @@ public class RobotContainer {
 
             case POOP:
                 activeCommand = poop();
+                break;
+
+            case STOP:
+                activeCommand = new InstantCommand(() -> {
+                    shooter.setVelocity(0); 
+                    dyeRotor.stopMotor();}, 
+                    shooter, dyeRotor);
                 break;
         }
 
@@ -368,7 +384,7 @@ public class RobotContainer {
 
         joystick.rightTrigger().onTrue(new InstantCommand(() -> toggleMode(RobotMode.AUTOAIM_FIRE)));
         joystick.rightBumper().onTrue(new InstantCommand(() -> toggleMode(RobotMode.PASS_SHOT)));
-        joystick.x().onTrue(new InstantCommand(() -> setMode(RobotMode.NEUTRAL)));
+        joystick.x().onTrue(new InstantCommand(() -> setMode(RobotMode.STOP)));
         joystick.povRight().onTrue(new InstantCommand(() -> toggleMode(RobotMode.SPINUP_SHOOTER)));
         joystick.povUp().onTrue(new InstantCommand(() -> toggleMode(RobotMode.POOP)));
 
