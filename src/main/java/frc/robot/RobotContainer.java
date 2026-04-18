@@ -52,8 +52,8 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    private final CommandXboxController joystick = new CommandXboxController(0);
-    private final CommandXboxController cojoystick = new CommandXboxController(1);
+    public final CommandXboxController joystick = new CommandXboxController(0);
+    public final CommandXboxController cojoystick = new CommandXboxController(1);
 
     public final Drivetrain drivetrain;
     public final DyeRotor dyeRotor;
