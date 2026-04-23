@@ -5,6 +5,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelights;
@@ -31,6 +33,7 @@ import frc.robot.subsystems.DyeRotor;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.IntakePivot;
+import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
 
@@ -47,6 +50,7 @@ public class Robot extends LoggedRobot {
     private final Intake intake = new Intake();
     private final IntakePivot intakePivot = new IntakePivot();
     private final Shooter shooter = new Shooter();
+    private final LED led;
 
     public final VisionIO visionIO;
     public final Vision vision;
@@ -81,6 +85,8 @@ public class Robot extends LoggedRobot {
         if (!AutoBuilder.isConfigured()){
             drivetrain.ConfigureAutobuilder();
         }
+
+        this.led = new LED(robotContainer);
         
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -105,6 +111,7 @@ public class Robot extends LoggedRobot {
     public void robotPeriodic() {
         CommandScheduler.getInstance().run(); 
         Logger.recordOutput("RobotState/RobotMode", robotContainer.currentMode);
+        Logger.recordOutput("Autoaim/DistanceToHubIterated", drivetrain.getDistanceToHubWhileMoving(robotContainer.getIteratedTof()));
         var latestShiftInfo = HubShiftUtil.getOfficialShiftInfo();
         Logger.recordOutput("HubShift/Official", latestShiftInfo);
 
@@ -128,7 +135,9 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void autonomousInit() {
-        m_autonomousCommand = autoChooser.getSelected();
+        m_autonomousCommand = autoChooser.getSelected().finallyDo(() -> {
+            RobotConstants.currentAimMode = RobotConstants.autoAimMode.HUB;
+        });
 
         if (m_autonomousCommand != null) {
             CommandScheduler.getInstance().schedule(m_autonomousCommand);

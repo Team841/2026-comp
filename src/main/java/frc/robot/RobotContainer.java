@@ -52,8 +52,8 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    private final CommandXboxController joystick = new CommandXboxController(0);
-    private final CommandXboxController cojoystick = new CommandXboxController(1);
+    public final CommandXboxController joystick = new CommandXboxController(0);
+    public final CommandXboxController cojoystick = new CommandXboxController(1);
 
     public final Drivetrain drivetrain;
     public final DyeRotor dyeRotor;
@@ -74,7 +74,8 @@ public class RobotContainer {
         AUTOAIM_FIRE,
         PASS_SHOT,
         SPINUP_SHOOTER,
-        POOP
+        POOP,
+        STOP
     }
 
     public RobotContainer(Drivetrain drivetrain, DyeRotor dyeRotor, Hood hood, Intake intake, IntakePivot intakePivot, Shooter shooter, Turret turret, VisionIO visionIO, Vision vision) {
@@ -101,9 +102,20 @@ public class RobotContainer {
                                                             .finallyDo(() -> {shooter.setVelocity(0);
                                                                             dyeRotor.stopMotor();}));
 
+        NamedCommands.registerCommand("AutoAimAndFire4Sec", autoAimAndFire().withTimeout(4)
+                .finallyDo(() -> {shooter.setVelocity(0);
+                    dyeRotor.stopMotor();}));
+
+        NamedCommands.registerCommand("AutoAimAndFire15Sec", autoAimAndFire().withTimeout(15)
+                .finallyDo(() -> {shooter.setVelocity(0);
+                    dyeRotor.stopMotor();}));
+
         NamedCommands.registerCommand("AutoPassAndFire", autoPassAndFire().withTimeout(5));
 
         NamedCommands.registerCommand("SpinUpShooterEarly", spinUpShooterEarly());
+
+        NamedCommands.registerCommand("ScoreMode", new InstantCommand(() -> RobotConstants.currentAimMode = RobotConstants.autoAimMode.HUB));
+        NamedCommands.registerCommand("CornerPassMode", new InstantCommand(() -> RobotConstants.currentAimMode = RobotConstants.autoAimMode.OutpostCorner));
         
         configureBindings();
     }
@@ -303,7 +315,15 @@ public class RobotContainer {
         switch (currentMode) {
 
             case NEUTRAL:
-                activeCommand = new InstantCommand(() -> {shooter.setVelocity(0); dyeRotor.stopMotor();}, shooter);
+                // activeCommand = new InstantCommand(() -> {shooter.setVelocity(0); dyeRotor.stopMotor();}, shooter);
+                activeCommand = Commands.run(
+                () -> {
+                    double distanceToHubIterated = 
+                        drivetrain.getDistanceToHubWhileMoving(getIteratedTof());
+                    shooter.setVelocity(shooter.getShooterSpeedFromDistanceMeters(distanceToHubIterated));
+                    dyeRotor.stopMotor();
+                },
+                shooter, dyeRotor);
                 break;
 
             case AUTOAIM_FIRE:
@@ -320,6 +340,13 @@ public class RobotContainer {
 
             case POOP:
                 activeCommand = poop();
+                break;
+
+            case STOP:
+                activeCommand = new InstantCommand(() -> {
+                    shooter.setVelocity(0); 
+                    dyeRotor.stopMotor();}, 
+                    shooter, dyeRotor);
                 break;
         }
 
@@ -360,6 +387,7 @@ public class RobotContainer {
         joystick.x().onTrue(new InstantCommand(() -> setMode(RobotMode.NEUTRAL)));
         joystick.povRight().onTrue(new InstantCommand(() -> toggleMode(RobotMode.SPINUP_SHOOTER)));
         joystick.povUp().onTrue(new InstantCommand(() -> toggleMode(RobotMode.POOP)));
+        joystick.povDown().onTrue(new InstantCommand(() -> setMode(RobotMode.STOP)));
 
         joystick.y().whileTrue(drivetrain.applyRequest(() -> brake));
         

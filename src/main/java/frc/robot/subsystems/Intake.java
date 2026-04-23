@@ -6,13 +6,10 @@ package frc.robot.subsystems;
 
 import org.littletonrobotics.junction.Logger;
 
-import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.AudioConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
@@ -41,5 +38,10 @@ public class Intake extends SubsystemBase {
         this.intakeMotorLeft.stopMotor();
     }
 
-
+    @Override
+    public void periodic() {
+        Logger.recordOutput("Intake/Velocity", this.intakeMotorLeft.getVelocity().getValueAsDouble());
+        Logger.recordOutput("Intake/RightMotorTemp", this.intakeMotorRight.getDeviceTemp().getValueAsDouble());
+        Logger.recordOutput("Intake/LeftMotorTemp", this.intakeMotorLeft.getDeviceTemp().getValueAsDouble());
+    }
 }

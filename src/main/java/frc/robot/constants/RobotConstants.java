@@ -12,6 +12,13 @@ public class RobotConstants {
         var alliance = DriverStation.getAlliance();
         return alliance.filter(value -> value == DriverStation.Alliance.Red).isPresent();
     };
+
+    public enum autoAimMode{
+        HUB,
+        OutpostCorner,
+    }
+
+    public static autoAimMode currentAimMode = autoAimMode.HUB;
     
     public static class Vision {
 
@@ -42,5 +49,8 @@ public class RobotConstants {
 
         public static final Pose2d redPassShotHighPose = new Pose2d(13.54175, 5.4, new Rotation2d());
         public static final Pose2d redPassShotLowPose = new Pose2d(13.54175, 2.6, new Rotation2d());
+
+        public static final Pose2d outpostBlue = new Pose2d(2.885, 0.933, Rotation2d.kZero);
+        public static final Pose2d outputRed = new Pose2d(14.392, 7.379, Rotation2d.kZero);
     }
 }

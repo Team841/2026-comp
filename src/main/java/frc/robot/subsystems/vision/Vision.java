@@ -48,22 +48,22 @@ public class Vision extends SubsystemBase {
 
         boolean reject = false;
 
-        if (Math.abs(lastDriveState.Speeds.omegaRadiansPerSecond) > 1.5){
+        if (Math.abs(lastDriveState.Speeds.omegaRadiansPerSecond) > 1.5) {
             reject = true;
         }
 
-        if (!reject){
-            try{
-                if (inputs.frontLeftHasTarget){
+        if (!reject) {
+            try {
+                if (inputs.frontLeftHasTarget) {
                     filterLL(inputs.frontLeftPoseEstimateMT1.pose(), inputs.frontLeftPoseEstimateMT1.tagCount(), inputs.frontLeftPoseEstimateMT1.avgTagArea(), inputs.frontLeftPoseEstimateMT1.timestampSeconds());
-                    // filterLL(inputs.leftPoseEstimateMT2.pose(), inputs.leftPoseEstimateMT2.tagCount(), inputs.leftPoseEstimateMT2.avgTagArea(), inputs.leftPoseEstimateMT2.timestampSeconds());
+//                     filterLL(inputs.frontLeftPoseEstimateMT2.pose(), inputs.frontLeftPoseEstimateMT2.tagCount(), inputs.frontLeftPoseEstimateMT2.avgTagArea(), inputs.frontLeftPoseEstimateMT2.timestampSeconds());
                 }
-
-                if (inputs.backLeftHasTarget){
+//
+                if (inputs.backLeftHasTarget) {
                     filterLL(inputs.backLeftPoseEstimateMT1.pose(), inputs.backLeftPoseEstimateMT1.tagCount(), inputs.backLeftPoseEstimateMT1.avgTagArea(), inputs.backLeftPoseEstimateMT1.timestampSeconds());
                     // filterLL(inputs.leftPoseEstimateMT2.pose(), inputs.leftPoseEstimateMT2.tagCount(), inputs.leftPoseEstimateMT2.avgTagArea(), inputs.leftPoseEstimateMT2.timestampSeconds());
                 }
-
+//
                 if (inputs.frontRightHasTarget) {
                     filterLL(inputs.frontRightPoseEstimateMT1.pose(), inputs.frontRightPoseEstimateMT1.tagCount(), inputs.frontRightPoseEstimateMT1.avgTagArea(), inputs.frontRightPoseEstimateMT1.timestampSeconds());
                     // filterLL(inputs.rightPoseEstimateMT2.pose(), inputs.rightPoseEstimateMT2.tagCount(), inputs.rightPoseEstimateMT2.avgTagArea(), inputs.rightPoseEstimateMT2.timestampSeconds());
@@ -71,29 +71,31 @@ public class Vision extends SubsystemBase {
 
                 if (inputs.backRightHasTarget) {
                     filterLL(inputs.backRightPoseEstimateMT1.pose(), inputs.backRightPoseEstimateMT1.tagCount(), inputs.backRightPoseEstimateMT1.avgTagArea(), inputs.backRightPoseEstimateMT1.timestampSeconds());
-                    // filterLL(inputs.rightPoseEstimateMT2.pose(), inputs.rightPoseEstimateMT2.tagCount(), inputs.rightPoseEstimateMT2.avgTagArea(), inputs.rightPoseEstimateMT2.timestampSeconds());
+//                     filterLL(inputs.backRightPoseEstimateMT2.pose(), inputs.backRightPoseEstimateMT2.tagCount(), inputs.backRightPoseEstimateMT2.avgTagArea(), inputs.backRightPoseEstimateMT2.timestampSeconds());
                 }
 
-                if (inputs.turretHasTarget) {
+                // if (!inputs.frontLeftHasTarget && !inputs.backRightHasTarget && !inputs.frontRightHasTarget && !inputs.backLeftHasTarget){
+                if (inputs.turretHasTarget){
                     filterLL(inputs.turretPoseEstimateMT1.pose(), inputs.turretPoseEstimateMT1.tagCount(), inputs.turretPoseEstimateMT1.avgTagArea(), inputs.turretPoseEstimateMT1.timestampSeconds());
                     // filterLL(inputs.turretPoseEstimateMT2.pose(), inputs.turretPoseEstimateMT2.tagCount(), inputs.turretPoseEstimateMT2.avgTagArea(), inputs.turretPoseEstimateMT2.timestampSeconds());
                 }
-            } catch (Exception ignored) { }
+
+            } catch (Exception ignored) {
+            }
         }
 
         Logger.recordOutput("Vision/latencyPeriodicSec", Timer.getTimestamp() - timestamp);
     }
 
-    private void filterLL(Pose2d pose, int tagCount, double avgTagArea, double timestampSeconds){
-        if (tagCount > 0){
-            if (tagCount == 1){
+    private void filterLL(Pose2d pose, int tagCount, double avgTagArea, double timestampSeconds) {
+        if (tagCount > 0) {
+            if (tagCount == 1) {
                 // this.drivetrain.addVisionMeasurement(
                 //         pose,
                 //         timestampSeconds,
                 //         standardVisionDevs1tag.times(avgTagArea)
                 // );
-            }
-            else {
+            } else {
                 this.drivetrain.addVisionMeasurement(
                         pose,
                         timestampSeconds,

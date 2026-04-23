@@ -319,15 +319,35 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
         Rotation2d robotToHubAngle;
 
         if (RobotConstants.isRedAlliance.getAsBoolean()) {
-            robotToHubAngle = new Rotation2d(
-                    Math.atan2(
-                            RobotConstants.AutoAim.redHubPose.getY() - robotTranslationOverTime.getY() - this.getState().Pose.getY(),
-                            RobotConstants.AutoAim.redHubPose.getX() - robotTranslationOverTime.getX() - this.getState().Pose.getX()));
+            switch (RobotConstants.currentAimMode){
+                case OutpostCorner -> {
+                    robotToHubAngle = new Rotation2d(
+                            Math.atan2(
+                                    RobotConstants.AutoAim.outputRed.getY() - robotTranslationOverTime.getY() - this.getState().Pose.getY(),
+                                    RobotConstants.AutoAim.outputRed.getX() - robotTranslationOverTime.getX() - this.getState().Pose.getX()));
+                }
+                default -> {
+                    robotToHubAngle = new Rotation2d(
+                            Math.atan2(
+                                    RobotConstants.AutoAim.redHubPose.getY() - robotTranslationOverTime.getY() - this.getState().Pose.getY(),
+                                    RobotConstants.AutoAim.redHubPose.getX() - robotTranslationOverTime.getX() - this.getState().Pose.getX()));
+                }
+            }
         } else {
-            robotToHubAngle = new Rotation2d(
-                    Math.atan2(
-                            RobotConstants.AutoAim.blueHubPose.getY() - robotTranslationOverTime.getY() - this.getState().Pose.getY(),
-                            RobotConstants.AutoAim.blueHubPose.getX() - robotTranslationOverTime.getX() - this.getState().Pose.getX()));
+            switch (RobotConstants.currentAimMode){
+                case OutpostCorner -> {
+                    robotToHubAngle = new Rotation2d(
+                            Math.atan2(
+                                    RobotConstants.AutoAim.outpostBlue.getY() - robotTranslationOverTime.getY() - this.getState().Pose.getY(),
+                                    RobotConstants.AutoAim.outpostBlue.getX() - robotTranslationOverTime.getX() - this.getState().Pose.getX()));
+                }
+                default -> {
+                    robotToHubAngle = new Rotation2d(
+                            Math.atan2(
+                                    RobotConstants.AutoAim.blueHubPose.getY() - robotTranslationOverTime.getY() - this.getState().Pose.getY(),
+                                    RobotConstants.AutoAim.blueHubPose.getX() - robotTranslationOverTime.getX() - this.getState().Pose.getX()));
+                }
+            }
         }
 
         Rotation2d turretToHubAngle = robotToHubAngle.minus(this.getState().Pose.getRotation());
@@ -338,9 +358,24 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
     public double getDistanceToHub() {
 
         if (RobotConstants.isRedAlliance.getAsBoolean()) {
-            return getDistanceBetweenPoses(this.getState().Pose, RobotConstants.AutoAim.redHubPose);
+            switch (RobotConstants.currentAimMode){
+                case OutpostCorner -> {
+                    return getDistanceBetweenPoses(this.getState().Pose, RobotConstants.AutoAim.outputRed);
+                }
+                default -> {
+                    return getDistanceBetweenPoses(this.getState().Pose, RobotConstants.AutoAim.redHubPose);
+                }
+
+            }
         } else {
-            return getDistanceBetweenPoses(this.getState().Pose, RobotConstants.AutoAim.blueHubPose);
+            switch (RobotConstants.currentAimMode){
+                case OutpostCorner -> {
+                    return getDistanceBetweenPoses(this.getState().Pose, RobotConstants.AutoAim.outpostBlue);
+                }
+                default -> {
+                    return getDistanceBetweenPoses(this.getState().Pose, RobotConstants.AutoAim.blueHubPose);
+                }
+            }
         }
     }
 
@@ -354,13 +389,32 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
                 fieldRelativeSpeeds.vyMetersPerSecond * timeOfFlight);
 
         if (RobotConstants.isRedAlliance.getAsBoolean()) {
-            return getDistanceBetweenPoses(
-                    new Pose2d(RobotConstants.AutoAim.redHubPose.getTranslation().minus(robotTranslationOverTime), new Rotation2d()),
-                    this.getState().Pose);
+            switch (RobotConstants.currentAimMode) {
+                case OutpostCorner -> {
+                    return getDistanceBetweenPoses(
+                            new Pose2d(RobotConstants.AutoAim.outputRed.getTranslation().minus(robotTranslationOverTime), new Rotation2d()),
+                            this.getState().Pose);
+                }
+                default -> {
+                    return getDistanceBetweenPoses(
+                            new Pose2d(RobotConstants.AutoAim.redHubPose.getTranslation().minus(robotTranslationOverTime), new Rotation2d()),
+                            this.getState().Pose);
+                }
+            }
         } else {
-            return getDistanceBetweenPoses(
-                    new Pose2d(RobotConstants.AutoAim.blueHubPose.getTranslation().minus(robotTranslationOverTime), new Rotation2d()),
-                    this.getState().Pose);
+            switch (RobotConstants.currentAimMode){
+                case OutpostCorner -> {
+                    return getDistanceBetweenPoses(
+                            new Pose2d(RobotConstants.AutoAim.outpostBlue.getTranslation().minus(robotTranslationOverTime), new Rotation2d()),
+                            this.getState().Pose);
+                }
+                default -> {
+                    return getDistanceBetweenPoses(
+                            new Pose2d(RobotConstants.AutoAim.blueHubPose.getTranslation().minus(robotTranslationOverTime), new Rotation2d()),
+                            this.getState().Pose);
+                }
+            }
+
         }
     }
 
@@ -396,7 +450,7 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
     }
 
     public void visionPeriodic() {
-        setLLSettings();
+//        setLLSettings();
         Logger.recordOutput("Drivetrain/RobotPose", this.getState().Pose);
 
 //        double timestamp = Timer.getTimestamp();
