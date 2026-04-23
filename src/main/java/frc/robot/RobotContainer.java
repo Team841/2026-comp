@@ -384,9 +384,10 @@ public class RobotContainer {
 
         joystick.rightTrigger().onTrue(new InstantCommand(() -> toggleMode(RobotMode.AUTOAIM_FIRE)));
         joystick.rightBumper().onTrue(new InstantCommand(() -> toggleMode(RobotMode.PASS_SHOT)));
-        joystick.x().onTrue(new InstantCommand(() -> setMode(RobotMode.STOP)));
+        joystick.x().onTrue(new InstantCommand(() -> setMode(RobotMode.NEUTRAL)));
         joystick.povRight().onTrue(new InstantCommand(() -> toggleMode(RobotMode.SPINUP_SHOOTER)));
         joystick.povUp().onTrue(new InstantCommand(() -> toggleMode(RobotMode.POOP)));
+        joystick.povDown().onTrue(new InstantCommand(() -> setMode(RobotMode.STOP)));
 
         joystick.y().whileTrue(drivetrain.applyRequest(() -> brake));
         

@@ -6,7 +6,6 @@ import static edu.wpi.first.units.Units.Second;
 
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.LEDPattern.GradientType;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.AddressableLEDBufferView;
@@ -18,20 +17,21 @@ import frc.robot.constants.RobotConstants;
 import edu.wpi.first.wpilibj.DriverStation;
 
 public class LED extends SubsystemBase{
-    private Timer timer;
-
     private RobotContainer robotContainer;
 
     private final AddressableLED LED = new AddressableLED(9);
-    private final AddressableLEDBuffer Buffer = new AddressableLEDBuffer(23);
+    private final AddressableLEDBuffer Buffer = new AddressableLEDBuffer(44);
     private final AddressableLEDBufferView BufferLeft = Buffer.createView(0, 10);
     private final AddressableLEDBufferView BufferRight = Buffer.createView(11, 22).reversed();
-    
+    private final AddressableLEDBufferView BufferRightSide = Buffer.createView(23, 26);
+    private final AddressableLEDBufferView BufferLeftBack = Buffer.createView(27, 33);
+    private final AddressableLEDBufferView BufferRightBack = Buffer.createView(34, 39).reversed();
+    private final AddressableLEDBufferView BufferLeftSide = Buffer.createView(40, 43).reversed();
+
     Color yellow = new Color(255, 200, 0);
     Color red = new Color(255, 0, 0);
     Color green = new Color(0, 255, 0);
     Color blue = new Color(0, 0, 255);
-    Color blueGreen = new Color(0, 225, 225);
     Color purple = new Color(255, 0, 255);
     Distance ledSpacing = Meters.of(1 / 120.0);
 
@@ -72,7 +72,6 @@ public class LED extends SubsystemBase{
     LEDPattern patternBrownSolid = LEDPattern.solid(Color.kBrown);
 
     public LED(RobotContainer robotContainer) {
-        this.timer = new Timer();
         this.robotContainer = robotContainer;
         LED.setLength(Buffer.getLength());
         patternRedSolid.applyTo(Buffer);
@@ -81,8 +80,13 @@ public class LED extends SubsystemBase{
     }
 
     private void apply(LEDPattern ledPattern) {
-        ledPattern.applyTo(BufferLeft);
-        ledPattern.applyTo(BufferRight);
+        // ledPattern.applyTo(BufferLeft);
+        // ledPattern.applyTo(BufferRight);
+        // ledPattern.applyTo(BufferRightSide);
+        // ledPattern.applyTo(BufferLeftBack);
+        // ledPattern.applyTo(BufferRightBack);
+        // ledPattern.applyTo(BufferLeftSide);
+        ledPattern.applyTo(Buffer);
         LED.setData(Buffer);
     }
 

@@ -111,6 +111,7 @@ public class Robot extends LoggedRobot {
     public void robotPeriodic() {
         CommandScheduler.getInstance().run(); 
         Logger.recordOutput("RobotState/RobotMode", robotContainer.currentMode);
+        Logger.recordOutput("Autoaim/DistanceToHubIterated", drivetrain.getDistanceToHubWhileMoving(robotContainer.getIteratedTof()));
         var latestShiftInfo = HubShiftUtil.getOfficialShiftInfo();
         Logger.recordOutput("HubShift/Official", latestShiftInfo);
 
