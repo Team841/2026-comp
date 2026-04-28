@@ -249,7 +249,7 @@ public class RobotContainer {
         return Commands.run(
             () -> {
                 if (shooter.atfullSpeed()) {
-                    dyeRotor.setDutyCycle(1);
+                    dyeRotor.setDutyCycle(0.4);
                 } else {
                     dyeRotor.setDutyCycle(0);
                 }
@@ -280,9 +280,9 @@ public class RobotContainer {
 
     public Command poop() {
         return new ParallelCommandGroup(
-            new InstantCommand(() -> shooter.setVelocity(-20), shooter),
+            new InstantCommand(() -> shooter.setVelocity(-10), shooter),
             new InstantCommand(() -> hood.setPosition(-4.1), hood),
-            new InstantCommand(() -> turret.setPosition(Rotation2d.k180deg), turret),
+            new InstantCommand(() -> turret.setPosition(new Rotation2d(0)), turret),
             runDyeRotorForPoopShot()
         );
     }
@@ -402,15 +402,15 @@ public class RobotContainer {
         joystick.start().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
         joystick.back().onTrue(new InstantCommand(() -> drivetrain.forceCameraPose(), drivetrain));
 
-        joystick.povLeft().whileTrue(new RepeatCommand(new InstantCommand(() -> drivetrain.forceCameraPose())));
-
-        cojoystick.leftBumper().whileTrue(rotateTurretToJoystick(() -> cojoystick.getLeftX(), () -> -cojoystick.getLeftY()));
+        cojoystick.leftBumper().whileTrue(rotateTurretToJoystick(() -> -cojoystick.getLeftX(), () -> cojoystick.getLeftY()));
         cojoystick.leftBumper().whileTrue(rotateHoodToJoystick(() -> -cojoystick.getRightY()));
 
-        cojoystick.a().onTrue(new InstantCommand(() -> shooter.requestVelocity(-40)));
-        cojoystick.b().onTrue(new InstantCommand(() -> shooter.requestVelocity(-45)));
-        cojoystick.x().onTrue(new InstantCommand(() -> shooter.requestVelocity(-55)));
-        cojoystick.y().onTrue(new InstantCommand(() -> shooter.requestVelocity(-90)));
+        cojoystick.a().onTrue(new InstantCommand(() -> shooter.requestVelocity(-5)));
+        cojoystick.b().onTrue(new InstantCommand(() -> shooter.requestVelocity(-10)));
+        cojoystick.x().onTrue(new InstantCommand(() -> shooter.requestVelocity(-20)));
+        cojoystick.y().onTrue(new InstantCommand(() -> shooter.requestVelocity(-25)));
+
+        cojoystick.rightTrigger().onTrue(new InstantCommand(() -> dyeRotor.setDutyCycle(0.5), dyeRotor)).onFalse(new InstantCommand(() -> dyeRotor.stopMotor(), dyeRotor));
 
         cojoystick.start().onTrue(new InstantCommand(HubShiftUtil::initialize));
 

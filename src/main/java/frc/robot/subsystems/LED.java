@@ -80,13 +80,13 @@ public class LED extends SubsystemBase{
     }
 
     private void apply(LEDPattern ledPattern) {
-        // ledPattern.applyTo(BufferLeft);
-        // ledPattern.applyTo(BufferRight);
-        // ledPattern.applyTo(BufferRightSide);
-        // ledPattern.applyTo(BufferLeftBack);
-        // ledPattern.applyTo(BufferRightBack);
-        // ledPattern.applyTo(BufferLeftSide);
-        ledPattern.applyTo(Buffer);
+        ledPattern.applyTo(BufferLeft);
+        ledPattern.applyTo(BufferRight);
+        ledPattern.applyTo(BufferRightSide);
+        ledPattern.applyTo(BufferLeftBack);
+        ledPattern.applyTo(BufferRightBack);
+        ledPattern.applyTo(BufferLeftSide);
+        // ledPattern.applyTo(Buffer);
         LED.setData(Buffer);
     }
 
