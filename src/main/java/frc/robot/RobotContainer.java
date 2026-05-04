@@ -8,12 +8,17 @@ import static edu.wpi.first.units.Units.*;
 
 import java.util.function.DoubleSupplier;
 
+import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.networktables.DoubleEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -49,7 +54,6 @@ public class RobotContainer {
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.ApplyRobotSpeeds speed = new SwerveRequest.ApplyRobotSpeeds();
 
-
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     public final CommandXboxController joystick = new CommandXboxController(0);
@@ -66,7 +70,7 @@ public class RobotContainer {
     public final VisionIO visionIO;
     public final Vision vision;
 
-    public RobotMode currentMode = RobotMode.NEUTRAL;
+    public RobotMode currentMode = RobotMode.STOP;
     private Command activeCommand = null;
 
     public enum RobotMode {
@@ -116,6 +120,12 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("ScoreMode", new InstantCommand(() -> RobotConstants.currentAimMode = RobotConstants.autoAimMode.HUB));
         NamedCommands.registerCommand("CornerPassMode", new InstantCommand(() -> RobotConstants.currentAimMode = RobotConstants.autoAimMode.OutpostCorner));
+
+        SmartDashboard.putNumber("Shooter/ShootSpeed1", -10);
+        SmartDashboard.putNumber("Shooter/ShootSpeed2", -20);
+        SmartDashboard.putNumber("Shooter/ShootSpeed3", -40);
+        SmartDashboard.putNumber("Shooter/ShootSpeed4", -100);
+
         
         configureBindings();
     }
@@ -405,12 +415,13 @@ public class RobotContainer {
         cojoystick.leftBumper().whileTrue(rotateTurretToJoystick(() -> -cojoystick.getLeftX(), () -> cojoystick.getLeftY()));
         cojoystick.leftBumper().whileTrue(rotateHoodToJoystick(() -> -cojoystick.getRightY()));
 
-        cojoystick.a().onTrue(new InstantCommand(() -> shooter.requestVelocity(-5)));
-        cojoystick.b().onTrue(new InstantCommand(() -> shooter.requestVelocity(-10)));
-        cojoystick.x().onTrue(new InstantCommand(() -> shooter.requestVelocity(-20)));
-        cojoystick.y().onTrue(new InstantCommand(() -> shooter.requestVelocity(-25)));
+        cojoystick.a().onTrue(new InstantCommand(() -> shooter.requestVelocity(SmartDashboard.getNumber("Shooter/ShootSpeed1", -10))));
+        cojoystick.b().onTrue(new InstantCommand(() -> shooter.requestVelocity(SmartDashboard.getNumber("Shooter/ShootSpeed2", -20))));
+        cojoystick.x().onTrue(new InstantCommand(() -> shooter.requestVelocity(SmartDashboard.getNumber("Shooter/ShootSpeed3", -40))));
+        cojoystick.y().onTrue(new InstantCommand(() -> shooter.requestVelocity(SmartDashboard.getNumber("Shooter/ShootSpeed4", -100))));
 
-        cojoystick.rightTrigger().onTrue(new InstantCommand(() -> dyeRotor.setDutyCycle(0.5), dyeRotor)).onFalse(new InstantCommand(() -> dyeRotor.stopMotor(), dyeRotor));
+        cojoystick.rightBumper().onTrue(new InstantCommand(() -> dyeRotor.setDutyCycle(0.2), dyeRotor)).onFalse(new InstantCommand(() -> dyeRotor.stopMotor(), dyeRotor));
+        cojoystick.rightTrigger().onTrue(new InstantCommand(() -> dyeRotor.setDutyCycle(1), dyeRotor)).onFalse(new InstantCommand(() -> dyeRotor.stopMotor(), dyeRotor));
 
         cojoystick.start().onTrue(new InstantCommand(HubShiftUtil::initialize));
 

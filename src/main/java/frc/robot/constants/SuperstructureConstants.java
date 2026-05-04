@@ -73,8 +73,8 @@ public class SuperstructureConstants {
                     .withRotorToSensorRatio(1))
             .withMotionMagic(
                 new MotionMagicConfigs()
-                    .withMotionMagicCruiseVelocity(20)
-                    .withMotionMagicAcceleration(10)
+                    .withMotionMagicCruiseVelocity(50)
+                    .withMotionMagicAcceleration(100)
                     .withMotionMagicJerk(3)
                     .withMotionMagicExpo_kA(0.12)
                     .withMotionMagicExpo_kV(0.1))
@@ -93,9 +93,9 @@ public class SuperstructureConstants {
 
     public class TurretConstants {
         public static final Slot0Configs turretConfigs = new Slot0Configs()
-            .withKP(12)
-            .withKI(0.1)
-            .withKD(0.1)
+            .withKP(20)
+            .withKI(0)
+            .withKD(0.2)
             .withKV(0.12)
             .withKA(0)
             .withKS(0)
@@ -114,7 +114,7 @@ public class SuperstructureConstants {
             .withMotionMagic(
                 new MotionMagicConfigs()
                     .withMotionMagicCruiseVelocity(70)
-                    .withMotionMagicAcceleration(40)
+                    .withMotionMagicAcceleration(140)
                     .withMotionMagicJerk(5)
                     .withMotionMagicExpo_kA(0.12)
                     .withMotionMagicExpo_kV(0.1))
