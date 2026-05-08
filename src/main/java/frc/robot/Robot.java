@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.constants.RobotConstants;
@@ -28,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 import frc.robot.constants.TunerConstants;
+import frc.robot.subsystems.Autoaim;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.DyeRotor;
 import frc.robot.subsystems.Hood;
@@ -43,6 +45,7 @@ public class Robot extends LoggedRobot {
     private final SendableChooser<Command> autoChooser;
 
     private final RobotContainer robotContainer;
+    private final Autoaim autoaim;
     private final Turret turret = new Turret();
     private final Drivetrain drivetrain;
     private final DyeRotor dyeRotor = new DyeRotor();
@@ -80,7 +83,9 @@ public class Robot extends LoggedRobot {
         this.visionIO = new VisionIOLimelights();
         this.vision = new Vision(visionIO, drivetrain, turret);
 
-        robotContainer = new RobotContainer(drivetrain, dyeRotor, hood, intake, intakePivot, shooter, turret, visionIO, vision);
+        this.autoaim = new Autoaim(drivetrain);
+
+        robotContainer = new RobotContainer(drivetrain, dyeRotor, hood, intake, intakePivot, shooter, turret, visionIO, vision, autoaim);
 
         if (!AutoBuilder.isConfigured()){
             drivetrain.ConfigureAutobuilder();
@@ -111,7 +116,7 @@ public class Robot extends LoggedRobot {
     public void robotPeriodic() {
         CommandScheduler.getInstance().run(); 
         Logger.recordOutput("RobotState/RobotMode", robotContainer.currentMode);
-        Logger.recordOutput("Autoaim/DistanceToHubIterated", drivetrain.getDistanceToHubWhileMoving(robotContainer.getIteratedTof()));
+        Logger.recordOutput("Drivetrain/TurretPose", new Pose2d(drivetrain.getState().Pose.getTranslation(), turret.getTurretAngleAbsolute().plus(drivetrain.getState().Pose.getRotation())));
         var latestShiftInfo = HubShiftUtil.getOfficialShiftInfo();
         Logger.recordOutput("HubShift/Official", latestShiftInfo);
 
@@ -135,9 +140,7 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void autonomousInit() {
-        m_autonomousCommand = autoChooser.getSelected().finallyDo(() -> {
-            RobotConstants.currentAimMode = RobotConstants.autoAimMode.HUB;
-        });
+        m_autonomousCommand = autoChooser.getSelected();
 
         if (m_autonomousCommand != null) {
             CommandScheduler.getInstance().schedule(m_autonomousCommand);

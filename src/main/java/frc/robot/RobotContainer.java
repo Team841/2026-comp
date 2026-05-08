@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants.TunerConstants;
 import frc.robot.constants.RobotConstants;
+import frc.robot.subsystems.Autoaim;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.DyeRotor;
 import frc.robot.subsystems.Hood;
@@ -38,6 +39,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Autoaim.FiringLocation;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 
@@ -67,6 +69,8 @@ public class RobotContainer {
     public final Shooter shooter;
     public final Turret turret;
 
+    public final Autoaim autoaim;
+
     public final VisionIO visionIO;
     public final Vision vision;
 
@@ -82,7 +86,7 @@ public class RobotContainer {
         STOP
     }
 
-    public RobotContainer(Drivetrain drivetrain, DyeRotor dyeRotor, Hood hood, Intake intake, IntakePivot intakePivot, Shooter shooter, Turret turret, VisionIO visionIO, Vision vision) {
+    public RobotContainer(Drivetrain drivetrain, DyeRotor dyeRotor, Hood hood, Intake intake, IntakePivot intakePivot, Shooter shooter, Turret turret, VisionIO visionIO, Vision vision, Autoaim autoaim) {
         this.drivetrain = drivetrain;
         this.dyeRotor = dyeRotor;
         this.hood = hood;
@@ -92,6 +96,7 @@ public class RobotContainer {
         this.turret = turret;
         this.visionIO = visionIO;
         this.vision = vision;
+        this.autoaim = autoaim;
 
         NamedCommands.registerCommand("IntakeDownAndSpin", intakeDownAndSpin());
         NamedCommands.registerCommand("IntakeUpAndStop", intakeUpAndStop());
@@ -117,9 +122,6 @@ public class RobotContainer {
         NamedCommands.registerCommand("AutoPassAndFire", autoPassAndFire().withTimeout(5));
 
         NamedCommands.registerCommand("SpinUpShooterEarly", spinUpShooterEarly());
-
-        NamedCommands.registerCommand("ScoreMode", new InstantCommand(() -> RobotConstants.currentAimMode = RobotConstants.autoAimMode.HUB));
-        NamedCommands.registerCommand("CornerPassMode", new InstantCommand(() -> RobotConstants.currentAimMode = RobotConstants.autoAimMode.OutpostCorner));
 
         SmartDashboard.putNumber("Shooter/ShootSpeed1", -10);
         SmartDashboard.putNumber("Shooter/ShootSpeed2", -20);
@@ -182,11 +184,12 @@ public class RobotContainer {
     }
 
     public Command snapTurretToHub() {
-        return new RunCommand(
-            () -> turret.setPosition(
-                drivetrain.getAngleToScoreWhileMoving(
-                    getIteratedTof()
-        )), turret);
+        return Commands.run(
+            () -> {
+                autoaim.setFiringLocation(FiringLocation.HUB);
+                turret.setPosition(
+                    autoaim.getTurretRelativeAngleToFireWhileMoving());
+            }, turret);
     }
 
     public Command snapHoodToHub() {
@@ -194,9 +197,8 @@ public class RobotContainer {
             () -> {
                 hood.setPosition(
                     hood.getHoodHeightFromMetersToHub(
-                        drivetrain.getDistanceToHubWhileMoving(
-                            getIteratedTof()
-                        )));
+                        autoaim.getDistanceToScoreWhileMoving()    
+                    ));
             }, 
             hood);
     }
@@ -205,38 +207,17 @@ public class RobotContainer {
         return Commands.run(
                 () -> {
                     double distanceToHubIterated = 
-                        drivetrain.getDistanceToHubWhileMoving(getIteratedTof());
+                        autoaim.getDistanceToScoreWhileMoving()    ;
                     shooter.setVelocity(shooter.getShooterSpeedFromDistanceMeters(distanceToHubIterated));
                 },
                 shooter);
     }
 
-    public double getIteratedTof() {
-        return shooter.getTimeOfFlightFromDistanceMeters(
-            drivetrain.getDistanceToHubWhileMoving(
-                shooter.getTimeOfFlightFromDistanceMeters(
-                    drivetrain.getDistanceToHubWhileMoving(
-                        shooter.getTimeOfFlightFromDistanceMeters(
-                            drivetrain.getDistanceToHubWhileMoving(
-                                shooter.getTimeOfFlightFromDistanceMeters(
-                                    drivetrain.getDistanceToHubWhileMoving(
-                                        shooter.getTimeOfFlightFromDistanceMeters(
-                                            drivetrain.getDistanceToHubWhileMoving(
-                                                shooter.getTimeOfFlightFromDistanceMeters(
-                                                    drivetrain.getDistanceToHubWhileMoving(
-                                                        shooter.getTimeOfFlightFromDistanceMeters(
-                                                            drivetrain.getDistanceToHubWhileMoving(
-                                                                shooter.getTimeOfFlightFromDistanceMeters(
-                                                                    drivetrain.getDistanceToHubWhileMoving(
-                                                                        shooter.getTimeOfFlightFromDistanceMeters(
-                                                                            drivetrain.getDistanceToHub()
-                        )))))))))))))))));
-    }
-
     public Command snapToPass() {
         return Commands.run(
             () -> {
-                turret.setPosition(drivetrain.getAngleToPassWhileMoving(getIteratedTof()));
+                autoaim.setFiringLocation(FiringLocation.PASS);
+                turret.setPosition(autoaim.getTurretRelativeAngleToFireWhileMoving());
                 hood.setPosition(-4.1);
                     shooter.setVelocity(shooter.getShooterPassingSpeedFromDistanceMeters(drivetrain.getDistanceToDriverStationWall()));
             }, 
@@ -329,8 +310,9 @@ public class RobotContainer {
                 activeCommand = Commands.run(
                 () -> {
                     double distanceToHubIterated = 
-                        drivetrain.getDistanceToHubWhileMoving(getIteratedTof());
+                        autoaim.getDistanceToScoreWhileMoving();
                     shooter.setVelocity(shooter.getShooterSpeedFromDistanceMeters(distanceToHubIterated));
+                    autoaim.setFiringLocation(FiringLocation.HUB);
                     dyeRotor.stopMotor();
                 },
                 shooter, dyeRotor);
@@ -410,7 +392,6 @@ public class RobotContainer {
         joystick.leftBumper().onTrue(new InstantCommand(() -> dyeRotor.setDutyCycle(-0.3))).onFalse(new InstantCommand(() -> dyeRotor.stopMotor()));
         
         joystick.start().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
-        joystick.back().onTrue(new InstantCommand(() -> drivetrain.forceCameraPose(), drivetrain));
 
         cojoystick.leftBumper().whileTrue(rotateTurretToJoystick(() -> -cojoystick.getLeftX(), () -> cojoystick.getLeftY()));
         cojoystick.leftBumper().whileTrue(rotateHoodToJoystick(() -> -cojoystick.getRightY()));

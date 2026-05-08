@@ -13,13 +13,6 @@ public class RobotConstants {
         return alliance.filter(value -> value == DriverStation.Alliance.Red).isPresent();
     };
 
-    public enum autoAimMode{
-        HUB,
-        OutpostCorner,
-    }
-
-    public static autoAimMode currentAimMode = autoAimMode.HUB;
-    
     public static class Vision {
 
         public static final String backLeftName = "limelight-bleft";
@@ -37,7 +30,7 @@ public class RobotConstants {
         public static final double turretCameraToTurretCenter = 0.072151;
     }
 
-    public static class AutoAim {
+    public static class AutoAimConstants {
 
         public static final double fieldLengthX = 16.54175;
         
