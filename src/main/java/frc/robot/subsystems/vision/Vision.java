@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Turret;
 
+import static edu.wpi.first.units.Units.Degree;
+
 import org.littletonrobotics.junction.Logger;
 
 public class Vision extends SubsystemBase {
@@ -21,9 +23,11 @@ public class Vision extends SubsystemBase {
     private final Drivetrain drivetrain;
     private final Turret turret;
 
-    public static final Vector<N3> standardVisionDevs2OrMore = VecBuilder.fill(0.3, 0.3, 0.3);
-    public static final Vector<N3> standardVisionDevs1tag = VecBuilder.fill(0.75, 0.75, 0.75);
+    public static final Vector<N3> standardVisionDevs2OrMore = VecBuilder.fill(0.75, 0.75, 0.75);
+    public static final Vector<N3> standardVisionDevs1tag = VecBuilder.fill(0.3, 0.3, 0.3);
 
+    public static final Vector<N3> standardVisionDevsMT2 = VecBuilder.fill(1, 1, 999);
+    public static final Vector<N3> standardVisionDevsMT1 = VecBuilder.fill(999, 999, 1);
 
     public Vision(VisionIO io, Drivetrain drivetrain, Turret turret) {
         this.io = io;
@@ -35,8 +39,8 @@ public class Vision extends SubsystemBase {
     public void periodic() {
         double timestamp = Timer.getTimestamp();
         SwerveDrivetrain.SwerveDriveState lastDriveState = this.drivetrain.getState();
-        inputs.robotYawDegrees = lastDriveState.Pose.getRotation().getDegrees();
-        inputs.robotYawRateDegreesPerSecond = lastDriveState.Speeds.omegaRadiansPerSecond;
+        inputs.robotYawDegrees = lastDriveState.Pose.getRotation().getMeasure().in(Units.Degree);
+        inputs.robotYawRateDegreesPerSecond = Math.toDegrees(lastDriveState.Speeds.omegaRadiansPerSecond);
         inputs.robotRollDegrees = this.drivetrain.getPigeon2().getRoll().getValue().in(Units.Degree);
         inputs.robotRollRateDegreesPerSecond = 0;
         inputs.robotPitchDegrees = this.drivetrain.getPigeon2().getPitch().getValue().in(Units.Degree);
@@ -55,29 +59,87 @@ public class Vision extends SubsystemBase {
         if (!reject) {
             try {
                 if (inputs.frontLeftHasTarget) {
-                    filterLL(inputs.frontLeftPoseEstimateMT1.pose(), inputs.frontLeftPoseEstimateMT1.tagCount(), inputs.frontLeftPoseEstimateMT1.avgTagArea(), inputs.frontLeftPoseEstimateMT1.timestampSeconds());
-//                     filterLL(inputs.frontLeftPoseEstimateMT2.pose(), inputs.frontLeftPoseEstimateMT2.tagCount(), inputs.frontLeftPoseEstimateMT2.avgTagArea(), inputs.frontLeftPoseEstimateMT2.timestampSeconds());
+                    filterLL(
+                        inputs.frontLeftPoseEstimateMT1.pose(), 
+                        inputs.frontLeftPoseEstimateMT1.tagCount(), 
+                        inputs.frontLeftPoseEstimateMT1.avgTagArea(), 
+                        inputs.frontLeftPoseEstimateMT1.timestampSeconds(), 
+                        false);
+                    // if (!inputs.turretHasTarget) {
+                        filterLL(
+                        inputs.frontLeftPoseEstimateMT2.pose(), 
+                        inputs.frontLeftPoseEstimateMT2.tagCount(), 
+                        inputs.frontLeftPoseEstimateMT2.avgTagArea(), 
+                        inputs.frontLeftPoseEstimateMT2.timestampSeconds(), 
+                        true);
+                    // }
                 }
-//
+
                 if (inputs.backLeftHasTarget) {
-                    filterLL(inputs.backLeftPoseEstimateMT1.pose(), inputs.backLeftPoseEstimateMT1.tagCount(), inputs.backLeftPoseEstimateMT1.avgTagArea(), inputs.backLeftPoseEstimateMT1.timestampSeconds());
-                    // filterLL(inputs.leftPoseEstimateMT2.pose(), inputs.leftPoseEstimateMT2.tagCount(), inputs.leftPoseEstimateMT2.avgTagArea(), inputs.leftPoseEstimateMT2.timestampSeconds());
+                    // filterLL(
+                    //     inputs.backLeftPoseEstimateMT1.pose(), 
+                    //     inputs.backLeftPoseEstimateMT1.tagCount(), 
+                    //     inputs.backLeftPoseEstimateMT1.avgTagArea(), 
+                    //     inputs.backLeftPoseEstimateMT1.timestampSeconds(), 
+                    //     false);
+                        
+                    // if (!inputs.turretHasTarget) {
+                        // filterLL(
+                        //     inputs.backLeftPoseEstimateMT2.pose(), 
+                        //     inputs.backLeftPoseEstimateMT2.tagCount(), 
+                        //     inputs.backLeftPoseEstimateMT2.avgTagArea(), 
+                        //     inputs.backLeftPoseEstimateMT2.timestampSeconds(), 
+                        //     true);
+                    // }
                 }
-//
+
                 if (inputs.frontRightHasTarget) {
-                    filterLL(inputs.frontRightPoseEstimateMT1.pose(), inputs.frontRightPoseEstimateMT1.tagCount(), inputs.frontRightPoseEstimateMT1.avgTagArea(), inputs.frontRightPoseEstimateMT1.timestampSeconds());
-                    // filterLL(inputs.rightPoseEstimateMT2.pose(), inputs.rightPoseEstimateMT2.tagCount(), inputs.rightPoseEstimateMT2.avgTagArea(), inputs.rightPoseEstimateMT2.timestampSeconds());
+                    // filterLL(
+                    //     inputs.frontRightPoseEstimateMT1.pose(), 
+                    //     inputs.frontRightPoseEstimateMT1.tagCount(), 
+                    //     inputs.frontRightPoseEstimateMT1.avgTagArea(), 
+                    //     inputs.frontRightPoseEstimateMT1.timestampSeconds(), 
+                    //     false);
+                    // if (!inputs.turretHasTarget) {
+                        // filterLL(
+                        //     inputs.frontRightPoseEstimateMT2.pose(), 
+                        //     inputs.frontRightPoseEstimateMT2.tagCount(), 
+                        //     inputs.frontRightPoseEstimateMT2.avgTagArea(), 
+                        //     inputs.frontRightPoseEstimateMT2.timestampSeconds(), 
+                        //     true);
+                    // }
                 }
 
                 if (inputs.backRightHasTarget) {
-                    filterLL(inputs.backRightPoseEstimateMT1.pose(), inputs.backRightPoseEstimateMT1.tagCount(), inputs.backRightPoseEstimateMT1.avgTagArea(), inputs.backRightPoseEstimateMT1.timestampSeconds());
-//                     filterLL(inputs.backRightPoseEstimateMT2.pose(), inputs.backRightPoseEstimateMT2.tagCount(), inputs.backRightPoseEstimateMT2.avgTagArea(), inputs.backRightPoseEstimateMT2.timestampSeconds());
+                    filterLL(
+                        inputs.backRightPoseEstimateMT1.pose(), 
+                        inputs.backRightPoseEstimateMT1.tagCount(), 
+                        inputs.backRightPoseEstimateMT1.avgTagArea(), 
+                        inputs.backRightPoseEstimateMT1.timestampSeconds(), 
+                        false);
+                    // if (!inputs.turretHasTarget) {
+                        filterLL(
+                            inputs.backRightPoseEstimateMT2.pose(), 
+                            inputs.backRightPoseEstimateMT2.tagCount(), 
+                            inputs.backRightPoseEstimateMT2.avgTagArea(), 
+                            inputs.backRightPoseEstimateMT2.timestampSeconds(), 
+                            true);
+                    // }
                 }
 
-                // if (!inputs.frontLeftHasTarget && !inputs.backRightHasTarget && !inputs.frontRightHasTarget && !inputs.backLeftHasTarget){
                 if (inputs.turretHasTarget){
-                    filterLL(inputs.turretPoseEstimateMT1.pose(), inputs.turretPoseEstimateMT1.tagCount(), inputs.turretPoseEstimateMT1.avgTagArea(), inputs.turretPoseEstimateMT1.timestampSeconds());
-                    // filterLL(inputs.turretPoseEstimateMT2.pose(), inputs.turretPoseEstimateMT2.tagCount(), inputs.turretPoseEstimateMT2.avgTagArea(), inputs.turretPoseEstimateMT2.timestampSeconds());
+                    // filterLL(
+                    //     inputs.turretPoseEstimateMT1.pose(), 
+                    //     inputs.turretPoseEstimateMT1.tagCount(), 
+                    //     inputs.turretPoseEstimateMT1.avgTagArea(), 
+                    //     inputs.turretPoseEstimateMT1.timestampSeconds(),
+                    //     false);
+                    filterLL(
+                        inputs.turretPoseEstimateMT2.pose(), 
+                        inputs.turretPoseEstimateMT2.tagCount(), 
+                        inputs.turretPoseEstimateMT2.avgTagArea(), 
+                        inputs.turretPoseEstimateMT2.timestampSeconds(),
+                        true);
                 }
 
             } catch (Exception ignored) {
@@ -87,19 +149,25 @@ public class Vision extends SubsystemBase {
         Logger.recordOutput("Vision/latencyPeriodicSec", Timer.getTimestamp() - timestamp);
     }
 
-    private void filterLL(Pose2d pose, int tagCount, double avgTagArea, double timestampSeconds) {
+    private void filterLL(Pose2d pose, int tagCount, double avgTagArea, double timestampSeconds, boolean isMT2) {
         if (tagCount > 0) {
-            if (tagCount == 1) {
-                // this.drivetrain.addVisionMeasurement(
-                //         pose,
-                //         timestampSeconds,
-                //         standardVisionDevs1tag.times(avgTagArea)
-                // );
-            } else {
+            if (tagCount == 1 && isMT2) {
                 this.drivetrain.addVisionMeasurement(
                         pose,
                         timestampSeconds,
-                        standardVisionDevs2OrMore.times(avgTagArea)
+                        standardVisionDevs1tag.elementTimes(standardVisionDevsMT2)
+                );
+            } else if (tagCount > 1 && isMT2) {
+                this.drivetrain.addVisionMeasurement(
+                        pose,
+                        timestampSeconds,
+                        standardVisionDevs2OrMore.elementTimes(standardVisionDevsMT2)
+                );
+            } else if (tagCount > 2 && !isMT2) {
+                this.drivetrain.addVisionMeasurement(
+                        pose,
+                        timestampSeconds,
+                        standardVisionDevs2OrMore.elementTimes(standardVisionDevsMT1)
                 );
             }
         }

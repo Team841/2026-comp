@@ -26,11 +26,11 @@ public class VisionIOLimelights implements VisionIO{
             LimelightHelpers.setLimelightNTDoubleArray(RobotConstants.Vision.frontRightName, "camerapose_robotspace_set", RobotConstants.Vision.frontRightPose);
             LimelightHelpers.setLimelightNTDoubleArray(RobotConstants.Vision.backRightName, "camerapose_robotspace_set", RobotConstants.Vision.backRightPose);
 
-            LimelightHelpers.SetIMUMode(RobotConstants.Vision.frontLeftName, 4);
-            LimelightHelpers.SetIMUMode(RobotConstants.Vision.backLeftName, 4);
-            LimelightHelpers.SetIMUMode(RobotConstants.Vision.turretName, 3);
-            LimelightHelpers.SetIMUMode(RobotConstants.Vision.frontRightName, 4);
-            LimelightHelpers.SetIMUMode(RobotConstants.Vision.backRightName, 4);
+            LimelightHelpers.SetIMUMode(RobotConstants.Vision.frontLeftName, 0);
+            LimelightHelpers.SetIMUMode(RobotConstants.Vision.backLeftName, 0);
+            LimelightHelpers.SetIMUMode(RobotConstants.Vision.turretName, 0);
+            LimelightHelpers.SetIMUMode(RobotConstants.Vision.frontRightName, 0);
+            LimelightHelpers.SetIMUMode(RobotConstants.Vision.backRightName, 0);
 
             LimelightHelpers.SetRobotOrientation(
                     RobotConstants.Vision.frontLeftName,
@@ -54,12 +54,12 @@ public class VisionIOLimelights implements VisionIO{
             
             LimelightHelpers.SetRobotOrientation(
                     RobotConstants.Vision.turretName,
-                    inputs.turretAngle.getDegrees(),
-                    0,
-                    0,
-                    0,
-                    0,
-                    0
+                    inputs.robotYawDegrees,
+                    inputs.robotYawRateDegreesPerSecond,
+                    inputs.robotPitchDegrees,
+                    inputs.robotPitchRateDegreesPerSecond,
+                    inputs.robotRollDegrees,
+                    inputs.robotRollRateDegreesPerSecond
             );
 
             LimelightHelpers.SetRobotOrientation(
