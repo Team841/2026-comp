@@ -20,19 +20,17 @@ public class LED extends SubsystemBase{
     private RobotContainer robotContainer;
 
     private final AddressableLED LED = new AddressableLED(9);
-    private final AddressableLEDBuffer Buffer = new AddressableLEDBuffer(44);
-    private final AddressableLEDBufferView BufferLeft = Buffer.createView(0, 10);
-    private final AddressableLEDBufferView BufferRight = Buffer.createView(11, 22).reversed();
-    private final AddressableLEDBufferView BufferRightSide = Buffer.createView(23, 26);
-    private final AddressableLEDBufferView BufferLeftBack = Buffer.createView(27, 33);
-    private final AddressableLEDBufferView BufferRightBack = Buffer.createView(34, 39).reversed();
-    private final AddressableLEDBufferView BufferLeftSide = Buffer.createView(40, 43).reversed();
+    private final AddressableLEDBuffer Buffer = new AddressableLEDBuffer(19);
 
-    Color yellow = new Color(255, 200, 0);
+    private final AddressableLEDBufferView BufferRight = Buffer.createView(4, 12);
+    private final AddressableLEDBufferView BufferLeft2 = Buffer.createView(0, 3);
+    private final AddressableLEDBufferView BufferLeft = Buffer.createView(13, 18).reversed();
+   
+    Color yellow = new Color(255, 0, 150);
     Color red = new Color(255, 0, 0);
-    Color green = new Color(0, 255, 0);
-    Color blue = new Color(0, 0, 255);
-    Color purple = new Color(255, 0, 255);
+    Color green = new Color(0, 0, 255);
+    Color blue = new Color(0, 255, 0);
+    Color purple = new Color(255, 255, 0);
     Distance ledSpacing = Meters.of(1 / 120.0);
 
     LEDPattern baseYellowScroll = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kBlack, yellow);
@@ -48,7 +46,7 @@ public class LED extends SubsystemBase{
     LEDPattern basePurpleScroll = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kBlack, purple);
     LEDPattern patternPurpleScroll = basePurpleScroll.scrollAtRelativeSpeed(Percent.per(Second).of(120));
 
-    LEDPattern baseRedScroll = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kBlack, Color.kRed);
+    LEDPattern baseRedScroll = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kBlack, red);
     LEDPattern patternRedScroll = baseRedScroll.scrollAtRelativeSpeed(Percent.per(Second).of(300));
     
     LEDPattern baseRainbowScroll = LEDPattern.rainbow(255, 255);
@@ -57,11 +55,11 @@ public class LED extends SubsystemBase{
     LEDPattern baseRedBreathe = LEDPattern.solid(red);
     LEDPattern patternRedBreathe = baseRedBreathe.breathe(Second.of(0.15));
 
-    LEDPattern baseRedBreatheScroll = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kBlack, Color.kRed);
+    LEDPattern baseRedBreatheScroll = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kBlack, red);
     LEDPattern base2RedBreatheScroll = baseRedBreatheScroll.scrollAtRelativeSpeed(Percent.per(Second).of(100)).reversed();
     LEDPattern patternRedBreatheScroll = base2RedBreatheScroll.breathe(Second.of(2));
     
-    LEDPattern baseBlueBreatheScroll = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kBlack, Color.kBlue);
+    LEDPattern baseBlueBreatheScroll = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kBlack, blue);
     LEDPattern base2BlueBreatheScroll = baseBlueBreatheScroll.scrollAtRelativeSpeed(Percent.per(Second).of(100)).reversed();
     LEDPattern patternBlueBreatheScroll = base2BlueBreatheScroll.breathe(Second.of(2));
 
@@ -80,13 +78,10 @@ public class LED extends SubsystemBase{
     }
 
     private void apply(LEDPattern ledPattern) {
-        ledPattern.applyTo(BufferLeft);
-        ledPattern.applyTo(BufferRight);
-        ledPattern.applyTo(BufferRightSide);
-        ledPattern.applyTo(BufferLeftBack);
-        ledPattern.applyTo(BufferRightBack);
-        ledPattern.applyTo(BufferLeftSide);
-        // ledPattern.applyTo(Buffer);
+        // ledPattern.applyTo(BufferLeft);
+        // ledPattern.applyTo(BufferRight);
+        // ledPattern.applyTo(BufferLeft2);
+        ledPattern.applyTo(Buffer);
         LED.setData(Buffer);
     }
 
