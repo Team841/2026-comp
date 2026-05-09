@@ -33,6 +33,7 @@ import frc.robot.subsystems.Autoaim.FiringLocation;
 import frc.robot.subsystems.DyeRotor.RotorState;
 import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.subsystems.IntakePivot.IntakePivotState;
+import frc.robot.subsystems.Turret.TurretState;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 
@@ -133,7 +134,8 @@ public class RobotContainer {
                         double angle = Math.atan2(controlY, controlX);
                         angle -= Math.PI / 2;
                         angle -= drivetrain.getState().Pose.getRotation().getRadians();
-                        turret.setPosition(new Rotation2d(wrapToPi(angle)));
+                        turret.setOverridePosition(new Rotation2d(wrapToPi(angle)));
+                        turret.setState(TurretState.TRACK_SUPPLIER);
                     }
                 }, turret);
     }
@@ -178,8 +180,7 @@ public class RobotContainer {
         return Commands.run(
             () -> {
                 autoaim.setFiringLocation(FiringLocation.HUB);
-                turret.setPosition(
-                    autoaim.getTurretRelativeAngleToFireWhileMoving());
+                turret.setState(TurretState.TRACK_TARGET);
             }, turret);
     }
 
@@ -208,7 +209,7 @@ public class RobotContainer {
         return Commands.run(
             () -> {
                 autoaim.setFiringLocation(FiringLocation.PASS);
-                turret.setPosition(autoaim.getTurretRelativeAngleToFireWhileMoving());
+                turret.setState(TurretState.TRACK_TARGET);
                 hood.setPosition(-4.1);
                     shooter.setVelocity(shooter.getShooterPassingSpeedFromDistanceMeters(drivetrain.getDistanceToDriverStationWall()));
             }, 
@@ -264,7 +265,8 @@ public class RobotContainer {
         return new ParallelCommandGroup(
             new InstantCommand(() -> shooter.setVelocity(-10), shooter),
             new InstantCommand(() -> hood.setPosition(-4.1), hood),
-            new InstantCommand(() -> turret.setPosition(new Rotation2d(0)), turret),
+            new InstantCommand(() -> turret.setOverridePosition(new Rotation2d())),
+            new InstantCommand(() -> turret.setState(TurretState.TRACK_SUPPLIER), turret),
             runDyeRotorForPoopShot()
         );
     }

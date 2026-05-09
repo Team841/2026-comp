@@ -23,15 +23,37 @@ public class Turret extends SubsystemBase {
 
     private Rotation2d targetAngle = new Rotation2d();
 
+    private Rotation2d overrideSupplierAngle = new Rotation2d();
+
+    private Autoaim autoaim;
+
     StatusCode[] latestStatus;
 
-    public Turret() {
-        turretMotor.getConfigurator().apply(SuperstructureConstants.TurretConstants.turretMotorConfigs);
-        this.zero();
+    public enum TurretState {
+        STOP,
+        HOLD,
+        TRACK_TARGET,
+        TRACK_SUPPLIER
     }
 
-    public void setPosition(Rotation2d angle) {
+    public TurretState turretState = TurretState.HOLD;
+
+    public Turret(Autoaim autoaim) {
+        turretMotor.getConfigurator().apply(SuperstructureConstants.TurretConstants.turretMotorConfigs);
+        this.zero();
+        this.autoaim = autoaim;
+    }
+
+    private void setPosition(Rotation2d angle) {
         this.targetAngle = new Rotation2d(Math.atan2(Math.sin(angle.getRadians()), Math.cos(angle.getRadians())));
+    }
+
+    public void setOverridePosition(Rotation2d angle) {
+        this.overrideSupplierAngle = new Rotation2d(Math.atan2(Math.sin(angle.getRadians()), Math.cos(angle.getRadians())));
+    }
+
+    public void setState(TurretState wantedState) {
+        this.turretState = wantedState;
     }
 
     public Rotation2d getTurretTargetAngle() {
@@ -55,14 +77,11 @@ public class Turret extends SubsystemBase {
 
         double currentRot = turretMotor.getPosition().getValueAsDouble();
 
-        // Convert radians → turret rotations
         double targetRot = targetRadians * (ROTATIONS_PER_TURRET_REV / (2 * Math.PI));
 
-        // Find closest equivalent revolution
         double base = Math.round((currentRot - targetRot) / ROTATIONS_PER_TURRET_REV);
         double candidate = targetRot + base * ROTATIONS_PER_TURRET_REV;
 
-        // If outside limits, jump one revolution
         if (candidate > MAX_ROT) {
             candidate -= ROTATIONS_PER_TURRET_REV;
         } 
@@ -94,13 +113,36 @@ public class Turret extends SubsystemBase {
 
     @Override
     public void periodic() {
-        this.latestStatus = this.setControl(positionControl.withPosition(this.getContinuousTurretSetpoint()));
         Logger.recordOutput("Turret/TargetPosition", this.getTurretTargetAngle().getDegrees());
         Logger.recordOutput("Turret/CurrentPosition", this.getTurretAngle().getDegrees());
         Logger.recordOutput("Turret/CurrentAbsolutePosition", this.getTurretAngleAbsolute().getDegrees());
         Logger.recordOutput("Turret/TargetMotorPosition", this.getContinuousTurretSetpoint());
         Logger.recordOutput("Turret/WithinTolerance", this.atAngle(10));
+        Logger.recordOutput("Turret/State", turretState);
 
+        switch (turretState) {
+            case STOP:
+                turretMotor.stopMotor();
+                break;
 
+            case HOLD:
+                break;
+
+            case TRACK_TARGET:
+                this.setPosition(autoaim.getTurretRelativeAngleToFireWhileMoving());
+                break;
+
+            case TRACK_SUPPLIER:
+                this.setPosition(overrideSupplierAngle);
+                break;
+        
+            default:
+                turretMotor.stopMotor();
+                break;
+        }
+
+        if (!turretState.equals(TurretState.STOP)) {
+            this.latestStatus = this.setControl(positionControl.withPosition(this.getContinuousTurretSetpoint()));
+        }
     }
 }

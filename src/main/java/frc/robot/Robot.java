@@ -46,13 +46,13 @@ public class Robot extends LoggedRobot {
 
     private final RobotContainer robotContainer;
     private final Autoaim autoaim;
-    private final Turret turret = new Turret();
+    private final Turret turret;
     private final Drivetrain drivetrain;
-    private final DyeRotor dyeRotor = new DyeRotor();
-    private final Hood hood = new Hood();
-    private final Intake intake = new Intake();
-    private final IntakePivot intakePivot = new IntakePivot();
-    private final Shooter shooter = new Shooter();
+    private final DyeRotor dyeRotor;
+    private final Hood hood;
+    private final Intake intake;
+    private final IntakePivot intakePivot;
+    private final Shooter shooter;
     private final LED led;
 
     public final VisionIO visionIO;
@@ -80,10 +80,18 @@ public class Robot extends LoggedRobot {
         TunerConstants.BackLeft, 
         TunerConstants.BackRight);
 
+        this.autoaim = new Autoaim(drivetrain);
+
+        this.turret = new Turret(autoaim);
+        this.dyeRotor = new DyeRotor();
+        this.hood = new Hood();
+        this.intake = new Intake();
+        this.intakePivot = new IntakePivot();
+        this.shooter = new Shooter();
+
         this.visionIO = new VisionIOLimelights();
         this.vision = new Vision(visionIO, drivetrain, turret);
 
-        this.autoaim = new Autoaim(drivetrain);
 
         robotContainer = new RobotContainer(drivetrain, dyeRotor, hood, intake, intakePivot, shooter, turret, visionIO, vision, autoaim);
 
