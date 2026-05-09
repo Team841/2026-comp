@@ -61,21 +61,6 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
 
     public final NetworkTable visionControlTable = vision.getTable("VisionControl");
 
-//    public final Consumer<VisionFieldPoseEstimate> visionEstimateConsumer = new Consumer<>() {
-//        @Override
-//        public void accept(VisionFieldPoseEstimate visionFieldPoseEstimate) {
-//            if (forcePoseReset) {
-//                resetPose(visionFieldPoseEstimate.getVisionRobotPoseMeters());
-//                forcePoseReset = false;
-//            } else {
-//                addVisionMeasurement(visionFieldPoseEstimate);
-//            }
-//            return;
-//        }
-//    };
-
-//    VisionProcessor visionProcessor = new VisionProcessor(visionEstimateConsumer);
-
     public final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds()
             .withDriveRequestType(SwerveModule.DriveRequestType.Velocity)
             .withSteerRequestType(SwerveModule.SteerRequestType.Position);
@@ -112,19 +97,6 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
     public Command applyRequest(Supplier<SwerveRequest> request) {
         return run(() -> this.setControl(request.get()));
     }
-
-//    public void addVisionMeasurement(VisionFieldPoseEstimate visionFieldPoseEstimate) {
-//        if (visionFieldPoseEstimate.getVisionMeasurementStdDevs() == null) {
-//            super.addVisionMeasurement(
-//                    visionFieldPoseEstimate.getVisionRobotPoseMeters(),
-//                    Utils.fpgaToCurrentTime(visionFieldPoseEstimate.getTimestampSeconds()));
-//        } else {
-//            super.addVisionMeasurement(
-//                    visionFieldPoseEstimate.getVisionRobotPoseMeters(),
-//                    Utils.fpgaToCurrentTime(visionFieldPoseEstimate.getTimestampSeconds()),
-//                    visionFieldPoseEstimate.getVisionMeasurementStdDevs());
-//        }
-//    }
 
     public void periodic() {
 

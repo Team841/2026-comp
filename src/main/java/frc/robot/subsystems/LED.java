@@ -21,9 +21,9 @@ public class LED extends SubsystemBase{
     private final AddressableLED LED = new AddressableLED(9);
     private final AddressableLEDBuffer Buffer = new AddressableLEDBuffer(19);
 
-    private final AddressableLEDBufferView BufferRight = Buffer.createView(4, 12);
-    private final AddressableLEDBufferView BufferLeft2 = Buffer.createView(0, 3);
-    private final AddressableLEDBufferView BufferLeft = Buffer.createView(13, 18).reversed();
+    // private final AddressableLEDBufferView BufferRight = Buffer.createView(4, 12);
+    // private final AddressableLEDBufferView BufferLeft2 = Buffer.createView(0, 3);
+    // private final AddressableLEDBufferView BufferLeft = Buffer.createView(13, 18).reversed();
    
     Color yellow = new Color(255, 0, 150);
     Color red = new Color(255, 0, 0);

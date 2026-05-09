@@ -90,30 +90,30 @@ public class RobotContainer {
         this.vision = vision;
         this.autoaim = autoaim;
 
-        NamedCommands.registerCommand("IntakeDownAndSpin", intakeDownAndSpin());
-        NamedCommands.registerCommand("IntakeUpAndStop", intakeUpAndStop());
-        NamedCommands.registerCommand("IntakeUpFullAndStop", intakeUpFullAndStop());
-        NamedCommands.registerCommand("IntakeForOutpost", new InstantCommand(() -> intakePivot.setState(IntakePivotState.BUMP_STOW)));
+        // NamedCommands.registerCommand("IntakeDownAndSpin", intakeDownAndSpin());
+        // NamedCommands.registerCommand("IntakeUpAndStop", intakeUpAndStop());
+        // NamedCommands.registerCommand("IntakeUpFullAndStop", intakeUpFullAndStop());
+        // NamedCommands.registerCommand("IntakeForOutpost", new InstantCommand(() -> intakePivot.setState(IntakePivotState.BUMP_STOW)));
 
-        NamedCommands.registerCommand("AutoAimAndFire10Sec", autoAimAndFire().withTimeout(10)
-                                                            .finallyDo(() -> {shooter.setState(ShooterState.STOP);
-                                                                            dyeRotor.setState(RotorState.STOP);}));
+        // NamedCommands.registerCommand("AutoAimAndFire10Sec", autoAimAndFire().withTimeout(10)
+        //                                                     .finallyDo(() -> {shooter.setState(ShooterState.STOP);
+        //                                                                     dyeRotor.setState(RotorState.STOP);}));
                
-        NamedCommands.registerCommand("AutoAimAndFire7Sec", autoAimAndFire().withTimeout(6)
-                                                            .finallyDo(() -> {shooter.setState(ShooterState.STOP);
-                                                                            dyeRotor.setState(RotorState.STOP);}));
+        // NamedCommands.registerCommand("AutoAimAndFire7Sec", autoAimAndFire().withTimeout(6)
+        //                                                     .finallyDo(() -> {shooter.setState(ShooterState.STOP);
+        //                                                                     dyeRotor.setState(RotorState.STOP);}));
 
-        NamedCommands.registerCommand("AutoAimAndFire4Sec", autoAimAndFire().withTimeout(4)
-                .finallyDo(() -> {shooter.setState(ShooterState.STOP);
-                    dyeRotor.setState(RotorState.STOP);}));
+        // NamedCommands.registerCommand("AutoAimAndFire4Sec", autoAimAndFire().withTimeout(4)
+        //         .finallyDo(() -> {shooter.setState(ShooterState.STOP);
+        //             dyeRotor.setState(RotorState.STOP);}));
 
-        NamedCommands.registerCommand("AutoAimAndFire15Sec", autoAimAndFire().withTimeout(15)
-                .finallyDo(() -> {shooter.setState(ShooterState.STOP);
-                    dyeRotor.setState(RotorState.STOP);}));
+        // NamedCommands.registerCommand("AutoAimAndFire15Sec", autoAimAndFire().withTimeout(15)
+        //         .finallyDo(() -> {shooter.setState(ShooterState.STOP);
+        //             dyeRotor.setState(RotorState.STOP);}));
 
-        NamedCommands.registerCommand("AutoPassAndFire", autoPassAndFire().withTimeout(5));
+        // NamedCommands.registerCommand("AutoPassAndFire", autoPassAndFire().withTimeout(5));
 
-        NamedCommands.registerCommand("SpinUpShooterEarly", spinUpShooterEarly());
+        // NamedCommands.registerCommand("SpinUpShooterEarly", spinUpShooterEarly());
 
         SmartDashboard.putNumber("Shooter/ShootSpeed1", -10);
         SmartDashboard.putNumber("Shooter/ShootSpeed2", -20);
@@ -134,7 +134,7 @@ public class RobotContainer {
                         double angle = Math.atan2(controlY, controlX);
                         angle -= Math.PI / 2;
                         angle -= drivetrain.getState().Pose.getRotation().getRadians();
-                        turret.setOverridePosition(new Rotation2d(wrapToPi(angle)));
+                        turret.setOverridePosition(new Rotation2d(angle));
                         turret.setState(TurretState.TRACK_SUPPLIER);
                     }
                 }, turret);
@@ -147,41 +147,6 @@ public class RobotContainer {
 
                     hood.setPositionFromPercentage((controlY + 1) / 2);
                 }, hood);
-    }
-
-    public Command intakeDownAndSpin() {
-        return new InstantCommand(() -> {
-            intakePivot.setState(IntakePivotState.INTAKE);
-            intake.setState(IntakeState.INTAKE);
-        }, intake, intakePivot);
-    }
-
-    public Command intakeUpAndStop() {
-        return new InstantCommand(() -> {
-            intakePivot.setState(IntakePivotState.BUMP_STOW);
-            intake.setState(IntakeState.STOP);
-        }, intake, intakePivot);
-    }
-
-    public Command intakeUpFullAndStop() {
-        return new InstantCommand(() -> {
-            intakePivot.setState(IntakePivotState.COMPACT_STOW);
-            intake.setState(IntakeState.STOP);
-        }, intake, intakePivot);
-    }
-
-    public Command spinUpShooterEarly() {
-        return new InstantCommand(() -> {
-            shooter.setState(ShooterState.STOP);;
-        }, shooter);
-    }
-
-    public Command snapTurretToHub() {
-        return Commands.runOnce(
-            () -> {
-                autoaim.setFiringLocation(FiringLocation.HUB);
-                turret.setState(TurretState.TRACK_TARGET);
-            }, turret);
     }
 
     public Command snapHoodToHub() {
@@ -231,48 +196,6 @@ public class RobotContainer {
             dyeRotor);
     }
 
-    public Command autoAimAndFire() {
-        return new ParallelCommandGroup(
-            Commands.runOnce(() -> shooter.setState(ShooterState.FOLLOW_TARGET), shooter),
-            snapHoodToHub(),
-            Commands.runOnce(() -> turret.setState(TurretState.TRACK_TARGET), turret),
-            runDyeRotorForHubShot()
-        );
-    }
-
-    public Command poop() {
-        return new ParallelCommandGroup(
-            new InstantCommand(() -> shooter.setOverrideVelocity(-10)),
-            new InstantCommand(() -> shooter.setState(ShooterState.FOLLOW_SUPPLIER), shooter),
-            new InstantCommand(() -> hood.setPosition(-4.1), hood),
-            new InstantCommand(() -> turret.setOverridePosition(new Rotation2d())),
-            new InstantCommand(() -> turret.setState(TurretState.TRACK_SUPPLIER), turret),
-            runDyeRotorForPoopShot()
-        );
-    }
-
-    public Command autoPassAndFire() {
-        return new ParallelCommandGroup(
-            Commands.runOnce(
-            () -> {
-                autoaim.setFiringLocation(FiringLocation.PASS);
-                turret.setState(TurretState.TRACK_TARGET);
-                hood.setPosition(-4.1);
-                shooter.setState(ShooterState.FOLLOW_TARGET);
-            }, 
-            turret, hood, shooter),
-            runDyeRotorForPassShot()
-        );
-    }
-
-    public static double wrapToPi(double angle) {
-        angle = (angle + Math.PI) % (2.0 * Math.PI);
-        if (angle < 0) {
-            angle += 2.0 * Math.PI;
-        }
-        return angle - Math.PI;
-    }
-
     public void setMode(RobotMode newMode) {
 
         if (newMode == currentMode) return;
@@ -286,7 +209,7 @@ public class RobotContainer {
         switch (currentMode) {
 
             case NEUTRAL:
-                activeCommand = Commands.run(
+                activeCommand = Commands.runOnce(
                 () -> {
                     autoaim.setFiringLocation(FiringLocation.HUB);
                     shooter.setState(ShooterState.FOLLOW_TARGET);
@@ -297,20 +220,50 @@ public class RobotContainer {
                 break;
 
             case AUTOAIM_FIRE:
-                activeCommand = autoAimAndFire();
+                activeCommand = new ParallelCommandGroup(
+                    Commands.runOnce(
+                    () -> {
+                        autoaim.setFiringLocation(FiringLocation.PASS);
+                        turret.setState(TurretState.TRACK_TARGET);
+                        shooter.setState(ShooterState.FOLLOW_TARGET);
+                    }, turret, shooter),
+                    snapHoodToHub(),
+                    runDyeRotorForHubShot()
+                );
                 break;
 
             case PASS_SHOT:
-                activeCommand = autoPassAndFire();
+                activeCommand = new ParallelCommandGroup(
+                    Commands.runOnce(
+                    () -> {
+                        autoaim.setFiringLocation(FiringLocation.PASS);
+                        turret.setState(TurretState.TRACK_TARGET);
+                        hood.setPosition(-4.1);
+                        shooter.setState(ShooterState.FOLLOW_TARGET);
+                    }, turret, hood, shooter),
+                    runDyeRotorForPassShot()
+                );
                 break;
 
             case POOP:
-                activeCommand = poop();
+                activeCommand = new ParallelCommandGroup(
+                    Commands.runOnce(
+                    () -> {
+                        autoaim.setFiringLocation(FiringLocation.HUB);
+                        turret.setOverridePosition(Rotation2d.kZero);
+                        turret.setState(TurretState.TRACK_SUPPLIER);
+                        hood.setPosition(-4.1);
+                        shooter.setOverrideVelocity(-10);
+                        shooter.setState(ShooterState.FOLLOW_TARGET);
+                    }, turret, hood, shooter),
+                    runDyeRotorForPoopShot()
+                );
                 break;
 
             case STOP:
-                activeCommand = new InstantCommand(() -> {
+                activeCommand = Commands.runOnce(() -> {
                     shooter.setState(ShooterState.STOP);
+                    turret.setState(TurretState.STOP);
                     dyeRotor.setState(RotorState.STOP);}, 
                     shooter, dyeRotor);
                 break;
@@ -367,7 +320,7 @@ public class RobotContainer {
 
         joystick.leftBumper().onTrue(
             new InstantCommand(() -> dyeRotor.setState(RotorState.UNJAM_BACKWARD), dyeRotor))
-            .onFalse(new InstantCommand(() -> dyeRotor.setState(RotorState.STOP)));
+            .onFalse(new InstantCommand(() -> dyeRotor.setState(RotorState.STOP), dyeRotor));
         
         joystick.start().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
