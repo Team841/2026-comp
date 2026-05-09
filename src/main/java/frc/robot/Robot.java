@@ -84,7 +84,7 @@ public class Robot extends LoggedRobot {
 
         this.turret = new Turret(autoaim);
         this.dyeRotor = new DyeRotor();
-        this.hood = new Hood();
+        this.hood = new Hood(autoaim);
         this.intake = new Intake();
         this.intakePivot = new IntakePivot();
         this.shooter = new Shooter(autoaim);

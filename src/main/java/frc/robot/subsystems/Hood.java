@@ -21,14 +21,29 @@ public class Hood extends SubsystemBase {
 
     private MotionMagicExpoVoltage positionControl = new MotionMagicExpoVoltage(0);
 
-    private double targetPosition = 2;
+    private double targetPosition = 0;
+
+    private double overrideSupplierPosition = 0;
 
     InterpolatingDoubleTreeMap hoodHeightMap;
 
+    private Autoaim autoaim;
+
     StatusCode[] latestStatus;
 
-    public Hood() {
+    public enum HoodState {
+        STOP,
+        HOLD,
+        TRACK_TARGET,
+        TRACK_SUPPLIER
+    }
+
+    public HoodState hoodState = HoodState.HOLD;
+
+    public Hood(Autoaim autoaim) {
         hoodMotor.getConfigurator().apply(SuperstructureConstants.HoodConstants.hoodMotorConfigs);
+
+        this.autoaim = autoaim;
 
         this.hoodHeightMap = new InterpolatingDoubleTreeMap();
         this.hoodHeightMap.put(1.0, HoodHeight.M1.getPosition());
@@ -38,12 +53,12 @@ public class Hood extends SubsystemBase {
         this.zero();
     }
 
-    public void setPosition(double position) {
-        this.targetPosition = position;
+    public void setState(HoodState wantedState) {
+        hoodState = wantedState;
     }
 
-    public void setPositionFromPercentage(double value) {
-        this.targetPosition = -4.1 * value;
+    public void setOverrideSupplier(double position) {
+        overrideSupplierPosition = position;
     }
 
     public double getHoodHeightFromMetersToHub(double distance) {
@@ -73,6 +88,32 @@ public class Hood extends SubsystemBase {
         this.latestStatus = this.setControl(positionControl.withPosition(this.targetPosition));
         Logger.recordOutput("Hood/TargetPosition", this.getHoodTargetPosition());
         Logger.recordOutput("Hood/Position", this.getHoodPosition());
+        Logger.recordOutput("Hood/State", hoodState);
+
+        switch (hoodState) {
+            case STOP:
+                hoodMotor.stopMotor();
+                break;
+
+            case HOLD:
+                break;
+
+            case TRACK_TARGET:
+                targetPosition = this.getHoodHeightFromMetersToHub(autoaim.getDistanceToScoreWhileMoving());
+                break;
+
+            case TRACK_SUPPLIER:
+                targetPosition = overrideSupplierPosition;
+                break;
+        
+            default:
+                hoodMotor.stopMotor();
+                break;
+        }
+
+        if (!hoodState.equals(HoodState.STOP)) {
+            this.latestStatus = this.setControl(positionControl.withPosition(this.targetPosition));
+        }
     }
 
     public enum HoodHeight {

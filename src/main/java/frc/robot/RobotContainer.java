@@ -31,6 +31,7 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Autoaim.FiringLocation;
 import frc.robot.subsystems.DyeRotor.RotorState;
+import frc.robot.subsystems.Hood.HoodState;
 import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.subsystems.IntakePivot.IntakePivotState;
 import frc.robot.subsystems.Shooter.ShooterState;
@@ -144,20 +145,9 @@ public class RobotContainer {
         return Commands.run(
                 () -> {
                     double controlY = y.getAsDouble();
-
-                    hood.setPositionFromPercentage((controlY + 1) / 2);
+                    hood.setState(HoodState.TRACK_SUPPLIER);
+                    hood.setOverrideSupplier(((controlY + 1) / 2) * -4.1);
                 }, hood);
-    }
-
-    public Command snapHoodToHub() {
-        return Commands.run(
-            () -> {
-                hood.setPosition(
-                    hood.getHoodHeightFromMetersToHub(
-                        autoaim.getDistanceToScoreWhileMoving()    
-                    ));
-            }, 
-            hood);
     }
 
     public Command runDyeRotorForHubShot() {
@@ -225,9 +215,9 @@ public class RobotContainer {
                     () -> {
                         autoaim.setFiringLocation(FiringLocation.PASS);
                         turret.setState(TurretState.TRACK_TARGET);
+                        hood.setState(HoodState.TRACK_TARGET);
                         shooter.setState(ShooterState.FOLLOW_TARGET);
                     }, turret, shooter),
-                    snapHoodToHub(),
                     runDyeRotorForHubShot()
                 );
                 break;
@@ -238,7 +228,8 @@ public class RobotContainer {
                     () -> {
                         autoaim.setFiringLocation(FiringLocation.PASS);
                         turret.setState(TurretState.TRACK_TARGET);
-                        hood.setPosition(-4.1);
+                        hood.setState(HoodState.TRACK_SUPPLIER);
+                        hood.setOverrideSupplier(-4.1);
                         shooter.setState(ShooterState.FOLLOW_TARGET);
                     }, turret, hood, shooter),
                     runDyeRotorForPassShot()
@@ -252,7 +243,8 @@ public class RobotContainer {
                         autoaim.setFiringLocation(FiringLocation.HUB);
                         turret.setOverridePosition(Rotation2d.kZero);
                         turret.setState(TurretState.TRACK_SUPPLIER);
-                        hood.setPosition(-4.1);
+                        hood.setState(HoodState.TRACK_SUPPLIER);
+                        hood.setOverrideSupplier(-4.1);
                         shooter.setOverrideVelocity(-10);
                         shooter.setState(ShooterState.FOLLOW_TARGET);
                     }, turret, hood, shooter),
