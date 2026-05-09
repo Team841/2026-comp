@@ -24,12 +24,22 @@ public class IntakePivot extends SubsystemBase {
 
     StatusCode[] latestStatus;
 
+    public enum IntakePivotState {
+        STOP,
+        MATCHSTART_STOW,
+        COMPACT_STOW,
+        BUMP_STOW,
+        INTAKE
+    }
+
+    public IntakePivotState intakePivotState = IntakePivotState.MATCHSTART_STOW;
+
     public IntakePivot() {
         intakePivotMotor.getConfigurator().apply(SuperstructureConstants.IntakePivotConstants.intakePivotMotorConfigs);
     }
 
-    public void setPosition(double position) {
-        this.targetPosition = position;
+    public void setState(IntakePivotState wantedState) {
+        intakePivotState = wantedState;
     }
 
     public StatusCode[] setControl(ControlRequest control) {
@@ -56,8 +66,38 @@ public class IntakePivot extends SubsystemBase {
 
     @Override
     public void periodic() {
-        this.latestStatus = this.setControl(positionControl.withPosition(this.targetPosition));
         Logger.recordOutput("IntakePivot/TargetPosition", this.getIntakePivotTargetPosition());
         Logger.recordOutput("IntakePivot/Position", this.getIntakePivotPosition());
+        Logger.recordOutput("IntakePivot/State", intakePivotState);
+        
+        switch (intakePivotState) {
+            case STOP:
+                intakePivotMotor.stopMotor();
+                break;
+
+            case INTAKE:
+                this.targetPosition = -22.9;
+                break;
+
+            case BUMP_STOW:
+                this.targetPosition = -20;
+                break;
+
+            case MATCHSTART_STOW:
+                this.targetPosition = -3;
+                break;
+
+            case COMPACT_STOW:
+                this.targetPosition = -6;
+                break;
+        
+            default:
+                intakePivotMotor.stopMotor();
+                break;
+        }
+
+        if (!intakePivotState.equals(IntakePivotState.STOP)) {
+            this.latestStatus = this.setControl(positionControl.withPosition(this.targetPosition));
+        }
     }
 }

@@ -133,6 +133,11 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void disabledPeriodic() {
+        LimelightHelpers.SetThrottle(RobotConstants.Vision.backLeftName, 150);
+        LimelightHelpers.SetThrottle(RobotConstants.Vision.backRightName, 150);
+        LimelightHelpers.SetThrottle(RobotConstants.Vision.frontLeftName, 150);
+        LimelightHelpers.SetThrottle(RobotConstants.Vision.frontRightName, 150);
+        LimelightHelpers.SetThrottle(RobotConstants.Vision.turretName, 150);
     }
 
     @Override
@@ -150,7 +155,13 @@ public class Robot extends LoggedRobot {
     }
 
     @Override
-    public void autonomousPeriodic() {}
+    public void autonomousPeriodic() {
+        LimelightHelpers.SetThrottle(RobotConstants.Vision.backLeftName, 0);
+        LimelightHelpers.SetThrottle(RobotConstants.Vision.backRightName, 0);
+        LimelightHelpers.SetThrottle(RobotConstants.Vision.frontLeftName, 0);
+        LimelightHelpers.SetThrottle(RobotConstants.Vision.frontRightName, 0);
+        LimelightHelpers.SetThrottle(RobotConstants.Vision.turretName, 0);
+    }
 
     @Override
     public void autonomousExit() {}
@@ -165,7 +176,13 @@ public class Robot extends LoggedRobot {
     }
 
     @Override
-    public void teleopPeriodic() {}
+    public void teleopPeriodic() {
+        LimelightHelpers.SetThrottle(RobotConstants.Vision.backLeftName, 0);
+        LimelightHelpers.SetThrottle(RobotConstants.Vision.backRightName, 0);
+        LimelightHelpers.SetThrottle(RobotConstants.Vision.frontLeftName, 0);
+        LimelightHelpers.SetThrottle(RobotConstants.Vision.frontRightName, 0);
+        LimelightHelpers.SetThrottle(RobotConstants.Vision.turretName, 0);
+    }
 
     @Override
     public void teleopExit() {}

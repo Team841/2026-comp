@@ -24,18 +24,23 @@ public class Intake extends SubsystemBase {
 
     private Follower follower = new Follower(SuperstructureConstants.IDs.intakeRollerLeftMotorID, MotorAlignmentValue.Opposed);
 
+    public enum IntakeState {
+        STOP,
+        INTAKE,
+        FULLSPEED_INTAKE,
+        OUTTAKE
+    }
+
+    public IntakeState intakeState = IntakeState.STOP;
+
     public Intake() {
         this.intakeMotorLeft.getConfigurator().apply(new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake).withInverted(InvertedValue.CounterClockwise_Positive)).withAudio(new AudioConfigs().withAllowMusicDurDisable(true)));
         this.intakeMotorRight.getConfigurator().apply(new TalonFXConfiguration().withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake).withInverted(InvertedValue.CounterClockwise_Positive)).withAudio(new AudioConfigs().withAllowMusicDurDisable(true)));
         this.intakeMotorRight.setControl(follower);
     }
 
-    public void setDutyCycle(double speed) {
-        this.intakeMotorLeft.set(speed);
-    }
-
-    public void stopMotor() {
-        this.intakeMotorLeft.stopMotor();
+    public void setState(IntakeState wantedState) {
+        intakeState = wantedState;
     }
 
     @Override
@@ -43,5 +48,28 @@ public class Intake extends SubsystemBase {
         Logger.recordOutput("Intake/Velocity", this.intakeMotorLeft.getVelocity().getValueAsDouble());
         Logger.recordOutput("Intake/RightMotorTemp", this.intakeMotorRight.getDeviceTemp().getValueAsDouble());
         Logger.recordOutput("Intake/LeftMotorTemp", this.intakeMotorLeft.getDeviceTemp().getValueAsDouble());
+        Logger.recordOutput("Intake/State", intakeState);
+
+        switch (intakeState) {
+            case STOP:
+                intakeMotorLeft.stopMotor();
+                break;
+
+            case INTAKE:
+                intakeMotorLeft.set(0.6);
+                break;
+
+            case FULLSPEED_INTAKE:
+                intakeMotorLeft.set(1);
+                break;
+
+            case OUTTAKE:
+                intakeMotorLeft.set(-1);
+                break;
+        
+            default:
+                intakeMotorLeft.stopMotor();
+                break;
+        }
     }
 }

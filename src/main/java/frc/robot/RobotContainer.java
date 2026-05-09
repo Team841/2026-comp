@@ -8,29 +8,19 @@ import static edu.wpi.first.units.Units.*;
 
 import java.util.function.DoubleSupplier;
 
-import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
-
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.networktables.DoubleEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants.TunerConstants;
-import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.Autoaim;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.DyeRotor;
@@ -40,6 +30,9 @@ import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Autoaim.FiringLocation;
+import frc.robot.subsystems.DyeRotor.RotorState;
+import frc.robot.subsystems.Intake.IntakeState;
+import frc.robot.subsystems.IntakePivot.IntakePivotState;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 
@@ -52,9 +45,7 @@ public class RobotContainer {
             .withDeadband(MaxSpeed * 0.05).withRotationalDeadband(MaxAngularRate * 0.05) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
-    private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-    private final SwerveRequest.ApplyRobotSpeeds speed = new SwerveRequest.ApplyRobotSpeeds();
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
@@ -101,23 +92,23 @@ public class RobotContainer {
         NamedCommands.registerCommand("IntakeDownAndSpin", intakeDownAndSpin());
         NamedCommands.registerCommand("IntakeUpAndStop", intakeUpAndStop());
         NamedCommands.registerCommand("IntakeUpFullAndStop", intakeUpFullAndStop());
-        NamedCommands.registerCommand("IntakeForOutpost", new InstantCommand(() -> intakePivot.setPosition(-9.5)));
+        NamedCommands.registerCommand("IntakeForOutpost", new InstantCommand(() -> intakePivot.setState(IntakePivotState.BUMP_STOW)));
 
         NamedCommands.registerCommand("AutoAimAndFire10Sec", autoAimAndFire().withTimeout(10)
                                                             .finallyDo(() -> {shooter.setVelocity(0);
-                                                                            dyeRotor.stopMotor();}));
+                                                                            dyeRotor.setState(RotorState.STOP);}));
                
         NamedCommands.registerCommand("AutoAimAndFire7Sec", autoAimAndFire().withTimeout(6)
                                                             .finallyDo(() -> {shooter.setVelocity(0);
-                                                                            dyeRotor.stopMotor();}));
+                                                                            dyeRotor.setState(RotorState.STOP);}));
 
         NamedCommands.registerCommand("AutoAimAndFire4Sec", autoAimAndFire().withTimeout(4)
                 .finallyDo(() -> {shooter.setVelocity(0);
-                    dyeRotor.stopMotor();}));
+                    dyeRotor.setState(RotorState.STOP);}));
 
         NamedCommands.registerCommand("AutoAimAndFire15Sec", autoAimAndFire().withTimeout(15)
                 .finallyDo(() -> {shooter.setVelocity(0);
-                    dyeRotor.stopMotor();}));
+                    dyeRotor.setState(RotorState.STOP);}));
 
         NamedCommands.registerCommand("AutoPassAndFire", autoPassAndFire().withTimeout(5));
 
@@ -153,27 +144,27 @@ public class RobotContainer {
                     double controlY = y.getAsDouble();
 
                     hood.setPositionFromPercentage((controlY + 1) / 2);
-                });
+                }, hood);
     }
 
     public Command intakeDownAndSpin() {
         return new InstantCommand(() -> {
-            intakePivot.setPosition(-22.9);
-            intake.setDutyCycle(0.6);
+            intakePivot.setState(IntakePivotState.INTAKE);
+            intake.setState(IntakeState.INTAKE);
         }, intake, intakePivot);
     }
 
     public Command intakeUpAndStop() {
         return new InstantCommand(() -> {
-            intakePivot.setPosition(-20);
-            intake.stopMotor();
+            intakePivot.setState(IntakePivotState.BUMP_STOW);
+            intake.setState(IntakeState.STOP);
         }, intake, intakePivot);
     }
 
     public Command intakeUpFullAndStop() {
         return new InstantCommand(() -> {
-            intakePivot.setPosition(-10);
-            intake.stopMotor();
+            intakePivot.setState(IntakePivotState.COMPACT_STOW);
+            intake.setState(IntakeState.STOP);
         }, intake, intakePivot);
     }
 
@@ -228,9 +219,9 @@ public class RobotContainer {
         return Commands.run(
             () -> {
                 if (turret.atAngle(10) && shooter.atfullSpeed()) {
-                    dyeRotor.setDutyCycle(1);
+                    dyeRotor.setState(RotorState.FULLSPEED_FORWARD);
                 } else {
-                    dyeRotor.setDutyCycle(0);
+                    dyeRotor.setState(RotorState.STOP);
                 }
             }, 
             dyeRotor);
@@ -240,9 +231,9 @@ public class RobotContainer {
         return Commands.run(
             () -> {
                 if (shooter.atfullSpeed()) {
-                    dyeRotor.setDutyCycle(0.4);
+                    dyeRotor.setState(RotorState.LOWSPEED_FORWARD);
                 } else {
-                    dyeRotor.setDutyCycle(0);
+                    dyeRotor.setState(RotorState.STOP);
                 }
             }, 
             dyeRotor);
@@ -252,9 +243,9 @@ public class RobotContainer {
         return Commands.run(
             () -> {
                 if (turret.atAngle(10) && shooter.atfullSpeed() && drivetrain.goodToPass()) {
-                    dyeRotor.setDutyCycle(1);
+                    dyeRotor.setState(RotorState.FULLSPEED_FORWARD);
                 } else {
-                    dyeRotor.setDutyCycle(0);
+                    dyeRotor.setState(RotorState.STOP);
                 }
             }, 
             dyeRotor);
@@ -306,14 +297,13 @@ public class RobotContainer {
         switch (currentMode) {
 
             case NEUTRAL:
-                // activeCommand = new InstantCommand(() -> {shooter.setVelocity(0); dyeRotor.stopMotor();}, shooter);
                 activeCommand = Commands.run(
                 () -> {
                     double distanceToHubIterated = 
                         autoaim.getDistanceToScoreWhileMoving();
                     shooter.setVelocity(shooter.getShooterSpeedFromDistanceMeters(distanceToHubIterated));
                     autoaim.setFiringLocation(FiringLocation.HUB);
-                    dyeRotor.stopMotor();
+                    dyeRotor.setState(RotorState.STOP);
                 },
                 shooter, dyeRotor);
                 break;
@@ -337,7 +327,7 @@ public class RobotContainer {
             case STOP:
                 activeCommand = new InstantCommand(() -> {
                     shooter.setVelocity(0); 
-                    dyeRotor.stopMotor();}, 
+                    dyeRotor.setState(RotorState.STOP);}, 
                     shooter, dyeRotor);
                 break;
         }
@@ -366,14 +356,6 @@ public class RobotContainer {
                 .withRotationalRate(-joystick.getRightX() * MaxAngularRate)) 
         );
 
-        // joystick.back().whileTrue(
-        //     new InstantCommand(() -> drivetrain.applyRequest(() -> point.withModuleDirection(new Rotation2d()))).withTimeout(0.2)
-        //     .andThen(drivetrain.applyRequest(() -> speed.withSpeeds(new ChassisSpeeds(0.2, 0, 0))))
-        // ).onFalse(drivetrain.applyRequest(() -> drive.withVelocityX(0).withVelocityY(0)));
-
-        // turret.setDefaultCommand(snapTurretToHub().withInterruptBehavior(InterruptionBehavior.kCancelSelf));
-        // hood.setDefaultCommand(snapHoodToHub().withInterruptBehavior(InterruptionBehavior.kCancelSelf));
-
         joystick.rightTrigger().onTrue(new InstantCommand(() -> toggleMode(RobotMode.AUTOAIM_FIRE)));
         joystick.rightBumper().onTrue(new InstantCommand(() -> toggleMode(RobotMode.PASS_SHOT)));
         joystick.x().onTrue(new InstantCommand(() -> setMode(RobotMode.NEUTRAL)));
@@ -383,26 +365,46 @@ public class RobotContainer {
 
         joystick.y().whileTrue(drivetrain.applyRequest(() -> brake));
         
-        joystick.leftTrigger().onTrue(new RepeatCommand(new InstantCommand(() -> intake.setDutyCycle(0.6), intake).onlyIf(() -> intakePivot.atPosition(-22.9)))).onFalse(new InstantCommand(() -> intake.stopMotor(), intake));
-        joystick.leftTrigger().onTrue(new InstantCommand(() -> intakePivot.setPosition(-22.9), intakePivot)).onFalse(new InstantCommand(() -> intakePivot.setPosition(-20), intakePivot));
-       
-        joystick.b().onTrue(new InstantCommand(() -> intake.setDutyCycle(-1))).onFalse(new InstantCommand(() -> intake.stopMotor()));
+        joystick.leftTrigger().onTrue(
+            new RepeatCommand(
+                new InstantCommand(() -> intake.setState(IntakeState.INTAKE), intake)
+                    .onlyIf(() -> intakePivot.atPosition(-22.9))))
+            .onFalse(new InstantCommand(() -> intake.setState(IntakeState.STOP), intake));
 
-        joystick.a().onTrue(new InstantCommand(() -> intakePivot.setPosition(-6), intakePivot));
-        joystick.leftBumper().onTrue(new InstantCommand(() -> dyeRotor.setDutyCycle(-0.3))).onFalse(new InstantCommand(() -> dyeRotor.stopMotor()));
+        joystick.leftTrigger().onTrue(
+            new InstantCommand(() -> intakePivot.setState(IntakePivotState.INTAKE), intakePivot))
+            .onFalse(new InstantCommand(() -> intakePivot.setState(IntakePivotState.BUMP_STOW), intakePivot));
+       
+        joystick.b().onTrue(
+            new InstantCommand(() -> intake.setState(IntakeState.OUTTAKE), intake))
+            .onFalse(new InstantCommand(() -> intake.setState(IntakeState.STOP), intake));
+
+        joystick.a().onTrue(
+            new InstantCommand(() -> intakePivot.setState(IntakePivotState.COMPACT_STOW), intakePivot));
+
+        joystick.leftBumper().onTrue(
+            new InstantCommand(() -> dyeRotor.setState(RotorState.UNJAM_BACKWARD), dyeRotor))
+            .onFalse(new InstantCommand(() -> dyeRotor.setState(RotorState.STOP)));
         
         joystick.start().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
-        cojoystick.leftBumper().whileTrue(rotateTurretToJoystick(() -> -cojoystick.getLeftX(), () -> cojoystick.getLeftY()));
-        cojoystick.leftBumper().whileTrue(rotateHoodToJoystick(() -> -cojoystick.getRightY()));
+        cojoystick.leftBumper().whileTrue(
+            rotateTurretToJoystick(() -> -cojoystick.getLeftX(), () -> cojoystick.getLeftY()));
 
-        cojoystick.a().onTrue(new InstantCommand(() -> shooter.requestVelocity(SmartDashboard.getNumber("Shooter/ShootSpeed1", -10))));
-        cojoystick.b().onTrue(new InstantCommand(() -> shooter.requestVelocity(SmartDashboard.getNumber("Shooter/ShootSpeed2", -20))));
-        cojoystick.x().onTrue(new InstantCommand(() -> shooter.requestVelocity(SmartDashboard.getNumber("Shooter/ShootSpeed3", -40))));
-        cojoystick.y().onTrue(new InstantCommand(() -> shooter.requestVelocity(SmartDashboard.getNumber("Shooter/ShootSpeed4", -100))));
+        cojoystick.leftBumper().whileTrue(
+            rotateHoodToJoystick(() -> -cojoystick.getRightY()));
 
-        cojoystick.rightBumper().onTrue(new InstantCommand(() -> dyeRotor.setDutyCycle(0.2), dyeRotor)).onFalse(new InstantCommand(() -> dyeRotor.stopMotor(), dyeRotor));
-        cojoystick.rightTrigger().onTrue(new InstantCommand(() -> dyeRotor.setDutyCycle(1), dyeRotor)).onFalse(new InstantCommand(() -> dyeRotor.stopMotor(), dyeRotor));
+        cojoystick.a().onTrue(new InstantCommand(() -> shooter.requestVelocity(SmartDashboard.getNumber("Shooter/ShootSpeed1", -10)), shooter));
+        cojoystick.b().onTrue(new InstantCommand(() -> shooter.requestVelocity(SmartDashboard.getNumber("Shooter/ShootSpeed2", -20)), shooter));
+        cojoystick.x().onTrue(new InstantCommand(() -> shooter.requestVelocity(SmartDashboard.getNumber("Shooter/ShootSpeed3", -40)), shooter));
+        cojoystick.y().onTrue(new InstantCommand(() -> shooter.requestVelocity(SmartDashboard.getNumber("Shooter/ShootSpeed4", -100)), shooter));
+
+        cojoystick.rightBumper().onTrue(
+            new InstantCommand(() -> dyeRotor.setState(RotorState.LOWSPEED_FORWARD), dyeRotor))
+            .onFalse(new InstantCommand(() -> dyeRotor.setState(RotorState.STOP), dyeRotor));
+        cojoystick.rightTrigger().onTrue(
+            new InstantCommand(() -> dyeRotor.setState(RotorState.FULLSPEED_FORWARD), dyeRotor))
+            .onFalse(new InstantCommand(() -> dyeRotor.setState(RotorState.STOP), dyeRotor));
 
         cojoystick.start().onTrue(new InstantCommand(HubShiftUtil::initialize));
 

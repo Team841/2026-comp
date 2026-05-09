@@ -14,16 +14,21 @@ import frc.robot.constants.SuperstructureConstants;
 public class DyeRotor extends SubsystemBase {
     public TalonFX rotorMotor = new TalonFX(SuperstructureConstants.IDs.dyeRotorMotorID, "rio");
 
+    public enum RotorState {
+        STOP,
+        FULLSPEED_FORWARD,
+        LOWSPEED_FORWARD,
+        UNJAM_BACKWARD
+    }
+
+    public RotorState rotorState = RotorState.STOP;
+
     public DyeRotor() {
         rotorMotor.getConfigurator().apply(SuperstructureConstants.DyeRotorConstants.dyeRotorMotorConfigs);
     }
 
-    public void setDutyCycle(double speed) {
-        this.rotorMotor.set(speed);
-    }
-
-    public void stopMotor() {
-        this.rotorMotor.stopMotor();
+    public void setState(RotorState wantedState) {
+        rotorState = wantedState;
     }
 
     @Override
@@ -31,5 +36,28 @@ public class DyeRotor extends SubsystemBase {
         Logger.recordOutput("DyeRotor/MotorStatorCurrent", this.rotorMotor.getStatorCurrent().getValueAsDouble());
         Logger.recordOutput("DyeRotor/MotorVelocity", this.rotorMotor.getVelocity().getValueAsDouble());
         Logger.recordOutput("DyeRotor/Temp", this.rotorMotor.getDeviceTemp().getValueAsDouble());
+        Logger.recordOutput("DyeRotor/State", rotorState);
+
+        switch (rotorState) {
+            case STOP:
+                rotorMotor.stopMotor();
+                break;
+
+            case FULLSPEED_FORWARD:
+                rotorMotor.set(1);
+                break;
+
+            case LOWSPEED_FORWARD:
+                rotorMotor.set(0.2);
+                break;
+
+            case UNJAM_BACKWARD:
+                rotorMotor.set(-0.3);
+                break;
+        
+            default:
+                rotorMotor.stopMotor();
+                break;
+        }
     }
 }
