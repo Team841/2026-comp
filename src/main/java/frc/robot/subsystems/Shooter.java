@@ -104,10 +104,10 @@ public class Shooter extends SubsystemBase {
 	}
 
 	public boolean atfullSpeed() {
-		if (Math.abs(this.targetVelocity - this.getShooterVelocity()) < 3 && this.targetVelocity != 0) {
+		if (Math.abs(this.targetVelocity - this.getShooterVelocity()) < 3 && this.targetVelocity != 0 && autoaim.target.equals(Autoaim.FiringLocation.HUB)) {
 			return true;
 		}
-		if (Math.abs(this.targetVelocity) > 70 && Math.abs(this.targetVelocity - this.getShooterVelocity()) < 10) {
+		if (Math.abs(this.targetVelocity - this.getShooterVelocity()) < 8 && this.targetVelocity != 0 && autoaim.target.equals(Autoaim.FiringLocation.PASS)) {
 			return true;
 		}
 		return false;
@@ -185,14 +185,14 @@ public class Shooter extends SubsystemBase {
 
 	public enum PassingShooterSpeed {
 
-		M0(-10),
-		M2(-28),
-		M4(-39),
-		M6(-51),
-		M8(-60),
-		M10(-68),
-		M12(-81),
-		M14(-94),
+		M0(-15),
+		M2(-33),
+		M4(-44),
+		M6(-56),
+		M8(-65),
+		M10(-73),
+		M12(-86),
+		M14(-99),
 		M16(-100);
 
 		private final double rps;
