@@ -125,6 +125,7 @@ public class RobotContainer {
         configureBindings();
     }
 
+    // Manual turret control, field relative
     public Command rotateTurretToJoystick(DoubleSupplier x, DoubleSupplier y) {
         return Commands.run(
                 () -> {
@@ -141,6 +142,7 @@ public class RobotContainer {
                 }, turret);
     }
 
+    // Manual hood control
     public Command rotateHoodToJoystick(DoubleSupplier y) {
         return Commands.run(
                 () -> {
@@ -150,6 +152,7 @@ public class RobotContainer {
                 }, hood);
     }
 
+    // Rotor run command for Hub firing, checks for valid turret and shooter conditions
     public Command runDyeRotorForHubShot() {
         return Commands.run(
             () -> {
@@ -162,6 +165,7 @@ public class RobotContainer {
             dyeRotor);
     }
 
+    // Rotor run command for Poop shot, checks for shooter speed and runs lower rotor speed
     public Command runDyeRotorForPoopShot() {
         return Commands.run(
             () -> {
@@ -174,6 +178,7 @@ public class RobotContainer {
             dyeRotor);
     }
 
+    // Rotor run command for Pass firing, checks for valid turret, shooter, and drivebase location conditions
     public Command runDyeRotorForPassShot() {
         return Commands.run(
             () -> {
@@ -186,6 +191,7 @@ public class RobotContainer {
             dyeRotor);
     }
 
+    // Controls firing superstructure through state machine
     public void setMode(RobotMode newMode) {
 
         if (newMode == currentMode) return;
@@ -198,17 +204,20 @@ public class RobotContainer {
 
         switch (currentMode) {
 
+            // Turn off firing and stop turret and hood, keep flywheel running for hub shot
             case NEUTRAL:
                 activeCommand = Commands.runOnce(
                 () -> {
                     autoaim.setFiringLocation(FiringLocation.HUB);
                     shooter.setState(ShooterState.FOLLOW_TARGET);
                     turret.setState(TurretState.HOLD);
+                    hood.setState(HoodState.HOLD);
                     dyeRotor.setState(RotorState.STOP);
                 },
                 shooter, dyeRotor, turret);
                 break;
 
+            // Hub firing mode
             case AUTOAIM_FIRE:
                 activeCommand = new ParallelCommandGroup(
                     Commands.runOnce(
@@ -217,11 +226,12 @@ public class RobotContainer {
                         turret.setState(TurretState.TRACK_TARGET);
                         hood.setState(HoodState.TRACK_TARGET);
                         shooter.setState(ShooterState.FOLLOW_TARGET);
-                    }, turret, shooter),
+                    }, turret, shooter, hood),
                     runDyeRotorForHubShot()
                 );
                 break;
 
+            // Passing firing mode
             case PASS_SHOT:
                 activeCommand = new ParallelCommandGroup(
                     Commands.runOnce(
@@ -236,6 +246,7 @@ public class RobotContainer {
                 );
                 break;
 
+            // "Pooping" mode, cycles balls from rotor back into hopper for agitation
             case POOP:
                 activeCommand = new ParallelCommandGroup(
                     Commands.runOnce(
@@ -252,12 +263,14 @@ public class RobotContainer {
                 );
                 break;
 
+            // Stops all firing components
             case STOP:
                 activeCommand = Commands.runOnce(() -> {
                     shooter.setState(ShooterState.STOP);
                     turret.setState(TurretState.STOP);
-                    dyeRotor.setState(RotorState.STOP);}, 
-                    shooter, dyeRotor);
+                    dyeRotor.setState(RotorState.STOP);
+                    hood.setState(HoodState.STOP);
+                }, shooter, dyeRotor, turret, hood);
                 break;
         }
 
@@ -268,6 +281,7 @@ public class RobotContainer {
         return;
     }
 
+    // Used if mode should be "toggled"
     public void toggleMode(RobotMode newMode) {
 
         if (currentMode == newMode) {
@@ -278,6 +292,7 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
+        // Drive normally, field relative with joystick inputs
         drivetrain.setDefaultCommand(
             drivetrain.applyRequest(() ->
                 drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) 
@@ -285,14 +300,17 @@ public class RobotContainer {
                 .withRotationalRate(-joystick.getRightX() * MaxAngularRate)) 
         );
 
+        // Mode switching for firing superstructure (Turret, Hood, Shooter, DyeRotor)
         joystick.rightTrigger().onTrue(new InstantCommand(() -> toggleMode(RobotMode.AUTOAIM_FIRE)));
         joystick.rightBumper().onTrue(new InstantCommand(() -> toggleMode(RobotMode.PASS_SHOT)));
         joystick.x().onTrue(new InstantCommand(() -> setMode(RobotMode.NEUTRAL)));
         joystick.povUp().onTrue(new InstantCommand(() -> toggleMode(RobotMode.POOP)));
         joystick.povDown().onTrue(new InstantCommand(() -> setMode(RobotMode.STOP)));
 
+        // X-Lock the drivebase to help against defense
         joystick.y().whileTrue(drivetrain.applyRequest(() -> brake));
         
+        // Intake rollers and pivot
         joystick.leftTrigger().onTrue(
             new RepeatCommand(
                 new InstantCommand(() -> intake.setState(IntakeState.INTAKE), intake)
@@ -303,25 +321,32 @@ public class RobotContainer {
             new InstantCommand(() -> intakePivot.setState(IntakePivotState.INTAKE), intakePivot))
             .onFalse(new InstantCommand(() -> intakePivot.setState(IntakePivotState.BUMP_STOW), intakePivot));
        
+        // Fire balls out of intake (alternative to passing)
         joystick.b().onTrue(
             new InstantCommand(() -> intake.setState(IntakeState.OUTTAKE), intake))
             .onFalse(new InstantCommand(() -> intake.setState(IntakeState.STOP), intake));
 
+        // Compact intake pivot to push balls into rotor
         joystick.a().onTrue(
             new InstantCommand(() -> intakePivot.setState(IntakePivotState.COMPACT_STOW), intakePivot));
 
+        // Run rotor in reverse in case of jamming
         joystick.leftBumper().onTrue(
             new InstantCommand(() -> dyeRotor.setState(RotorState.UNJAM_BACKWARD), dyeRotor))
             .onFalse(new InstantCommand(() -> dyeRotor.setState(RotorState.STOP), dyeRotor));
-        
+
+        // Zero drivebase relative to field
         joystick.start().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
+        // Manual turret control
         cojoystick.leftBumper().whileTrue(
             rotateTurretToJoystick(() -> -cojoystick.getLeftX(), () -> cojoystick.getLeftY()));
 
+        // Manual hood control
         cojoystick.leftBumper().whileTrue(
             rotateHoodToJoystick(() -> -cojoystick.getRightY()));
 
+        // Manual shoot speed controls
         cojoystick.a().onTrue(
             new InstantCommand(() -> {
                 shooter.requestOverrideVelocity(SmartDashboard.getNumber("Shooter/ShootSpeed1", -10));
@@ -339,13 +364,16 @@ public class RobotContainer {
                 shooter.requestOverrideVelocity(SmartDashboard.getNumber("Shooter/ShootSpeed4", -100));
                 shooter.setState(ShooterState.FOLLOW_SUPPLIER);}, shooter));
 
+        // Manual rotor control, fast and slow options
         cojoystick.rightBumper().onTrue(
             new InstantCommand(() -> dyeRotor.setState(RotorState.LOWSPEED_FORWARD), dyeRotor))
             .onFalse(new InstantCommand(() -> dyeRotor.setState(RotorState.STOP), dyeRotor));
+
         cojoystick.rightTrigger().onTrue(
             new InstantCommand(() -> dyeRotor.setState(RotorState.FULLSPEED_FORWARD), dyeRotor))
             .onFalse(new InstantCommand(() -> dyeRotor.setState(RotorState.STOP), dyeRotor));
 
+        // Initialize/restart inactive/active shift information
         cojoystick.start().onTrue(new InstantCommand(HubShiftUtil::initialize));
 
         drivetrain.registerTelemetry(logger::telemeterize);

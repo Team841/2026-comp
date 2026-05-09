@@ -61,9 +61,9 @@ public class Robot extends LoggedRobot {
     private Orchestra orchestra = new Orchestra();
 
     public Robot() {
-//        Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
+        // Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
 
-       Logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
+        Logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
         Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
         //  Logger.addDataReceiver(new RLOGServer());
 
@@ -74,11 +74,11 @@ public class Robot extends LoggedRobot {
         Logger.start();
 
         drivetrain = new Drivetrain(
-        TunerConstants.DrivetrainConstants, 
-        TunerConstants.FrontLeft, 
-        TunerConstants.FrontRight, 
-        TunerConstants.BackLeft, 
-        TunerConstants.BackRight);
+            TunerConstants.DrivetrainConstants, 
+            TunerConstants.FrontLeft, 
+            TunerConstants.FrontRight, 
+            TunerConstants.BackLeft, 
+            TunerConstants.BackRight);
 
         this.autoaim = new Autoaim(drivetrain);
 
@@ -92,14 +92,13 @@ public class Robot extends LoggedRobot {
         this.visionIO = new VisionIOLimelights();
         this.vision = new Vision(visionIO, drivetrain, turret);
 
-
         robotContainer = new RobotContainer(drivetrain, dyeRotor, hood, intake, intakePivot, shooter, turret, visionIO, vision, autoaim);
+
+        this.led = new LED(robotContainer);
 
         if (!AutoBuilder.isConfigured()){
             drivetrain.ConfigureAutobuilder();
         }
-
-        this.led = new LED(robotContainer);
         
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -129,7 +128,7 @@ public class Robot extends LoggedRobot {
         Logger.recordOutput("HubShift/Official", latestShiftInfo);
 
         SmartDashboard.putString("Current Shift", latestShiftInfo.currentShift().toString());
-//        SmartDashboard.putNumber("Elapsed Time", latestShiftInfo.elapsedTime());
+        // SmartDashboard.putNumber("Elapsed Time", latestShiftInfo.elapsedTime());
         SmartDashboard.putNumber("Remaining Time", latestShiftInfo.remainingTime());
         SmartDashboard.putBoolean("Shift Active", latestShiftInfo.active());
     }
