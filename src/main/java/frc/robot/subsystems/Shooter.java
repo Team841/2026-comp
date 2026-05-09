@@ -25,20 +25,30 @@ public class Shooter extends SubsystemBase {
 	private Follower follower = new Follower(SuperstructureConstants.IDs.rightShooterMotorID, MotorAlignmentValue.Opposed);
 
 	private InterpolatingDoubleTreeMap shooterSpeedsMap;
-
 	private InterpolatingDoubleTreeMap passingShooterSpeedsMap;
 
-	private InterpolatingDoubleTreeMap timeOfFlightMap;
+	private Autoaim autoaim;
 
 	private double targetVelocity = 0;
 
+	private double overrideSupplierVelocity = 0;
+
 	StatusCode[] latestStatus;
 
-	public Shooter() {
+	public enum ShooterState {
+        STOP,
+        HOLD,
+        FOLLOW_TARGET,
+        FOLLOW_SUPPLIER
+    }
+
+	public ShooterState shooterState = ShooterState.STOP;
+
+	public Shooter(Autoaim autoaim) {
 		this.rightMotor.getConfigurator().apply(SuperstructureConstants.ShooterConstants.shooterMotorConfigs);
 		this.leftMotor.setControl(follower);
 
-		this.targetVelocity = 0;
+		this.autoaim = autoaim;
 
 		this.shooterSpeedsMap = new InterpolatingDoubleTreeMap();
 		this.shooterSpeedsMap.put(1.0, ShooterSpeed.M1.getRPS());
@@ -56,18 +66,10 @@ public class Shooter extends SubsystemBase {
 		this.passingShooterSpeedsMap.put(10.0, PassingShooterSpeed.M10.getRPS());
 		this.passingShooterSpeedsMap.put(12.0, PassingShooterSpeed.M12.getRPS());
 		this.passingShooterSpeedsMap.put(16.0, PassingShooterSpeed.M16.getRPS());
-
-		this.timeOfFlightMap = new InterpolatingDoubleTreeMap();
-		this.timeOfFlightMap.put(1.0, TimeOfFlight.M1.getSeconds());
-		this.timeOfFlightMap.put(2.0, TimeOfFlight.M2.getSeconds());
-		this.timeOfFlightMap.put(3.0, TimeOfFlight.M3.getSeconds());
-		this.timeOfFlightMap.put(4.0, TimeOfFlight.M4.getSeconds());
-		this.timeOfFlightMap.put(5.0, TimeOfFlight.M5.getSeconds());
-
 	}
 
-	public void setVelocity(double rps) {
-		this.targetVelocity = rps;
+	public void setState(ShooterState wantedState) {
+		this.shooterState = wantedState;
 	}
 
 	public double getShooterSpeedFromDistanceMeters(double distance) {
@@ -78,16 +80,16 @@ public class Shooter extends SubsystemBase {
 		return this.passingShooterSpeedsMap.get(distance);
 	}
 
-	public double getTimeOfFlightFromDistanceMeters(double distance) {
-		return this.timeOfFlightMap.get(distance);
+	public void requestOverrideVelocity(double newRPS) {
+		if (newRPS == this.overrideSupplierVelocity) {
+			this.overrideSupplierVelocity = 0;
+		} else {
+			this.overrideSupplierVelocity = newRPS;
+		}
 	}
 
-	public void requestVelocity(double newRPS) {
-		if (newRPS == this.targetVelocity) {
-			this.targetVelocity = 0;
-		} else {
-			this.targetVelocity = newRPS;
-		}
+	public void setOverrideVelocity(double rps) {
+		this.overrideSupplierVelocity = rps;
 	}
 
 	public void stopMotor() {
@@ -121,15 +123,43 @@ public class Shooter extends SubsystemBase {
 
 	@Override
 	public void periodic() {
-		if (this.targetVelocity == 0) {
-			this.stopMotor();
-		} else {
-			this.latestStatus = this.setControl(velocityControl.withVelocity(this.targetVelocity));
-		}
-
 		Logger.recordOutput("Shooter/TargetSpeed", this.getShooterTargetVelocity());
 		Logger.recordOutput("Shooter/Speed", this.getShooterVelocity());
 		Logger.recordOutput("Shooter/AtFullSpeed", this.atfullSpeed());
+		Logger.recordOutput("Shooter/State", shooterState);
+
+        switch (shooterState) {
+            case STOP:
+                this.stopMotor();
+                break;
+
+            case HOLD:
+                break;
+
+            case FOLLOW_TARGET:
+				if (autoaim.target.equals(Autoaim.FiringLocation.HUB)) {
+					targetVelocity = getShooterSpeedFromDistanceMeters(autoaim.getDistanceToScoreWhileMoving());
+				} else if (autoaim.target.equals(Autoaim.FiringLocation.PASS)) {
+					targetVelocity = getShooterPassingSpeedFromDistanceMeters(autoaim.getDistanceToScoreWhileMoving());
+				}
+                break;
+
+            case FOLLOW_SUPPLIER:
+				targetVelocity = overrideSupplierVelocity;
+                break;
+        
+            default:
+                this.stopMotor();
+                break;
+        }
+
+        if (!shooterState.equals(ShooterState.STOP)) {
+			if (this.targetVelocity == 0) {
+				this.stopMotor();
+			} else {
+				this.latestStatus = this.setControl(velocityControl.withVelocity(this.targetVelocity));
+			}
+        }
 	}
 
 	public enum ShooterSpeed {
@@ -155,15 +185,15 @@ public class Shooter extends SubsystemBase {
 
 	public enum PassingShooterSpeed {
 
-		M0(-4),
-		M2(-18),
-		M4(-29),
-		M6(-41),
-		M8(-50),
-		M10(-58),
-		M12(-71),
-		M14(-84),
-		M16(-99);
+		M0(-10),
+		M2(-28),
+		M4(-39),
+		M6(-51),
+		M8(-60),
+		M10(-68),
+		M12(-81),
+		M14(-94),
+		M16(-100);
 
 		private final double rps;
 
@@ -175,26 +205,4 @@ public class Shooter extends SubsystemBase {
 			return rps;
 		}
 	}
-
-	public enum TimeOfFlight {
-
-		M1(0.7),
-		M2(0.9),
-		M3(1.1),
-		M4(1.4),
-		M5(1.6),
-		M6(1.8),
-		M7(2);
-
-		private final double sec;
-
-		TimeOfFlight(double sec) {
-			this.sec = sec;
-		}
-
-		public double getSeconds() {
-			return sec;
-		}
-	}
-
 }

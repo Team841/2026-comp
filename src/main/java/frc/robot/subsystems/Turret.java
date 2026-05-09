@@ -96,9 +96,8 @@ public class Turret extends SubsystemBase {
         return Math.abs(this.getTurretTargetAngle().getDegrees() - this.getTurretAngleAbsolute().getDegrees()) < toleranceDegrees;
     }
 
-    public static double shortestAngleDifference(double current, double target) {
-        double diff = target - current;
-        return Math.atan2(Math.sin(diff), Math.cos(diff));
+    public boolean atAngleToFire() {
+        return Math.abs(autoaim.getTurretRelativeAngleToFireWhileMoving().getDegrees() - this.getTurretAngleAbsolute().getDegrees()) < 10;
     }
 
     public void zero() {
@@ -117,7 +116,8 @@ public class Turret extends SubsystemBase {
         Logger.recordOutput("Turret/CurrentPosition", this.getTurretAngle().getDegrees());
         Logger.recordOutput("Turret/CurrentAbsolutePosition", this.getTurretAngleAbsolute().getDegrees());
         Logger.recordOutput("Turret/TargetMotorPosition", this.getContinuousTurretSetpoint());
-        Logger.recordOutput("Turret/WithinTolerance", this.atAngle(10));
+        Logger.recordOutput("Turret/WithinTolerance10deg", this.atAngle(10));
+        Logger.recordOutput("Turret/WithinToleranceToFire", this.atAngleToFire());
         Logger.recordOutput("Turret/State", turretState);
 
         switch (turretState) {
@@ -129,7 +129,7 @@ public class Turret extends SubsystemBase {
                 break;
 
             case TRACK_TARGET:
-                this.setPosition(autoaim.getTurretRelativeAngleToFireWhileMoving());
+                this.setPosition(autoaim.getTurretRelativeAngleToFireWhileMoving().minus(autoaim.getTurretLeadAngleFromDrivetrainRotation()));
                 break;
 
             case TRACK_SUPPLIER:

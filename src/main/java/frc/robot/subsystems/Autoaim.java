@@ -60,7 +60,11 @@ public class Autoaim extends SubsystemBase {
     }
 
     public Rotation2d getTurretRelativeAngleToFireWhileMoving() {
-        return getFieldRelativeAngleToFireWhileMoving().minus(drivetrain.getState().Pose.getRotation()).minus(new Rotation2d(drivetrain.getState().Speeds.omegaRadiansPerSecond * 0.05));
+        return getFieldRelativeAngleToFireWhileMoving().minus(drivetrain.getState().Pose.getRotation());
+    }
+
+    public Rotation2d getTurretLeadAngleFromDrivetrainRotation() {
+        return new Rotation2d(drivetrain.getState().Speeds.omegaRadiansPerSecond * 0.05);
     }
 
     public double getDistanceToScoreWhileMoving() {
