@@ -92,36 +92,10 @@ public class RobotContainer {
         this.vision = vision;
         this.autoaim = autoaim;
 
-        // NamedCommands.registerCommand("IntakeDownAndSpin", intakeDownAndSpin());
-        // NamedCommands.registerCommand("IntakeUpAndStop", intakeUpAndStop());
-        // NamedCommands.registerCommand("IntakeUpFullAndStop", intakeUpFullAndStop());
-        // NamedCommands.registerCommand("IntakeForOutpost", new InstantCommand(() -> intakePivot.setState(IntakePivotState.BUMP_STOW)));
-
-        // NamedCommands.registerCommand("AutoAimAndFire10Sec", autoAimAndFire().withTimeout(10)
-        //                                                     .finallyDo(() -> {shooter.setState(ShooterState.STOP);
-        //                                                                     dyeRotor.setState(RotorState.STOP);}));
-               
-        // NamedCommands.registerCommand("AutoAimAndFire7Sec", autoAimAndFire().withTimeout(6)
-        //                                                     .finallyDo(() -> {shooter.setState(ShooterState.STOP);
-        //                                                                     dyeRotor.setState(RotorState.STOP);}));
-
-        // NamedCommands.registerCommand("AutoAimAndFire4Sec", autoAimAndFire().withTimeout(4)
-        //         .finallyDo(() -> {shooter.setState(ShooterState.STOP);
-        //             dyeRotor.setState(RotorState.STOP);}));
-
-        // NamedCommands.registerCommand("AutoAimAndFire15Sec", autoAimAndFire().withTimeout(15)
-        //         .finallyDo(() -> {shooter.setState(ShooterState.STOP);
-        //             dyeRotor.setState(RotorState.STOP);}));
-
-        // NamedCommands.registerCommand("AutoPassAndFire", autoPassAndFire().withTimeout(5));
-
-        // NamedCommands.registerCommand("SpinUpShooterEarly", spinUpShooterEarly());
-
         SmartDashboard.putNumber("Shooter/ShootSpeed1", -10);
         SmartDashboard.putNumber("Shooter/ShootSpeed2", -20);
         SmartDashboard.putNumber("Shooter/ShootSpeed3", -40);
         SmartDashboard.putNumber("Shooter/ShootSpeed4", -100);
-
         
         configureBindings();
     }

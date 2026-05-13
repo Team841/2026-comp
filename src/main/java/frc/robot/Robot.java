@@ -6,8 +6,6 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.RobotContainer.RobotMode;
 import frc.robot.constants.RobotConstants;
@@ -22,40 +20,26 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.SignalLogger;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.FollowPathCommand;
 
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
-import choreo.auto.AutoRoutine;
-import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj.Threads;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Autoaim;
-import frc.robot.subsystems.Autoaim.FiringLocation;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.DyeRotor;
 import frc.robot.subsystems.Hood;
-import frc.robot.subsystems.Hood.HoodState;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Shooter.ShooterState;
 import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.Turret.TurretState;
 import frc.robot.subsystems.Intake.IntakeState;
-import frc.robot.subsystems.IntakePivot.IntakePivotState;
 
 public class Robot extends LoggedRobot {
-    private Command m_autonomousCommand;
 
-    // private final SendableChooser<Command> autoChooser;
     private final AutoChooser autoChooser;
 
     private final RobotContainer robotContainer;
@@ -128,8 +112,12 @@ public class Robot extends LoggedRobot {
 
         autoChooser.addRoutine("L_NZ_DP_NZR", autos::LeftSideOneSweepPlusDepotAndReturn);
         autoChooser.addRoutine("R_NZ", autos::RightSideOneSweepNZ);
+        autoChooser.addRoutine("L_NZ", autos::LeftSideOneSweepNZ);
         autoChooser.addRoutine("L_NZ_NZ", autos::LeftSideTwoSweep);
         autoChooser.addRoutine("R_NZ_NZ", autos::RightSideTwoSweep);
+        autoChooser.addRoutine("M_Preload", autos::MiddlePreloadFire);
+        autoChooser.addRoutine("M_DP", autos::MiddleDepot);
+        autoChooser.addRoutine("M_OP", autos::MiddleOutpost);
 
         SmartDashboard.putData("AutoChooser", autoChooser);
 
