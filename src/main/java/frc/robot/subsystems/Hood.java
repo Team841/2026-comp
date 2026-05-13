@@ -99,7 +99,11 @@ public class Hood extends SubsystemBase {
                 break;
 
             case TRACK_TARGET:
-                targetPosition = this.getHoodHeightFromMetersToHub(autoaim.getDistanceToScoreWhileMoving());
+                if (autoaim.target.equals(Autoaim.FiringLocation.HUB)) {
+                    targetPosition = this.getHoodHeightFromMetersToHub(autoaim.getDistanceToScoreWhileMoving());
+                } else {
+                    targetPosition = -4.1;
+                }
                 break;
 
             case TRACK_SUPPLIER:

@@ -222,7 +222,7 @@ public class RobotContainer {
                 activeCommand = new ParallelCommandGroup(
                     Commands.runOnce(
                     () -> {
-                        autoaim.setFiringLocation(FiringLocation.PASS);
+                        autoaim.setFiringLocation(FiringLocation.HUB);
                         turret.setState(TurretState.TRACK_TARGET);
                         hood.setState(HoodState.TRACK_TARGET);
                         shooter.setState(ShooterState.FOLLOW_TARGET);
