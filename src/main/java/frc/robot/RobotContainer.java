@@ -76,6 +76,7 @@ public class RobotContainer {
         AUTOAIM_FIRE,
         PASS_SHOT,
         POOP,
+        ZERO,
         STOP
     }
 
@@ -263,6 +264,20 @@ public class RobotContainer {
                 );
                 break;
 
+            case ZERO:
+                activeCommand = Commands.runOnce(
+                () -> {
+                    autoaim.setFiringLocation(FiringLocation.HUB);
+                    shooter.setState(ShooterState.STOP);
+                    turret.setOverridePosition(Rotation2d.kZero);
+                    turret.setState(TurretState.TRACK_SUPPLIER);
+                    hood.setOverrideSupplier(0);
+                    hood.setState(HoodState.TRACK_SUPPLIER);
+                    dyeRotor.setState(RotorState.STOP);
+                },
+                shooter, dyeRotor, turret);
+                break;
+
             // Stops all firing components
             case STOP:
                 activeCommand = Commands.runOnce(() -> {
@@ -306,6 +321,7 @@ public class RobotContainer {
         joystick.x().onTrue(new InstantCommand(() -> setMode(RobotMode.NEUTRAL)));
         joystick.povUp().onTrue(new InstantCommand(() -> toggleMode(RobotMode.POOP)));
         joystick.povDown().onTrue(new InstantCommand(() -> setMode(RobotMode.STOP)));
+        joystick.povLeft().onTrue(new InstantCommand(() -> setMode(RobotMode.ZERO)));
 
         // X-Lock the drivebase to help against defense
         joystick.y().whileTrue(drivetrain.applyRequest(() -> brake));
