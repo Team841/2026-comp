@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import frc.robot.RobotContainer.RobotMode;
 import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
@@ -73,6 +74,8 @@ public class Robot extends LoggedRobot {
 
     private final AutoFactory autoFactory;
 
+    private final Autos autos;
+
     private Orchestra orchestra = new Orchestra();
 
     public Robot() {
@@ -111,29 +114,26 @@ public class Robot extends LoggedRobot {
 
         this.led = new LED(robotContainer);
 
-        // if (!AutoBuilder.isConfigured()){
-        //     drivetrain.ConfigureAutobuilder();
-        // }
-
-
-        autoFactory = new AutoFactory(
+        this.autoFactory = new AutoFactory(
             drivetrain::getPose, // A function that returns the current robot pose
             drivetrain::resetPose, // A function that resets the current robot pose to the provided Pose2d
             drivetrain::followTrajectory, // The drive subsystem trajectory follower 
             true, // If alliance flipping should be enabled 
             drivetrain // The drive subsystem
         );
+
+        this.autos = new Autos(robotContainer, autoFactory);
         
         autoChooser = new AutoChooser();
 
-        autoChooser.addRoutine("Poop", this::masonTestAutoRoutine);
+        autoChooser.addRoutine("L_NZ_DP_NZR", autos::LeftSideOneSweepPlusDepotAndReturn);
+        autoChooser.addRoutine("R_NZ", autos::RightSideOneSweepNZ);
+        autoChooser.addRoutine("L_NZ_NZ", autos::LeftSideTwoSweep);
+        autoChooser.addRoutine("R_NZ_NZ", autos::RightSideTwoSweep);
 
         SmartDashboard.putData("AutoChooser", autoChooser);
 
         RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());
-
-        // autoChooser = AutoBuilder.buildAutoChooser();
-        // SmartDashboard.putData("Auto Chooser", autoChooser);
 
         Threads.setCurrentThreadPriority(true, 5);
 
@@ -149,41 +149,6 @@ public class Robot extends LoggedRobot {
         // this.orchestra.loadMusic("rickroll.chrp");
 
         // this.orchestra.play();
-    }
-
-    private AutoRoutine masonTestAutoRoutine() {
-        AutoRoutine routine = autoFactory.newRoutine("MasonTest");
-
-        // Load the routine's trajectories
-        AutoTrajectory pathToNzAndBack = routine.trajectory("MasonTest");  
-        
-        routine.active().onTrue(
-            Commands.sequence(
-                pathToNzAndBack.cmd()
-            )
-        );
-
-        pathToNzAndBack.atTime("IntakeDown").onTrue(Commands.runOnce(() -> {
-            intake.setState(IntakeState.INTAKE);
-            intakePivot.setState(IntakePivotState.INTAKE);
-        }, intake, intakePivot));
-
-        pathToNzAndBack.atTime("IntakeUp").onTrue(Commands.runOnce(() -> {
-            intakePivot.setState(IntakePivotState.BUMP_STOW);
-        }, intakePivot));
-
-        pathToNzAndBack.atTime("Shoot").onTrue(new ParallelCommandGroup(
-                    Commands.runOnce(
-                    () -> {
-                        autoaim.setFiringLocation(FiringLocation.HUB);
-                        turret.setState(TurretState.TRACK_TARGET);
-                        hood.setState(HoodState.TRACK_TARGET);
-                        shooter.setState(ShooterState.FOLLOW_TARGET);
-                    }, turret, shooter, hood),
-                    robotContainer.runDyeRotorForHubShot()
-                ));
-
-        return routine;
     }
 
     @Override
@@ -219,16 +184,6 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void autonomousInit() {
-        // m_autonomousCommand = autoChooser.getSelected();
-
-        // m_autonomousCommand = Commands.sequence(
-        //     // autoFactory.resetOdometry("TEST"), 
-        //     autoFactory.trajectoryCmd("TEST"));
-
-        // if (m_autonomousCommand != null) {
-        //     CommandScheduler.getInstance().schedule(m_autonomousCommand);
-        // }
-
         HubShiftUtil.initialize();
     }
 
@@ -246,10 +201,8 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void teleopInit() {
-        if (m_autonomousCommand != null) {
-            CommandScheduler.getInstance().cancel(m_autonomousCommand);
-        }
-
+        intake.setState(IntakeState.STOP);
+        robotContainer.setMode(RobotMode.NEUTRAL);
         HubShiftUtil.initialize();
     }
 

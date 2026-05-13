@@ -68,7 +68,7 @@ public class RobotContainer {
     public final VisionIO visionIO;
     public final Vision vision;
 
-    public RobotMode currentMode = RobotMode.STOP;
+    public RobotMode currentMode = RobotMode.NEUTRAL;
     private Command activeCommand = null;
 
     public enum RobotMode {
