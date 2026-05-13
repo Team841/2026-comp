@@ -261,6 +261,53 @@ public class Autos {
         return routine;
     }
 
+    public AutoRoutine RightSideOneSweepDepotAndReturn() {
+        AutoRoutine routine = autoFactory.newRoutine("RightSideOneSweepDepotAndReturn");
+
+        AutoTrajectory path = routine.trajectory("RightSideOneSweepPlusOutpost");  
+        
+        routine.active().onTrue(
+                path.cmd()
+        );
+
+        path.atTime("IntakeDown").onTrue(Commands.runOnce(() -> {
+            intake.setState(IntakeState.INTAKE);
+            intakePivot.setState(IntakePivotState.INTAKE);
+        }, intake, intakePivot));
+
+        path.atTime("IntakeBumpStow").onTrue(Commands.runOnce(() -> {
+            intakePivot.setState(IntakePivotState.BUMP_STOW);
+        }, intakePivot));
+
+        path.atTime("IntakeUp").onTrue(Commands.runOnce(() -> {
+            intakePivot.setState(IntakePivotState.COMPACT_STOW);
+        }, intakePivot));
+
+        path.atTime("HubFire").onTrue(new ParallelCommandGroup(
+            Commands.runOnce(
+            () -> {
+                autoaim.setFiringLocation(FiringLocation.HUB);
+                turret.setState(TurretState.TRACK_TARGET);
+                hood.setState(HoodState.TRACK_TARGET);
+                shooter.setState(ShooterState.FOLLOW_TARGET);
+            }, turret, shooter, hood),
+            robotContainer.runDyeRotorForHubShot()
+        ));
+
+        path.atTime("StopFire").onTrue(
+            Commands.runOnce(
+            () -> {
+                autoaim.setFiringLocation(FiringLocation.HUB);
+                turret.setState(TurretState.TRACK_TARGET);
+                hood.setState(HoodState.TRACK_TARGET);
+                shooter.setState(ShooterState.FOLLOW_TARGET);
+                dyeRotor.setState(RotorState.STOP);
+            }, turret, shooter, hood, dyeRotor)
+        );
+
+        return routine;
+    }
+
     public AutoRoutine MiddlePreloadFire() {
         AutoRoutine routine = autoFactory.newRoutine("MiddlePreloadFire");
 

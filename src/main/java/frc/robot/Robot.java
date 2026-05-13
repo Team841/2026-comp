@@ -115,6 +115,7 @@ public class Robot extends LoggedRobot {
         autoChooser.addRoutine("L_NZ", autos::LeftSideOneSweepNZ);
         autoChooser.addRoutine("L_NZ_NZ", autos::LeftSideTwoSweep);
         autoChooser.addRoutine("R_NZ_NZ", autos::RightSideTwoSweep);
+        autoChooser.addRoutine("R_NZ_OP_NZR", autos::RightSideOneSweepDepotAndReturn);
         autoChooser.addRoutine("M_Preload", autos::MiddlePreloadFire);
         autoChooser.addRoutine("M_DP", autos::MiddleDepot);
         autoChooser.addRoutine("M_OP", autos::MiddleOutpost);
