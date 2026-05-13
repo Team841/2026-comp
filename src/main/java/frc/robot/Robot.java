@@ -7,6 +7,8 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
@@ -22,27 +24,38 @@ import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.FollowPathCommand;
 
+import choreo.auto.AutoChooser;
+import choreo.auto.AutoFactory;
+import choreo.auto.AutoRoutine;
+import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Autoaim;
+import frc.robot.subsystems.Autoaim.FiringLocation;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.DyeRotor;
 import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.Hood.HoodState;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Shooter.ShooterState;
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Turret.TurretState;
+import frc.robot.subsystems.Intake.IntakeState;
+import frc.robot.subsystems.IntakePivot.IntakePivotState;
 
 public class Robot extends LoggedRobot {
     private Command m_autonomousCommand;
 
-    private final SendableChooser<Command> autoChooser;
+    // private final SendableChooser<Command> autoChooser;
+    private final AutoChooser autoChooser;
 
     private final RobotContainer robotContainer;
     private final Autoaim autoaim;
@@ -57,6 +70,8 @@ public class Robot extends LoggedRobot {
 
     public final VisionIO visionIO;
     public final Vision vision;
+
+    private final AutoFactory autoFactory;
 
     private Orchestra orchestra = new Orchestra();
 
@@ -96,12 +111,29 @@ public class Robot extends LoggedRobot {
 
         this.led = new LED(robotContainer);
 
-        if (!AutoBuilder.isConfigured()){
-            drivetrain.ConfigureAutobuilder();
-        }
+        // if (!AutoBuilder.isConfigured()){
+        //     drivetrain.ConfigureAutobuilder();
+        // }
+
+
+        autoFactory = new AutoFactory(
+            drivetrain::getPose, // A function that returns the current robot pose
+            drivetrain::resetPose, // A function that resets the current robot pose to the provided Pose2d
+            drivetrain::followTrajectory, // The drive subsystem trajectory follower 
+            true, // If alliance flipping should be enabled 
+            drivetrain // The drive subsystem
+        );
         
-        autoChooser = AutoBuilder.buildAutoChooser();
-        SmartDashboard.putData("Auto Chooser", autoChooser);
+        autoChooser = new AutoChooser();
+
+        autoChooser.addRoutine("Poop", this::masonTestAutoRoutine);
+
+        SmartDashboard.putData("AutoChooser", autoChooser);
+
+        RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());
+
+        // autoChooser = AutoBuilder.buildAutoChooser();
+        // SmartDashboard.putData("Auto Chooser", autoChooser);
 
         Threads.setCurrentThreadPriority(true, 5);
 
@@ -117,6 +149,41 @@ public class Robot extends LoggedRobot {
         // this.orchestra.loadMusic("rickroll.chrp");
 
         // this.orchestra.play();
+    }
+
+    private AutoRoutine masonTestAutoRoutine() {
+        AutoRoutine routine = autoFactory.newRoutine("MasonTest");
+
+        // Load the routine's trajectories
+        AutoTrajectory pathToNzAndBack = routine.trajectory("MasonTest");  
+        
+        routine.active().onTrue(
+            Commands.sequence(
+                pathToNzAndBack.cmd()
+            )
+        );
+
+        pathToNzAndBack.atTime("IntakeDown").onTrue(Commands.runOnce(() -> {
+            intake.setState(IntakeState.INTAKE);
+            intakePivot.setState(IntakePivotState.INTAKE);
+        }, intake, intakePivot));
+
+        pathToNzAndBack.atTime("IntakeUp").onTrue(Commands.runOnce(() -> {
+            intakePivot.setState(IntakePivotState.BUMP_STOW);
+        }, intakePivot));
+
+        pathToNzAndBack.atTime("Shoot").onTrue(new ParallelCommandGroup(
+                    Commands.runOnce(
+                    () -> {
+                        autoaim.setFiringLocation(FiringLocation.HUB);
+                        turret.setState(TurretState.TRACK_TARGET);
+                        hood.setState(HoodState.TRACK_TARGET);
+                        shooter.setState(ShooterState.FOLLOW_TARGET);
+                    }, turret, shooter, hood),
+                    robotContainer.runDyeRotorForHubShot()
+                ));
+
+        return routine;
     }
 
     @Override
@@ -152,11 +219,15 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void autonomousInit() {
-        m_autonomousCommand = autoChooser.getSelected();
+        // m_autonomousCommand = autoChooser.getSelected();
 
-        if (m_autonomousCommand != null) {
-            CommandScheduler.getInstance().schedule(m_autonomousCommand);
-        }
+        // m_autonomousCommand = Commands.sequence(
+        //     // autoFactory.resetOdometry("TEST"), 
+        //     autoFactory.trajectoryCmd("TEST"));
+
+        // if (m_autonomousCommand != null) {
+        //     CommandScheduler.getInstance().schedule(m_autonomousCommand);
+        // }
 
         HubShiftUtil.initialize();
     }
