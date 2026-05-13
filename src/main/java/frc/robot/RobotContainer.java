@@ -257,7 +257,7 @@ public class RobotContainer {
                         hood.setState(HoodState.TRACK_SUPPLIER);
                         hood.setOverrideSupplier(-4.1);
                         shooter.setOverrideVelocity(-10);
-                        shooter.setState(ShooterState.FOLLOW_TARGET);
+                        shooter.setState(ShooterState.FOLLOW_SUPPLIER);
                     }, turret, hood, shooter),
                     runDyeRotorForPoopShot()
                 );

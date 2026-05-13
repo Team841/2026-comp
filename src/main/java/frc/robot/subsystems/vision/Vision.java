@@ -21,7 +21,7 @@ public class Vision extends SubsystemBase {
     private final Drivetrain drivetrain;
     private final Turret turret;
 
-    public static final Vector<N3> standardVisionDevs2OrMore = VecBuilder.fill(0.75, 0.75, 0.75);
+    public static final Vector<N3> standardVisionDevs2OrMore = VecBuilder.fill(0.1, 0.1, 0.1);
     public static final Vector<N3> standardVisionDevs1tag = VecBuilder.fill(0.3, 0.3, 0.3);
 
     public static final Vector<N3> standardVisionDevsMT2 = VecBuilder.fill(1, 1, 999);
