@@ -119,7 +119,13 @@ public class Autos {
         AutoTrajectory path = routine.trajectory("LeftSideOneSweepPlusDepot");  
         
         routine.active().onTrue(
-                path.cmd()
+            Commands.parallel(
+                path.cmd(),
+                Commands.runOnce(() -> {
+                    shooter.setState(ShooterState.FOLLOW_TARGET);
+                    autoaim.setFiringLocation(FiringLocation.HUB);
+                })
+            )
         );
 
         path.atTime("IntakeDown").onTrue(Commands.runOnce(() -> {
