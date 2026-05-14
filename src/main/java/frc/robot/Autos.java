@@ -66,11 +66,11 @@ public class Autos {
             intakePivot.setState(IntakePivotState.INTAKE);
         }, intake, intakePivot));
 
-        path.atTime("IntakeUp").onTrue(Commands.runOnce(() -> {
+        path.atTime("IntakeBumpStow").onTrue(Commands.runOnce(() -> {
             intakePivot.setState(IntakePivotState.BUMP_STOW);
         }, intakePivot));
 
-        path.atTime("Shoot").onTrue(new ParallelCommandGroup(
+        path.atTime("HubFire").onTrue(new ParallelCommandGroup(
                     Commands.runOnce(
                     () -> {
                         autoaim.setFiringLocation(FiringLocation.HUB);
@@ -101,11 +101,11 @@ public class Autos {
             intakePivot.setState(IntakePivotState.INTAKE);
         }, intake, intakePivot));
 
-        path.atTime("IntakeUp").onTrue(Commands.runOnce(() -> {
+        path.atTime("IntakeBumpStow").onTrue(Commands.runOnce(() -> {
             intakePivot.setState(IntakePivotState.BUMP_STOW);
         }, intakePivot));
 
-        path.atTime("Shoot").onTrue(new ParallelCommandGroup(
+        path.atTime("HubFire").onTrue(new ParallelCommandGroup(
                     Commands.runOnce(
                     () -> {
                         autoaim.setFiringLocation(FiringLocation.HUB);
@@ -132,6 +132,8 @@ public class Autos {
                     Commands.runOnce(() -> {
                         shooter.setState(ShooterState.FOLLOW_TARGET);
                         autoaim.setFiringLocation(FiringLocation.HUB);
+                        turret.setState(TurretState.TRACK_TARGET);
+                        hood.setState(HoodState.TRACK_TARGET);
                     })
                 )
             )

@@ -323,7 +323,7 @@
   "splits":[0]
  },
  "events":[
-   {"name":"IntakeUp", "from":{"target":6, "targetTimestamp":4.39811, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
-   {"name":"Shoot", "from":{"target":7, "targetTimestamp":6.00517, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
+   {"name":"IntakeBumpStow", "from":{"target":6, "targetTimestamp":4.39811, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
+   {"name":"HubFire", "from":{"target":7, "targetTimestamp":6.00517, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
    {"name":"IntakeDown", "from":{"target":1, "targetTimestamp":0.74447, "offset":{"exp":"0 s", "val":0.0}}, "event":null}]
 }

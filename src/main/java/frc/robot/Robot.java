@@ -36,7 +36,10 @@ import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.DyeRotor.RotorState;
+import frc.robot.subsystems.Hood.HoodState;
 import frc.robot.subsystems.Intake.IntakeState;
+import frc.robot.subsystems.Turret.TurretState;
 
 public class Robot extends LoggedRobot {
 
@@ -192,6 +195,9 @@ public class Robot extends LoggedRobot {
     @Override
     public void teleopInit() {
         intake.setState(IntakeState.STOP);
+        dyeRotor.setState(RotorState.STOP);
+        turret.setState(TurretState.HOLD);
+        hood.setState(HoodState.HOLD);
         robotContainer.setMode(RobotMode.NEUTRAL);
         HubShiftUtil.initialize();
         vision.enableVision();
