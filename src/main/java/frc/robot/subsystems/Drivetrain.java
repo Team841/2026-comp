@@ -60,9 +60,9 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
 
     public final NetworkTable visionControlTable = vision.getTable("VisionControl");
 
-    private final PIDController xController = new PIDController(10.0, 0.0, 0.0);
-    private final PIDController yController = new PIDController(10.0, 0.0, 0.0);
-    private final PIDController headingController = new PIDController(7.5, 0.0, 0.0);
+    private final PIDController xController = new PIDController(7.0, 0.0, 0.2);
+    private final PIDController yController = new PIDController(7.0, 0.0, 0.2);
+    private final PIDController headingController = new PIDController(5, 0.0, 0.1);
 
     public final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds()
             .withDriveRequestType(SwerveModule.DriveRequestType.Velocity)

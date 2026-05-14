@@ -27,6 +27,8 @@ public class Vision extends SubsystemBase {
     public static final Vector<N3> standardVisionDevsMT2 = VecBuilder.fill(1, 1, 999);
     public static final Vector<N3> standardVisionDevsMT1 = VecBuilder.fill(999, 999, 1);
 
+    public boolean disableVision = false;
+
     public Vision(VisionIO io, Drivetrain drivetrain, Turret turret) {
         this.io = io;
         this.drivetrain = drivetrain;
@@ -51,6 +53,10 @@ public class Vision extends SubsystemBase {
         boolean reject = false;
 
         if (Math.abs(lastDriveState.Speeds.omegaRadiansPerSecond) > 1.5) {
+            reject = true;
+        }
+
+        if (disableVision) {
             reject = true;
         }
 
@@ -125,7 +131,7 @@ public class Vision extends SubsystemBase {
                     // }
                 }
 
-                if (inputs.turretHasTarget){
+                if (inputs.turretHasTarget && !inputs.backRightHasTarget && !inputs.frontLeftHasTarget){
                     // filterLL(
                     //     inputs.turretPoseEstimateMT1.pose(), 
                     //     inputs.turretPoseEstimateMT1.tagCount(), 
@@ -169,5 +175,13 @@ public class Vision extends SubsystemBase {
                 );
             }
         }
+    }
+
+    public void disableVision() {
+        disableVision = true;
+    }
+
+    public void enableVision() {
+        disableVision = false;
     }
 }

@@ -55,7 +55,10 @@ public class Autos {
         AutoTrajectory path = routine.trajectory("RightSideOneSweep");  
         
         routine.active().onTrue(
+            Commands.sequence(
+                path.resetOdometry(),
                 path.cmd()
+            )
         );
 
         path.atTime("IntakeDown").onTrue(Commands.runOnce(() -> {
@@ -87,7 +90,10 @@ public class Autos {
         AutoTrajectory path = routine.trajectory("RightSideOneSweep").mirrorY();  
         
         routine.active().onTrue(
+            Commands.sequence(
+                path.resetOdometry(),
                 path.cmd()
+            )
         );
 
         path.atTime("IntakeDown").onTrue(Commands.runOnce(() -> {
@@ -119,12 +125,15 @@ public class Autos {
         AutoTrajectory path = routine.trajectory("LeftSideOneSweepPlusDepot");  
         
         routine.active().onTrue(
-            Commands.parallel(
-                path.cmd(),
-                Commands.runOnce(() -> {
-                    shooter.setState(ShooterState.FOLLOW_TARGET);
-                    autoaim.setFiringLocation(FiringLocation.HUB);
-                })
+            Commands.sequence(
+                path.resetOdometry(),
+                Commands.parallel(
+                    path.cmd(),
+                    Commands.runOnce(() -> {
+                        shooter.setState(ShooterState.FOLLOW_TARGET);
+                        autoaim.setFiringLocation(FiringLocation.HUB);
+                    })
+                )
             )
         );
 
@@ -179,7 +188,18 @@ public class Autos {
         AutoTrajectory path = routine.trajectory("LeftSideTwoSweep");  
         
         routine.active().onTrue(
-                path.cmd()
+            Commands.sequence(
+                path.resetOdometry(),
+                Commands.parallel(
+                    path.cmd(),
+                    Commands.runOnce(() -> {
+                        shooter.setState(ShooterState.FOLLOW_TARGET);
+                        autoaim.setFiringLocation(FiringLocation.HUB);
+                        turret.setState(TurretState.TRACK_TARGET);
+                        hood.setState(HoodState.TRACK_TARGET);
+                    })
+                )
+            )
         );
 
         path.atTime("IntakeDown").onTrue(Commands.runOnce(() -> {
@@ -202,8 +222,9 @@ public class Autos {
                 turret.setState(TurretState.TRACK_TARGET);
                 hood.setState(HoodState.TRACK_TARGET);
                 shooter.setState(ShooterState.FOLLOW_TARGET);
-            }, turret, shooter, hood),
-            robotContainer.runDyeRotorForHubShot()
+                dyeRotor.setState(RotorState.FULLSPEED_FORWARD);
+            }, turret, shooter, hood) //,
+            // robotContainer.runDyeRotorForHubShot()
         ));
 
         path.atTime("StopFire").onTrue(
@@ -215,6 +236,18 @@ public class Autos {
                 shooter.setState(ShooterState.FOLLOW_TARGET);
                 dyeRotor.setState(RotorState.STOP);
             }, turret, shooter, hood, dyeRotor)
+        );
+
+        path.atTime("DisableVision").onTrue(
+            Commands.runOnce(
+                () -> robotContainer.vision.disableVision(), 
+                robotContainer.vision)
+        );
+
+        path.atTime("EnableVision").onTrue(
+            Commands.runOnce(
+                () -> robotContainer.vision.disableVision(), 
+                robotContainer.vision)
         );
 
         return routine;
@@ -226,7 +259,18 @@ public class Autos {
         AutoTrajectory path = routine.trajectory("LeftSideTwoSweep").mirrorY();  
         
         routine.active().onTrue(
-                path.cmd()
+            Commands.sequence(
+                path.resetOdometry(),
+                Commands.parallel(
+                    path.cmd(),
+                    Commands.runOnce(() -> {
+                        shooter.setState(ShooterState.FOLLOW_TARGET);
+                        autoaim.setFiringLocation(FiringLocation.HUB);
+                        turret.setState(TurretState.TRACK_TARGET);
+                        hood.setState(HoodState.TRACK_TARGET);
+                    })
+                )
+            )
         );
 
         path.atTime("IntakeDown").onTrue(Commands.runOnce(() -> {
@@ -249,8 +293,9 @@ public class Autos {
                 turret.setState(TurretState.TRACK_TARGET);
                 hood.setState(HoodState.TRACK_TARGET);
                 shooter.setState(ShooterState.FOLLOW_TARGET);
-            }, turret, shooter, hood),
-            robotContainer.runDyeRotorForHubShot()
+                dyeRotor.setState(RotorState.FULLSPEED_FORWARD);
+            }, turret, shooter, hood) //,
+            // robotContainer.runDyeRotorForHubShot()
         ));
 
         path.atTime("StopFire").onTrue(
@@ -264,16 +309,31 @@ public class Autos {
             }, turret, shooter, hood, dyeRotor)
         );
 
+        path.atTime("DisableVision").onTrue(
+            Commands.runOnce(
+                () -> robotContainer.vision.disableVision(), 
+                robotContainer.vision)
+        );
+
+        path.atTime("EnableVision").onTrue(
+            Commands.runOnce(
+                () -> robotContainer.vision.disableVision(), 
+                robotContainer.vision)
+        );
+
         return routine;
     }
 
-    public AutoRoutine RightSideOneSweepDepotAndReturn() {
-        AutoRoutine routine = autoFactory.newRoutine("RightSideOneSweepDepotAndReturn");
+    public AutoRoutine RightSideOneSweepOutpostAndReturn() {
+        AutoRoutine routine = autoFactory.newRoutine("RightSideOneSweepOutpostAndReturn");
 
         AutoTrajectory path = routine.trajectory("RightSideOneSweepPlusOutpost");  
         
         routine.active().onTrue(
+            Commands.sequence(
+                path.resetOdometry(),
                 path.cmd()
+            )
         );
 
         path.atTime("IntakeDown").onTrue(Commands.runOnce(() -> {
@@ -320,7 +380,10 @@ public class Autos {
         AutoTrajectory path = routine.trajectory("MiddleScorePreload");  
         
         routine.active().onTrue(
+            Commands.sequence(
+                path.resetOdometry(),
                 path.cmd()
+            )
         );
 
         path.atTime("IntakeUp").onTrue(Commands.runOnce(() -> {
@@ -358,7 +421,10 @@ public class Autos {
         AutoTrajectory path = routine.trajectory("MiddleDepot");  
         
         routine.active().onTrue(
+            Commands.sequence(
+                path.resetOdometry(),
                 path.cmd()
+            )
         );
 
         path.atTime("IntakeDown").onTrue(Commands.runOnce(() -> {
@@ -390,7 +456,10 @@ public class Autos {
         AutoTrajectory path = routine.trajectory("MiddleOutpost");  
         
         routine.active().onTrue(
+            Commands.sequence(
+                path.resetOdometry(),
                 path.cmd()
+            )
         );
 
         path.atTime("IntakeDown").onTrue(Commands.runOnce(() -> {
