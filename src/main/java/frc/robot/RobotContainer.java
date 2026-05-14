@@ -156,7 +156,7 @@ public class RobotContainer {
     public Command runDyeRotorForPassShot() {
         return Commands.run(
             () -> {
-                if (turret.atAngleToFire() && shooter.atfullSpeed() && drivetrain.goodToPass()) {
+                if (turret.atAngleToFire() && shooter.atfullSpeed() && autoaim.goodToPass()) {
                     dyeRotor.setState(RotorState.FULLSPEED_FORWARD);
                 } else {
                     dyeRotor.setState(RotorState.STOP);

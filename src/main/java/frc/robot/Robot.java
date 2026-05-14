@@ -36,6 +36,7 @@ import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Autoaim.FiringLocation;
 import frc.robot.subsystems.DyeRotor.RotorState;
 import frc.robot.subsystems.Hood.HoodState;
 import frc.robot.subsystems.Intake.IntakeState;
@@ -178,15 +179,17 @@ public class Robot extends LoggedRobot {
     public void autonomousInit() {
         HubShiftUtil.initialize();
         vision.enableVision();
-    }
+        vision.enableTurretVision();
 
-    @Override
-    public void autonomousPeriodic() {
         LimelightHelpers.SetThrottle(RobotConstants.Vision.backLeftName, 0);
         LimelightHelpers.SetThrottle(RobotConstants.Vision.backRightName, 0);
         LimelightHelpers.SetThrottle(RobotConstants.Vision.frontLeftName, 0);
         LimelightHelpers.SetThrottle(RobotConstants.Vision.frontRightName, 0);
         LimelightHelpers.SetThrottle(RobotConstants.Vision.turretName, 0);
+    }
+
+    @Override
+    public void autonomousPeriodic() {
     }
 
     @Override
@@ -198,18 +201,21 @@ public class Robot extends LoggedRobot {
         dyeRotor.setState(RotorState.STOP);
         turret.setState(TurretState.HOLD);
         hood.setState(HoodState.HOLD);
+        autoaim.setFiringLocation(FiringLocation.HUB);
         robotContainer.setMode(RobotMode.NEUTRAL);
         HubShiftUtil.initialize();
         vision.enableVision();
-    }
+        vision.enableTurretVision();
 
-    @Override
-    public void teleopPeriodic() {
         LimelightHelpers.SetThrottle(RobotConstants.Vision.backLeftName, 0);
         LimelightHelpers.SetThrottle(RobotConstants.Vision.backRightName, 0);
         LimelightHelpers.SetThrottle(RobotConstants.Vision.frontLeftName, 0);
         LimelightHelpers.SetThrottle(RobotConstants.Vision.frontRightName, 0);
         LimelightHelpers.SetThrottle(RobotConstants.Vision.turretName, 0);
+    }
+
+    @Override
+    public void teleopPeriodic() {
     }
 
     @Override

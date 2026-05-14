@@ -28,6 +28,7 @@ public class Vision extends SubsystemBase {
     public static final Vector<N3> standardVisionDevsMT1 = VecBuilder.fill(999, 999, 1);
 
     public boolean disableVision = false;
+    public boolean disableTurretCamera = false;
 
     public Vision(VisionIO io, Drivetrain drivetrain, Turret turret) {
         this.io = io;
@@ -79,7 +80,7 @@ public class Vision extends SubsystemBase {
                     // }
                 }
 
-                if (inputs.backLeftHasTarget) {
+                // if (inputs.backLeftHasTarget) {
                     // filterLL(
                     //     inputs.backLeftPoseEstimateMT1.pose(), 
                     //     inputs.backLeftPoseEstimateMT1.tagCount(), 
@@ -95,9 +96,9 @@ public class Vision extends SubsystemBase {
                         //     inputs.backLeftPoseEstimateMT2.timestampSeconds(), 
                         //     true);
                     // }
-                }
+                // }
 
-                if (inputs.frontRightHasTarget) {
+                // if (inputs.frontRightHasTarget) {
                     // filterLL(
                     //     inputs.frontRightPoseEstimateMT1.pose(), 
                     //     inputs.frontRightPoseEstimateMT1.tagCount(), 
@@ -112,7 +113,7 @@ public class Vision extends SubsystemBase {
                         //     inputs.frontRightPoseEstimateMT2.timestampSeconds(), 
                         //     true);
                     // }
-                }
+                // }
 
                 if (inputs.backRightHasTarget) {
                     filterLL(
@@ -131,13 +132,7 @@ public class Vision extends SubsystemBase {
                     // }
                 }
 
-                if (inputs.turretHasTarget && !inputs.backRightHasTarget && !inputs.frontLeftHasTarget){
-                    // filterLL(
-                    //     inputs.turretPoseEstimateMT1.pose(), 
-                    //     inputs.turretPoseEstimateMT1.tagCount(), 
-                    //     inputs.turretPoseEstimateMT1.avgTagArea(), 
-                    //     inputs.turretPoseEstimateMT1.timestampSeconds(),
-                    //     false);
+                if (inputs.turretHasTarget && !inputs.backRightHasTarget && !inputs.frontLeftHasTarget && !disableTurretCamera){
                     filterLL(
                         inputs.turretPoseEstimateMT2.pose(), 
                         inputs.turretPoseEstimateMT2.tagCount(), 
@@ -183,5 +178,13 @@ public class Vision extends SubsystemBase {
 
     public void enableVision() {
         disableVision = false;
+    }
+
+    public void disableTurretVision() {
+        disableTurretCamera = true;
+    }
+
+    public void enableTurretVision() {
+        disableTurretCamera = false;
     }
 }

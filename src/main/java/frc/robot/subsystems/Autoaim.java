@@ -71,6 +71,11 @@ public class Autoaim extends SubsystemBase {
         return drivetrain.getState().Pose.getTranslation().getDistance(targetDisplacedIteratedPose);
     }
 
+    public boolean goodToPass() {
+        return drivetrain.getState().Pose.getY() < 3.3 || drivetrain.getState().Pose.getY() > 4.7;
+    }
+
+
     @Override
     public void periodic() {
         switch (target) {
@@ -110,6 +115,7 @@ public class Autoaim extends SubsystemBase {
         Logger.recordOutput("Autoaim/drivetrainAngle", drivetrain.getState().Pose.getRotation());
         Logger.recordOutput("Autoaim/distanceToTarget", this.getDistanceToTarget());
         Logger.recordOutput("Autoaim/distanceToDisplacedTarget", this.getDistanceToScoreWhileMoving());
+        Logger.recordOutput("Autoaim/goodToPass", this.goodToPass());
     }
 
     public void periodicTOF() {

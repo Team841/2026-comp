@@ -94,10 +94,12 @@ public class LED extends SubsystemBase{
             } else {
                 apply(patternBlueBreatheScroll);
             }
+        } else if (DriverStation.isAutonomousEnabled()) {
+            apply(patternPurpleScroll);
         } else if (robotContainer.currentMode == RobotContainer.RobotMode.AUTOAIM_FIRE || robotContainer.currentMode == RobotContainer.RobotMode.PASS_SHOT) {
             if (!robotContainer.shooter.atfullSpeed()) {
                 apply(patternRedScroll);
-            } else if (!robotContainer.turret.atAngle(10)) {
+            } else if (!robotContainer.turret.atAngleToFire()) {
                 apply(patternRedBreathe);
             } else if (robotContainer.currentMode == RobotContainer.RobotMode.AUTOAIM_FIRE) {
                 apply(patternGreenSolid);
@@ -106,8 +108,6 @@ public class LED extends SubsystemBase{
             }
         } else if (Math.abs(robotContainer.intake.intakeMotorLeft.getDutyCycle().getValueAsDouble()) > 0.1) {
             apply(patternYellowScrollReverse);
-        } else if (DriverStation.isAutonomousEnabled()) {
-            apply(patternPurpleScroll);
         } else {
             apply(patternYellowScroll);
         }

@@ -110,8 +110,8 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
 
     public void periodic() {
 
-        visionPeriodic();
-
+        Logger.recordOutput("Drivetrain/RobotRelativeSpeeds", this.getState().Speeds);
+        Logger.recordOutput("Drivetrain/RobotPose", this.getState().Pose);
         Logger.recordOutput("Drivetrain/DriveMotorRotations", this.getModule(1).getDriveMotor().getPosition().getValueAsDouble());
         Logger.recordOutput("Drivetrain/DriveMotorVelocity", this.getModule(1).getDriveMotor().getVelocity().getValueAsDouble());
 
@@ -225,25 +225,5 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
 
     public Pose2d getPose() {
         return this.getState().Pose;
-    }
-
-    public boolean goodToPass() {
-        return this.getState().Pose.getY() < 3.3 || this.getState().Pose.getY() > 4.7;
-    }
-
-    public double getDistanceToDriverStationWall() {
-
-        double fieldLength = 16.54175; 
-
-        if (!RobotConstants.isRedAlliance.getAsBoolean()) {
-            return this.getState().Pose.getX(); 
-        } else {
-            return fieldLength - this.getState().Pose.getX(); 
-        }
-    }
-
-    public void visionPeriodic() {
-        Logger.recordOutput("Drivetrain/RobotPose", this.getState().Pose);
-
     }
 }
