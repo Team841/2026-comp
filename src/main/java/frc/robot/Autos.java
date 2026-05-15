@@ -268,6 +268,15 @@ public class Autos {
                 robotContainer.vision)
         );
 
+        path.done().onTrue(
+            Commands.sequence(
+                Commands.waitSeconds(2),
+                Commands.runOnce(
+                    () -> intakePivot.setState(IntakePivotState.COMPACT_STOW), 
+                    intakePivot)
+            )
+        );
+
         return routine;
     }
 
@@ -337,6 +346,15 @@ public class Autos {
             Commands.runOnce(
                 () -> robotContainer.vision.disableVision(), 
                 robotContainer.vision)
+        );
+
+        path.done().onTrue(
+            Commands.sequence(
+                Commands.waitSeconds(2),
+                Commands.runOnce(
+                    () -> intakePivot.setState(IntakePivotState.COMPACT_STOW), 
+                    intakePivot)
+            )
         );
 
         return routine;
