@@ -53,7 +53,7 @@ public class Vision extends SubsystemBase {
 
         boolean reject = false;
 
-        if (Math.abs(lastDriveState.Speeds.omegaRadiansPerSecond) > 1.5) {
+        if (Math.abs(lastDriveState.Speeds.omegaRadiansPerSecond) > 3) {
             reject = true;
         }
 
