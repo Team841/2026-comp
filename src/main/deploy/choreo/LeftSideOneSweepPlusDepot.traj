@@ -871,5 +871,10 @@
    {"name":"HubFire", "from":{"target":10, "targetTimestamp":11.25315, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
    {"name":"StopFire", "from":{"target":11, "targetTimestamp":17.54913, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
    {"name":"IntakeUp", "from":{"target":10, "targetTimestamp":11.25315, "offset":{"exp":"2.5 s", "val":2.5}}, "event":null},
-   {"name":"IntakeDown", "from":{"target":11, "targetTimestamp":17.54913, "offset":{"exp":"0 s", "val":0.0}}, "event":null}]
+   {"name":"IntakeDown", "from":{"target":11, "targetTimestamp":17.54913, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
+   {"name":"DisableVision", "from":{"target":7, "targetTimestamp":5.79418, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
+   {"name":"EnableVision", "from":{"target":8, "targetTimestamp":9.78426, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
+   {"name":"DisableVision", "from":{"target":10, "targetTimestamp":11.25315, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
+   {"name":"EnableVision", "from":{"target":11, "targetTimestamp":17.54913, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
+   {"name":"IntakeUp", "from":{"target":10, "targetTimestamp":11.25315, "offset":{"exp":"2.5 s", "val":2.5}}, "event":null}]
 }

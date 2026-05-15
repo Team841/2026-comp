@@ -144,6 +144,10 @@ public class Autos {
             intakePivot.setState(IntakePivotState.INTAKE);
         }, intake, intakePivot));
 
+        path.atTime("IntakeUp").onTrue(Commands.runOnce(() -> {
+            intakePivot.setState(IntakePivotState.COMPACT_STOW);
+        }, intakePivot));
+
         path.atTime("IntakeBumpStow").onTrue(Commands.runOnce(() -> {
             intakePivot.setState(IntakePivotState.BUMP_STOW);
         }, intakePivot));
@@ -168,6 +172,18 @@ public class Autos {
                 shooter.setState(ShooterState.FOLLOW_TARGET);
                 dyeRotor.setState(RotorState.STOP);
             }, turret, shooter, hood, dyeRotor)
+        );
+
+        path.atTime("DisableVision").onTrue(
+            Commands.runOnce(
+                () -> robotContainer.vision.disableVision(), 
+                robotContainer.vision)
+        );
+
+        path.atTime("EnableVision").onTrue(
+            Commands.runOnce(
+                () -> robotContainer.vision.disableVision(), 
+                robotContainer.vision)
         );
 
         path.done().onTrue(
