@@ -68,6 +68,10 @@ public class Turret extends SubsystemBase {
         return new Rotation2d(Math.atan2(Math.sin(this.getTurretAngle().getRadians()), Math.cos(this.getTurretAngle().getRadians())));
     }
 
+    public double getTurretVelocityInRadiansPerSecond() {
+        return -this.turretMotor.getVelocity().getValueAsDouble() * (Math.PI / 6.25);
+    }
+
     public double getContinuousTurretSetpoint() {
 
         double targetRadians = this.getTurretTargetAngle().getRadians();

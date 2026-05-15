@@ -132,7 +132,7 @@ public class Vision extends SubsystemBase {
                     // }
                 }
 
-                if (inputs.turretHasTarget && !inputs.backRightHasTarget && !inputs.frontLeftHasTarget && !disableTurretCamera){
+                if (inputs.turretHasTarget && !inputs.backRightHasTarget && !inputs.frontLeftHasTarget && !disableTurretCamera && Math.abs(turret.getTurretVelocityInRadiansPerSecond()) < 5){
                     filterLL(
                         inputs.turretPoseEstimateMT2.pose(), 
                         inputs.turretPoseEstimateMT2.tagCount(), 

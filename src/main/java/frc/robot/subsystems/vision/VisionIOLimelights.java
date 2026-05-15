@@ -14,7 +14,7 @@ public class VisionIOLimelights implements VisionIO{
 
     private void setLLSettings(VisionIOInputs inputs) {
         try {
-            RobotConstants.Vision.turretPose[0] = RobotConstants.Vision.turretCameraToTurretCenter * inputs.turretAngle.getCos();
+            RobotConstants.Vision.turretPose[0] = (RobotConstants.Vision.turretCameraToTurretCenter * inputs.turretAngle.getCos()) - 0.0127;
             RobotConstants.Vision.turretPose[1] = RobotConstants.Vision.turretCameraToTurretCenter * inputs.turretAngle.getSin();
             RobotConstants.Vision.turretPose[5] = inputs.turretAngle.getDegrees();
 
