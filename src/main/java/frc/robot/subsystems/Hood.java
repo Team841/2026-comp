@@ -100,7 +100,7 @@ public class Hood extends SubsystemBase {
 
             case TRACK_TARGET:
                 if (autoaim.target.equals(Autoaim.FiringLocation.HUB)) {
-                    targetPosition = this.getHoodHeightFromMetersToHub(autoaim.getDistanceToScoreWhileMoving());
+                    targetPosition = this.getHoodHeightFromMetersToHub(autoaim.getDistanceToScoreWhileMoving()) + (autoaim.getHoodDisplacementFromDrivebaseTilt().getRotations() * 30.96);
                 } else {
                     targetPosition = -4.1;
                 }

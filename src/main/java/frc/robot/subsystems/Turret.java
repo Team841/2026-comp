@@ -133,7 +133,7 @@ public class Turret extends SubsystemBase {
                 break;
 
             case TRACK_TARGET:
-                this.setPosition(autoaim.getTurretRelativeAngleToFireWhileMoving().minus(autoaim.getTurretLeadAngleFromDrivetrainRotation()));
+                this.setPosition(autoaim.getTurretRelativeAngleToFireWhileMoving().minus(autoaim.getTurretLeadAngleFromDrivetrainRotation()).plus(autoaim.getTurretDisplacementFromDrivebaseTilt()));
                 break;
 
             case TRACK_SUPPLIER:

@@ -42,9 +42,10 @@ public class Vision extends SubsystemBase {
         SwerveDrivetrain.SwerveDriveState lastDriveState = this.drivetrain.getState();
         inputs.robotYawDegrees = lastDriveState.Pose.getRotation().getMeasure().in(Units.Degree);
         inputs.robotYawRateDegreesPerSecond = Math.toDegrees(lastDriveState.Speeds.omegaRadiansPerSecond);
-        inputs.robotRollDegrees = this.drivetrain.getPigeon2().getRoll().getValue().in(Units.Degree);
+        // NOTE THAT ON ROBOT, GYRO IS ROTATED 90 DEGREES AND THEREFORE PITCH = ROLL AND VISA VERSA
+        inputs.robotRollDegrees = this.drivetrain.getPigeon2().getPitch().getValue().in(Units.Degree);
         inputs.robotRollRateDegreesPerSecond = 0;
-        inputs.robotPitchDegrees = this.drivetrain.getPigeon2().getPitch().getValue().in(Units.Degree);
+        inputs.robotPitchDegrees = this.drivetrain.getPigeon2().getRoll().getValue().in(Units.Degree);
         inputs.robotPitchRateDegreesPerSecond = 0;
         inputs.turretAngle = turret.getTurretAngleAbsolute();
 

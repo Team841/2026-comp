@@ -115,6 +115,10 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
         Logger.recordOutput("Drivetrain/DriveMotorRotations", this.getModule(1).getDriveMotor().getPosition().getValueAsDouble());
         Logger.recordOutput("Drivetrain/DriveMotorVelocity", this.getModule(1).getDriveMotor().getVelocity().getValueAsDouble());
 
+        Logger.recordOutput("Drivetrain/PigeonYaw", this.getPigeon2().getYaw().getValueAsDouble());
+        Logger.recordOutput("Drivetrain/PigeonRoll", this.getPigeon2().getRoll().getValueAsDouble());
+        Logger.recordOutput("Drivetrain/PigeonPitch", this.getPigeon2().getPitch().getValueAsDouble());
+
         /*
          * // * Periodically try to apply the operator perspective.
          * // * If we haven't applied the operator perspective before, then we should

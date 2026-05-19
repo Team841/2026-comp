@@ -1,5 +1,8 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Radians;
+
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -63,6 +66,24 @@ public class Autoaim extends SubsystemBase {
         return getFieldRelativeAngleToFireWhileMoving().minus(drivetrain.getState().Pose.getRotation());
     }
 
+    public Rotation2d getTurretDisplacementFromDrivebaseTilt() {
+        if (Math.abs(drivetrain.getPigeon2().getRoll().getValue().in(Degrees)) < 0.055 && Math.abs(drivetrain.getPigeon2().getPitch().getValue().in(Degrees)) < 0.055) {
+            return Rotation2d.kZero;
+        }
+        return new Rotation2d(
+            (-drivetrain.getPigeon2().getPitch().getValue().in(Radians) * Math.cos(getTurretRelativeAngleToFireWhileMoving().getRadians()))
+            + (drivetrain.getPigeon2().getRoll().getValue().in(Radians) * Math.sin(getTurretRelativeAngleToFireWhileMoving().getRadians())));
+    }
+
+    public Rotation2d getHoodDisplacementFromDrivebaseTilt() {
+        if (Math.abs(drivetrain.getPigeon2().getRoll().getValue().in(Radians)) < 0.055 && Math.abs(drivetrain.getPigeon2().getPitch().getValue().in(Radians)) < 0.055) {
+            return Rotation2d.kZero;
+        }
+        return new Rotation2d(
+            (drivetrain.getPigeon2().getRoll().getValue().in(Radians) * Math.cos(getTurretRelativeAngleToFireWhileMoving().getRadians()))
+            + (drivetrain.getPigeon2().getPitch().getValue().in(Radians) * Math.sin(getTurretRelativeAngleToFireWhileMoving().getRadians())));
+    }
+
     public Rotation2d getTurretLeadAngleFromDrivetrainRotation() {
         return new Rotation2d(drivetrain.getState().Speeds.omegaRadiansPerSecond * 0.05);
     }
@@ -116,6 +137,8 @@ public class Autoaim extends SubsystemBase {
         Logger.recordOutput("Autoaim/distanceToTarget", this.getDistanceToTarget());
         Logger.recordOutput("Autoaim/distanceToDisplacedTarget", this.getDistanceToScoreWhileMoving());
         Logger.recordOutput("Autoaim/goodToPass", this.goodToPass());
+        Logger.recordOutput("Autoaim/turretTiltDisplacement", this.getTurretDisplacementFromDrivebaseTilt());
+        Logger.recordOutput("Autoaim/hoodTiltDisplacement", this.getHoodDisplacementFromDrivebaseTilt());
     }
 
     public void periodicTOF() {
