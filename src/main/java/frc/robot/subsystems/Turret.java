@@ -101,7 +101,7 @@ public class Turret extends SubsystemBase {
     }
 
     public boolean atAngleToFire() {
-        return Math.abs(autoaim.getTurretRelativeAngleToFireWhileMoving().getDegrees() - this.getTurretAngleAbsolute().getDegrees()) < 10;
+        return Math.abs(autoaim.getTurretRelativeAngleToFireWhileMoving().minus(autoaim.getTurretDisplacementFromDrivebaseTilt()).getDegrees() - this.getTurretAngleAbsolute().getDegrees()) < 10;
     }
 
     public void zero() {
@@ -133,7 +133,7 @@ public class Turret extends SubsystemBase {
                 break;
 
             case TRACK_TARGET:
-                this.setPosition(autoaim.getTurretRelativeAngleToFireWhileMoving().minus(autoaim.getTurretLeadAngleFromDrivetrainRotation()).plus(autoaim.getTurretDisplacementFromDrivebaseTilt()));
+                this.setPosition(autoaim.getTurretRelativeAngleToFireWhileMoving().minus(autoaim.getTurretLeadAngleFromDrivetrainRotation()).minus(autoaim.getTurretDisplacementFromDrivebaseTilt()));
                 break;
 
             case TRACK_SUPPLIER:

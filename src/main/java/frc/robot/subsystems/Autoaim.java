@@ -99,7 +99,8 @@ public class Autoaim extends SubsystemBase {
 
     @Override
     public void periodic() {
-        switch (target) {
+        try {
+            switch (target) {
             case HUB:
                 if (RobotConstants.isRedAlliance.getAsBoolean()) {
                     targetPose = RobotConstants.AutoAimConstants.redHubPose.getTranslation();
@@ -128,17 +129,22 @@ public class Autoaim extends SubsystemBase {
         }
 
         periodicTOF();
+        } catch (Exception ignored) {
+        }
         
-        Logger.recordOutput("Autoaim/target", new Pose2d(targetPose, new Rotation2d()));
-        Logger.recordOutput("Autoaim/displacedTarget", new Pose2d(targetDisplacedIteratedPose, new Rotation2d()));
-        Logger.recordOutput("Autoaim/iteratedTOF", iteratedTOF);
-        Logger.recordOutput("Autoaim/targetAngle", this.getTurretRelativeAngleToFireWhileMoving());
-        Logger.recordOutput("Autoaim/drivetrainAngle", drivetrain.getState().Pose.getRotation());
-        Logger.recordOutput("Autoaim/distanceToTarget", this.getDistanceToTarget());
-        Logger.recordOutput("Autoaim/distanceToDisplacedTarget", this.getDistanceToScoreWhileMoving());
-        Logger.recordOutput("Autoaim/goodToPass", this.goodToPass());
-        Logger.recordOutput("Autoaim/turretTiltDisplacement", this.getTurretDisplacementFromDrivebaseTilt());
-        Logger.recordOutput("Autoaim/hoodTiltDisplacement", this.getHoodDisplacementFromDrivebaseTilt());
+        try {
+            Logger.recordOutput("Autoaim/target", new Pose2d(targetPose, new Rotation2d()));
+            Logger.recordOutput("Autoaim/displacedTarget", new Pose2d(targetDisplacedIteratedPose, new Rotation2d()));
+            Logger.recordOutput("Autoaim/iteratedTOF", iteratedTOF);
+            Logger.recordOutput("Autoaim/targetAngle", this.getTurretRelativeAngleToFireWhileMoving());
+            Logger.recordOutput("Autoaim/drivetrainAngle", drivetrain.getState().Pose.getRotation());
+            Logger.recordOutput("Autoaim/distanceToTarget", this.getDistanceToTarget());
+            Logger.recordOutput("Autoaim/distanceToDisplacedTarget", this.getDistanceToScoreWhileMoving());
+            Logger.recordOutput("Autoaim/goodToPass", this.goodToPass());
+            Logger.recordOutput("Autoaim/turretTiltDisplacement", this.getTurretDisplacementFromDrivebaseTilt());
+            Logger.recordOutput("Autoaim/hoodTiltDisplacement", this.getHoodDisplacementFromDrivebaseTilt());
+        } catch (Exception ignored) {
+        }
     }
 
     public void periodicTOF() {
