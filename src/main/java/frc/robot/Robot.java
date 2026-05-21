@@ -161,15 +161,15 @@ public class Robot extends LoggedRobot {
     @Override
     public void disabledInit() {
         HubShiftUtil.initialize();
-    }
-
-    @Override
-    public void disabledPeriodic() {
         LimelightHelpers.SetThrottle(RobotConstants.Vision.backLeftName, 150);
         LimelightHelpers.SetThrottle(RobotConstants.Vision.backRightName, 150);
         LimelightHelpers.SetThrottle(RobotConstants.Vision.frontLeftName, 150);
         LimelightHelpers.SetThrottle(RobotConstants.Vision.frontRightName, 150);
         LimelightHelpers.SetThrottle(RobotConstants.Vision.turretName, 150);
+    }
+
+    @Override
+    public void disabledPeriodic() {
     }
 
     @Override

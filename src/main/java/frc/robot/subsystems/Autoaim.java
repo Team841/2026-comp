@@ -46,12 +46,13 @@ public class Autoaim extends SubsystemBase {
 
         this.passTimeOfFlightMap = new InterpolatingDoubleTreeMap();
 		this.passTimeOfFlightMap.put(1.0, PassTimeOfFlight.M1.getSeconds());
-		this.passTimeOfFlightMap.put(2.0, PassTimeOfFlight.M2.getSeconds());
 		this.passTimeOfFlightMap.put(3.0, PassTimeOfFlight.M3.getSeconds());
-		this.passTimeOfFlightMap.put(4.0, PassTimeOfFlight.M4.getSeconds());
 		this.passTimeOfFlightMap.put(5.0, PassTimeOfFlight.M5.getSeconds());
-		this.passTimeOfFlightMap.put(6.0, PassTimeOfFlight.M6.getSeconds());
 		this.passTimeOfFlightMap.put(7.0, PassTimeOfFlight.M7.getSeconds());
+        this.passTimeOfFlightMap.put(9.0, PassTimeOfFlight.M9.getSeconds());
+		this.passTimeOfFlightMap.put(11.0, PassTimeOfFlight.M11.getSeconds());
+		this.passTimeOfFlightMap.put(13.0, PassTimeOfFlight.M13.getSeconds());
+
     }
 
     public void setFiringLocation(FiringLocation newLocation) {
@@ -213,13 +214,13 @@ public class Autoaim extends SubsystemBase {
 
     private enum PassTimeOfFlight {
 
-		M1(0.7),
-		M2(0.9),
-		M3(1.1),
-		M4(1.4),
-		M5(1.6),
-		M6(1.8),
-		M7(2);
+		M1(0.2),
+		M3(0.4),
+		M5(0.7),
+		M7(1),
+		M9(1.2),
+		M11(1.5),
+		M13(1.8);
 
 		private final double sec;
 
