@@ -144,7 +144,8 @@ public class Autoaim extends SubsystemBase {
             Logger.recordOutput("Autoaim/goodToPass", this.goodToPass());
             Logger.recordOutput("Autoaim/turretTiltDisplacement", this.getTurretDisplacementFromDrivebaseTilt());
             Logger.recordOutput("Autoaim/hoodTiltDisplacement", this.getHoodDisplacementFromDrivebaseTilt());
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            System.out.println("Error logging autoaim values: " + e.getMessage());
         }
     }
 

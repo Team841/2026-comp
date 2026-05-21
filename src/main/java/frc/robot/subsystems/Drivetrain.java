@@ -52,14 +52,6 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean m_hasAppliedOperatorPerspective = false;
 
-    NetworkTable turretCameraTable = NetworkTableInstance.getDefault().getTable("limelight-turret");
-    NetworkTable leftCameraTable = NetworkTableInstance.getDefault().getTable("limelight-left");
-    NetworkTable rightCameraTable = NetworkTableInstance.getDefault().getTable("limelight-right");
-
-    public final NetworkTableInstance vision = NetworkTableInstance.getDefault();
-
-    public final NetworkTable visionControlTable = vision.getTable("VisionControl");
-
     private final PIDController xController = new PIDController(7.0, 0.0, 0.2);
     private final PIDController yController = new PIDController(7.0, 0.0, 0.2);
     private final PIDController headingController = new PIDController(5, 0.0, 0.1);

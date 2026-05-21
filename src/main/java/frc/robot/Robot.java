@@ -69,7 +69,7 @@ public class Robot extends LoggedRobot {
     public Robot() {
         // Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
 
-        Logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
+        Logger.addDataReceiver(new WPILOGWriter("/media/sdb1/"));
         Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
         //  Logger.addDataReceiver(new RLOGServer());
 
@@ -77,7 +77,7 @@ public class Robot extends LoggedRobot {
 
         SignalLogger.enableAutoLogging(false);
 
-        Logger.start();
+        // Logger.start();
 
         drivetrain = new Drivetrain(
             TunerConstants.DrivetrainConstants, 

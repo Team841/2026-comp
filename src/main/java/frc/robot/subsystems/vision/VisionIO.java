@@ -14,11 +14,11 @@ public interface VisionIO {
         public boolean backLeftHasTarget;
         public boolean backRightHasTarget;
 
-        public LimelightHelpers.RawFiducial[] frontLeftRawFiducial = new LimelightHelpers.RawFiducial[]{};
-        public LimelightHelpers.RawFiducial[] frontRightRawFiducial = new LimelightHelpers.RawFiducial[]{};
-        public LimelightHelpers.RawFiducial[] backLeftRawFiducial = new LimelightHelpers.RawFiducial[]{};
-        public LimelightHelpers.RawFiducial[] backRightRawFiducial = new LimelightHelpers.RawFiducial[]{};
-        public LimelightHelpers.RawFiducial[] turretRawFiducial = new LimelightHelpers.RawFiducial[]{};
+        // public LimelightHelpers.RawFiducial[] frontLeftRawFiducial = new LimelightHelpers.RawFiducial[]{};
+        // public LimelightHelpers.RawFiducial[] frontRightRawFiducial = new LimelightHelpers.RawFiducial[]{};
+        // public LimelightHelpers.RawFiducial[] backLeftRawFiducial = new LimelightHelpers.RawFiducial[]{};
+        // public LimelightHelpers.RawFiducial[] backRightRawFiducial = new LimelightHelpers.RawFiducial[]{};
+        // public LimelightHelpers.RawFiducial[] turretRawFiducial = new LimelightHelpers.RawFiducial[]{};
 
         public LimelightHelpers.PoseEstimate frontLeftPoseEstimateMT1 = new LimelightHelpers.PoseEstimate(false);
         public LimelightHelpers.PoseEstimate frontLeftPoseEstimateMT2 = new LimelightHelpers.PoseEstimate(true);

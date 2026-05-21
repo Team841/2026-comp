@@ -49,8 +49,12 @@ public class Vision extends SubsystemBase {
         inputs.robotPitchRateDegreesPerSecond = 0;
         inputs.turretAngle = turret.getTurretAngleAbsolute();
 
-        io.updateInputs(inputs);
-        Logger.processInputs("Vision", inputs);
+        // try {
+            io.updateInputs(inputs);
+            Logger.processInputs("Vision", inputs);
+        // } catch (Exception e) {
+        //     System.out.println("Error updating vision inputs: " + e.getMessage());
+        // }
 
         boolean reject = false;
 
