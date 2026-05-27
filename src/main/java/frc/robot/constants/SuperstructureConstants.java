@@ -32,8 +32,8 @@ public class SuperstructureConstants {
             .withKI(0)
             .withKD(0)
             .withKV(0.12)
-            .withKA(0.04)
-            .withKS(0.1);
+            .withKA(0.01)
+            .withKS(0.25);
 
         public static final TalonFXConfiguration shooterMotorConfigs = new TalonFXConfiguration()
             .withSlot0(shooterConfigs)
@@ -45,7 +45,7 @@ public class SuperstructureConstants {
                 new MotionMagicConfigs()
                     .withMotionMagicCruiseVelocity(110)
                     .withMotionMagicAcceleration(1000)
-                    .withMotionMagicJerk(200)
+                    .withMotionMagicJerk(4000)
                     .withMotionMagicExpo_kA(0.12)
                     .withMotionMagicExpo_kV(0.1))
             .withAudio(new AudioConfigs().withAllowMusicDurDisable(true));
