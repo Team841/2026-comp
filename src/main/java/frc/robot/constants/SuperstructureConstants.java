@@ -93,12 +93,12 @@ public class SuperstructureConstants {
 
     public class TurretConstants {
         public static final Slot0Configs turretConfigs = new Slot0Configs()
-            .withKP(20)
+            .withKP(15)
             .withKI(0)
             .withKD(0.2)
             .withKV(0.12)
             .withKA(0)
-            .withKS(0)
+            .withKS(0.3)
             .withKG(0);
 
         public static final TalonFXConfiguration turretMotorConfigs = new TalonFXConfiguration()
@@ -113,11 +113,11 @@ public class SuperstructureConstants {
                     .withRotorToSensorRatio(1))
             .withMotionMagic(
                 new MotionMagicConfigs()
-                    .withMotionMagicCruiseVelocity(70)
-                    .withMotionMagicAcceleration(140)
-                    .withMotionMagicJerk(5)
-                    .withMotionMagicExpo_kA(0.12)
-                    .withMotionMagicExpo_kV(0.1))
+                    .withMotionMagicCruiseVelocity(100)
+                    .withMotionMagicAcceleration(1000)
+                    .withMotionMagicJerk(4000)
+                    .withMotionMagicExpo_kV(0.12)
+                    .withMotionMagicExpo_kA(0.1))
             .withMotorOutput(
                 new MotorOutputConfigs()
                     .withNeutralMode(NeutralModeValue.Brake)
