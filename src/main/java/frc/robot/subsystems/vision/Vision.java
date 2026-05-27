@@ -10,13 +10,14 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.vision.VisionIO.VisionIOInputs;
 
 import org.littletonrobotics.junction.Logger;
 
 public class Vision extends SubsystemBase {
 
     private final VisionIO io;
-    private final VisionIOInputsAutoLogged inputs = new VisionIOInputsAutoLogged();
+    private final VisionIOInputs inputs = new VisionIOInputs();
 
     private final Drivetrain drivetrain;
     private final Turret turret;
@@ -49,12 +50,8 @@ public class Vision extends SubsystemBase {
         inputs.robotPitchRateDegreesPerSecond = 0;
         inputs.turretAngle = turret.getTurretAngleAbsolute();
 
-        // try {
-            io.updateInputs(inputs);
-            Logger.processInputs("Vision", inputs);
-        // } catch (Exception e) {
-        //     System.out.println("Error updating vision inputs: " + e.getMessage());
-        // }
+        io.updateInputs(inputs);
+        Logger.processInputs("Vision", inputs);
 
         boolean reject = false;
 

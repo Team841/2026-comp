@@ -77,7 +77,7 @@ public class Robot extends LoggedRobot {
 
         SignalLogger.enableAutoLogging(false);
 
-        // Logger.start();
+        Logger.start();
 
         drivetrain = new Drivetrain(
             TunerConstants.DrivetrainConstants, 
