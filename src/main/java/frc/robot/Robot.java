@@ -69,7 +69,7 @@ public class Robot extends LoggedRobot {
     public Robot() {
         // Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
 
-        Logger.addDataReceiver(new WPILOGWriter("/media/sdb1/"));
+        Logger.addDataReceiver(new WPILOGWriter());
         Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
         //  Logger.addDataReceiver(new RLOGServer());
 
@@ -161,11 +161,9 @@ public class Robot extends LoggedRobot {
     @Override
     public void disabledInit() {
         HubShiftUtil.initialize();
-        LimelightHelpers.SetThrottle(RobotConstants.Vision.backLeftName, 150);
-        LimelightHelpers.SetThrottle(RobotConstants.Vision.backRightName, 150);
-        LimelightHelpers.SetThrottle(RobotConstants.Vision.frontLeftName, 150);
-        LimelightHelpers.SetThrottle(RobotConstants.Vision.frontRightName, 150);
-        LimelightHelpers.SetThrottle(RobotConstants.Vision.turretName, 150);
+        // LimelightHelpers.SetThrottle(RobotConstants.Vision.backRightName, 150);
+        // LimelightHelpers.SetThrottle(RobotConstants.Vision.frontLeftName, 150);
+        // LimelightHelpers.SetThrottle(RobotConstants.Vision.turretName, 150);
     }
 
     @Override
@@ -181,10 +179,8 @@ public class Robot extends LoggedRobot {
         vision.enableVision();
         vision.enableTurretVision();
 
-        LimelightHelpers.SetThrottle(RobotConstants.Vision.backLeftName, 0);
         LimelightHelpers.SetThrottle(RobotConstants.Vision.backRightName, 0);
         LimelightHelpers.SetThrottle(RobotConstants.Vision.frontLeftName, 0);
-        LimelightHelpers.SetThrottle(RobotConstants.Vision.frontRightName, 0);
         LimelightHelpers.SetThrottle(RobotConstants.Vision.turretName, 0);
     }
 
@@ -207,10 +203,8 @@ public class Robot extends LoggedRobot {
         vision.enableVision();
         vision.enableTurretVision();
 
-        LimelightHelpers.SetThrottle(RobotConstants.Vision.backLeftName, 0);
         LimelightHelpers.SetThrottle(RobotConstants.Vision.backRightName, 0);
         LimelightHelpers.SetThrottle(RobotConstants.Vision.frontLeftName, 0);
-        LimelightHelpers.SetThrottle(RobotConstants.Vision.frontRightName, 0);
         LimelightHelpers.SetThrottle(RobotConstants.Vision.turretName, 0);
     }
 

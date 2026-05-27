@@ -82,41 +82,6 @@ public class Vision extends SubsystemBase {
                     // }
                 }
 
-                // if (inputs.backLeftHasTarget) {
-                    // filterLL(
-                    //     inputs.backLeftPoseEstimateMT1.pose(), 
-                    //     inputs.backLeftPoseEstimateMT1.tagCount(), 
-                    //     inputs.backLeftPoseEstimateMT1.avgTagArea(), 
-                    //     inputs.backLeftPoseEstimateMT1.timestampSeconds(), 
-                    //     false);
-                        
-                    // if (!inputs.turretHasTarget) {
-                        // filterLL(
-                        //     inputs.backLeftPoseEstimateMT2.pose(), 
-                        //     inputs.backLeftPoseEstimateMT2.tagCount(), 
-                        //     inputs.backLeftPoseEstimateMT2.avgTagArea(), 
-                        //     inputs.backLeftPoseEstimateMT2.timestampSeconds(), 
-                        //     true);
-                    // }
-                // }
-
-                // if (inputs.frontRightHasTarget) {
-                    // filterLL(
-                    //     inputs.frontRightPoseEstimateMT1.pose(), 
-                    //     inputs.frontRightPoseEstimateMT1.tagCount(), 
-                    //     inputs.frontRightPoseEstimateMT1.avgTagArea(), 
-                    //     inputs.frontRightPoseEstimateMT1.timestampSeconds(), 
-                    //     false);
-                    // if (!inputs.turretHasTarget) {
-                        // filterLL(
-                        //     inputs.frontRightPoseEstimateMT2.pose(), 
-                        //     inputs.frontRightPoseEstimateMT2.tagCount(), 
-                        //     inputs.frontRightPoseEstimateMT2.avgTagArea(), 
-                        //     inputs.frontRightPoseEstimateMT2.timestampSeconds(), 
-                        //     true);
-                    // }
-                // }
-
                 if (inputs.backRightHasTarget) {
                     filterLL(
                         inputs.backRightPoseEstimateMT1.pose(), 

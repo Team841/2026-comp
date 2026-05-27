@@ -9,24 +9,14 @@ public interface VisionIO {
     class VisionIOInputs implements LoggableInputs {
         public boolean turretHasTarget;
         public boolean frontLeftHasTarget;
-        public boolean frontRightHasTarget;
-        public boolean backLeftHasTarget;
         public boolean backRightHasTarget;
 
         public LimelightHelpers.RawFiducial[] frontLeftRawFiducial = new LimelightHelpers.RawFiducial[]{};
-        public LimelightHelpers.RawFiducial[] frontRightRawFiducial = new LimelightHelpers.RawFiducial[]{};
-        public LimelightHelpers.RawFiducial[] backLeftRawFiducial = new LimelightHelpers.RawFiducial[]{};
         public LimelightHelpers.RawFiducial[] backRightRawFiducial = new LimelightHelpers.RawFiducial[]{};
         public LimelightHelpers.RawFiducial[] turretRawFiducial = new LimelightHelpers.RawFiducial[]{};
 
         public LimelightHelpers.PoseEstimate frontLeftPoseEstimateMT1 = new LimelightHelpers.PoseEstimate(false);
         public LimelightHelpers.PoseEstimate frontLeftPoseEstimateMT2 = new LimelightHelpers.PoseEstimate(true);
-
-        public LimelightHelpers.PoseEstimate frontRightPoseEstimateMT1 = new LimelightHelpers.PoseEstimate(false);
-        public LimelightHelpers.PoseEstimate frontRightPoseEstimateMT2 = new LimelightHelpers.PoseEstimate(true);
-
-        public LimelightHelpers.PoseEstimate backLeftPoseEstimateMT1 = new LimelightHelpers.PoseEstimate(false);
-        public LimelightHelpers.PoseEstimate backLeftPoseEstimateMT2 = new LimelightHelpers.PoseEstimate(true);
 
         public LimelightHelpers.PoseEstimate backRightPoseEstimateMT1 = new LimelightHelpers.PoseEstimate(false);
         public LimelightHelpers.PoseEstimate backRightPoseEstimateMT2 = new LimelightHelpers.PoseEstimate(true);
@@ -47,22 +37,14 @@ public interface VisionIO {
         public void toLog(LogTable table) {
             table.put("turretHasTarget", turretHasTarget);
             table.put("frontLeftHasTarget", frontLeftHasTarget);
-            table.put("frontRightHasTarget", frontRightHasTarget);
-            table.put("backLeftHasTarget", backLeftHasTarget);
             table.put("backRightHasTarget", backRightHasTarget);
 
             table.put("frontLeftRawFiducial", rawFiducialsToLogArray(frontLeftRawFiducial));
-            table.put("frontRightRawFiducial", rawFiducialsToLogArray(frontRightRawFiducial));
-            table.put("backLeftRawFiducial", rawFiducialsToLogArray(backLeftRawFiducial));
             table.put("backRightRawFiducial", rawFiducialsToLogArray(backRightRawFiducial));
             table.put("turretRawFiducial", rawFiducialsToLogArray(turretRawFiducial));
 
             logPoseEstimate(table, "frontLeftPoseEstimateMT1", frontLeftPoseEstimateMT1);
             logPoseEstimate(table, "frontLeftPoseEstimateMT2", frontLeftPoseEstimateMT2);
-            logPoseEstimate(table, "frontRightPoseEstimateMT1", frontRightPoseEstimateMT1);
-            logPoseEstimate(table, "frontRightPoseEstimateMT2", frontRightPoseEstimateMT2);
-            logPoseEstimate(table, "backLeftPoseEstimateMT1", backLeftPoseEstimateMT1);
-            logPoseEstimate(table, "backLeftPoseEstimateMT2", backLeftPoseEstimateMT2);
             logPoseEstimate(table, "backRightPoseEstimateMT1", backRightPoseEstimateMT1);
             logPoseEstimate(table, "backRightPoseEstimateMT2", backRightPoseEstimateMT2);
             logPoseEstimate(table, "turretPoseEstimateMT1", turretPoseEstimateMT1);
@@ -81,22 +63,14 @@ public interface VisionIO {
         public void fromLog(LogTable table) {
             turretHasTarget = table.get("turretHasTarget", turretHasTarget);
             frontLeftHasTarget = table.get("frontLeftHasTarget", frontLeftHasTarget);
-            frontRightHasTarget = table.get("frontRightHasTarget", frontRightHasTarget);
-            backLeftHasTarget = table.get("backLeftHasTarget", backLeftHasTarget);
             backRightHasTarget = table.get("backRightHasTarget", backRightHasTarget);
 
             frontLeftRawFiducial = rawFiducialsFromLogArray(table.get("frontLeftRawFiducial", rawFiducialsToLogArray(frontLeftRawFiducial)));
-            frontRightRawFiducial = rawFiducialsFromLogArray(table.get("frontRightRawFiducial", rawFiducialsToLogArray(frontRightRawFiducial)));
-            backLeftRawFiducial = rawFiducialsFromLogArray(table.get("backLeftRawFiducial", rawFiducialsToLogArray(backLeftRawFiducial)));
             backRightRawFiducial = rawFiducialsFromLogArray(table.get("backRightRawFiducial", rawFiducialsToLogArray(backRightRawFiducial)));
             turretRawFiducial = rawFiducialsFromLogArray(table.get("turretRawFiducial", rawFiducialsToLogArray(turretRawFiducial)));
 
             frontLeftPoseEstimateMT1 = readPoseEstimate(table, "frontLeftPoseEstimateMT1", frontLeftPoseEstimateMT1);
             frontLeftPoseEstimateMT2 = readPoseEstimate(table, "frontLeftPoseEstimateMT2", frontLeftPoseEstimateMT2);
-            frontRightPoseEstimateMT1 = readPoseEstimate(table, "frontRightPoseEstimateMT1", frontRightPoseEstimateMT1);
-            frontRightPoseEstimateMT2 = readPoseEstimate(table, "frontRightPoseEstimateMT2", frontRightPoseEstimateMT2);
-            backLeftPoseEstimateMT1 = readPoseEstimate(table, "backLeftPoseEstimateMT1", backLeftPoseEstimateMT1);
-            backLeftPoseEstimateMT2 = readPoseEstimate(table, "backLeftPoseEstimateMT2", backLeftPoseEstimateMT2);
             backRightPoseEstimateMT1 = readPoseEstimate(table, "backRightPoseEstimateMT1", backRightPoseEstimateMT1);
             backRightPoseEstimateMT2 = readPoseEstimate(table, "backRightPoseEstimateMT2", backRightPoseEstimateMT2);
             turretPoseEstimateMT1 = readPoseEstimate(table, "turretPoseEstimateMT1", turretPoseEstimateMT1);
