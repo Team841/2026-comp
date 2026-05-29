@@ -73,11 +73,11 @@ public class SuperstructureConstants {
                     .withRotorToSensorRatio(1))
             .withMotionMagic(
                 new MotionMagicConfigs()
-                    .withMotionMagicCruiseVelocity(50)
-                    .withMotionMagicAcceleration(100)
-                    .withMotionMagicJerk(3)
-                    .withMotionMagicExpo_kA(0.12)
-                    .withMotionMagicExpo_kV(0.1))
+                    .withMotionMagicCruiseVelocity(100)
+                    .withMotionMagicAcceleration(400)
+                    .withMotionMagicJerk(4000)
+                    .withMotionMagicExpo_kA(0.1)
+                    .withMotionMagicExpo_kV(0.12))
             .withMotorOutput(
                 new MotorOutputConfigs()
                     .withNeutralMode(NeutralModeValue.Brake)
@@ -153,11 +153,11 @@ public class SuperstructureConstants {
                     .withRotorToSensorRatio(1))
             .withMotionMagic(
                 new MotionMagicConfigs()
-                    .withMotionMagicCruiseVelocity(50)
-                    .withMotionMagicAcceleration(30)
-                    .withMotionMagicJerk(5)
-                    .withMotionMagicExpo_kA(0.12)
-                    .withMotionMagicExpo_kV(0.1))
+                    .withMotionMagicCruiseVelocity(100)
+                    .withMotionMagicAcceleration(400)
+                    .withMotionMagicJerk(4000)
+                    .withMotionMagicExpo_kA(0.1)
+                    .withMotionMagicExpo_kV(0.12))
             .withMotorOutput(
                 new MotorOutputConfigs()
                     .withNeutralMode(NeutralModeValue.Brake)
