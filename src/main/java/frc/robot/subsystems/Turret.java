@@ -74,10 +74,10 @@ public class Turret extends SubsystemBase {
 
     public double getContinuousTurretSetpoint() {
 
-        double targetRadians = this.getTurretTargetAngle().getRadians();
+        double targetRadians = -this.getTurretTargetAngle().getRadians();
         double ROTATIONS_PER_TURRET_REV = 12.5;
-        double MIN_ROT = -5;
-        double MAX_ROT = 5;
+        double MIN_ROT = -11.5;
+        double MAX_ROT = 7.5;
 
         double currentRot = turretMotor.getPosition().getValueAsDouble();
 
@@ -93,7 +93,7 @@ public class Turret extends SubsystemBase {
             candidate += ROTATIONS_PER_TURRET_REV;
         }
 
-        return -candidate;
+        return candidate;
     }
 
     public boolean atAngle(double toleranceDegrees) {

@@ -127,7 +127,7 @@ public class SuperstructureConstants {
                     .withForwardSoftLimitEnable(true)
                     .withReverseSoftLimitEnable(true)
                     .withForwardSoftLimitThreshold(7.5)
-                    .withReverseSoftLimitThreshold(-7.5))
+                    .withReverseSoftLimitThreshold(-11.5))
             .withAudio(new AudioConfigs().withAllowMusicDurDisable(true));
     }
 
