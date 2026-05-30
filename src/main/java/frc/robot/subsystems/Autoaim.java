@@ -163,7 +163,7 @@ public class Autoaim extends SubsystemBase {
             case PASS:
                 double passCycleTOF = hubTimeOfFlightMap.get(getDistanceToTarget());
                 for (int i = 0; i < 10; i++) {
-                    passCycleTOF = hubTimeOfFlightMap.get(getDistanceToTargetWhileMoving(passCycleTOF));
+                    passCycleTOF = passTimeOfFlightMap.get(getDistanceToTargetWhileMoving(passCycleTOF));
                 }
                 iteratedTOF = passCycleTOF;
                 targetDisplacedIteratedPose = getDisplacedTarget(iteratedTOF);
@@ -217,11 +217,11 @@ public class Autoaim extends SubsystemBase {
 
 		M1(0.2),
 		M3(0.4),
-		M5(0.7),
-		M7(1),
-		M9(1.2),
-		M11(1.5),
-		M13(1.8);
+		M5(0.6),
+		M7(0.8),
+		M9(1),
+		M11(1.2),
+		M13(1.4);
 
 		private final double sec;
 
