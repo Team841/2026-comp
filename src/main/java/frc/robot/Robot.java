@@ -77,8 +77,6 @@ public class Robot extends LoggedRobot {
 
         SignalLogger.enableAutoLogging(false);
 
-        Logger.start();
-
         drivetrain = new Drivetrain(
             TunerConstants.DrivetrainConstants, 
             TunerConstants.FrontLeft, 
@@ -129,6 +127,8 @@ public class Robot extends LoggedRobot {
         RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());
 
         Threads.setCurrentThreadPriority(true, 5);
+
+        Logger.start();
 
         // this.orchestra.addInstrument(this.dyeRotor.rotorMotor);
         // this.orchestra.addInstrument(this.intake.intakeMotorLeft);
