@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 
 import org.littletonrobotics.junction.Logger;
@@ -14,6 +13,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.RobotConstants;
 
 public class Autoaim extends SubsystemBase {
+
+    private static final double DRIVEBASE_TILT_DEADBAND_RADIANS = 0.055;
 
     public double iteratedTOF;
 
@@ -31,6 +32,8 @@ public class Autoaim extends SubsystemBase {
         HUB,
         PASS
     }
+
+    public record DrivebaseTiltDisplacement(Rotation2d turret, Rotation2d hood) {}
 
     public Autoaim(Drivetrain drivetrain) {
         this.drivetrain = drivetrain;
@@ -67,22 +70,40 @@ public class Autoaim extends SubsystemBase {
         return getFieldRelativeAngleToFireWhileMoving().minus(drivetrain.getState().Pose.getRotation());
     }
 
-    public Rotation2d getTurretDisplacementFromDrivebaseTilt() {
-        if (Math.abs(drivetrain.getPigeon2().getRoll().getValue().in(Degrees)) < 0.055 && Math.abs(drivetrain.getPigeon2().getPitch().getValue().in(Degrees)) < 0.055) {
-            return Rotation2d.kZero;
+    public DrivebaseTiltDisplacement getDrivebaseTiltDisplacement() {
+        double forwardTiltRadians = drivetrain.getPigeon2().getRoll().getValue().in(Radians);
+        double sidewaysTiltRadians = drivetrain.getPigeon2().getPitch().getValue().in(Radians);
+        return calculateDrivebaseTiltDisplacement(
+            forwardTiltRadians,
+            sidewaysTiltRadians,
+            getTurretRelativeAngleToFireWhileMoving());
+    }
+
+    public static DrivebaseTiltDisplacement calculateDrivebaseTiltDisplacement(
+            double forwardTiltRadians,
+            double sidewaysTiltRadians,
+            Rotation2d turretFacingAngle) {
+        if (Math.hypot(forwardTiltRadians, sidewaysTiltRadians) < DRIVEBASE_TILT_DEADBAND_RADIANS) {
+            return new DrivebaseTiltDisplacement(Rotation2d.kZero, Rotation2d.kZero);
         }
-        return new Rotation2d(
-            (-drivetrain.getPigeon2().getPitch().getValue().in(Radians) * Math.cos(getTurretRelativeAngleToFireWhileMoving().getRadians()))
-            + (drivetrain.getPigeon2().getRoll().getValue().in(Radians) * Math.sin(getTurretRelativeAngleToFireWhileMoving().getRadians())));
+
+        double cos = turretFacingAngle.getCos();
+        double sin = turretFacingAngle.getSin();
+
+        double hoodDisplacementRadians = (forwardTiltRadians * cos) + (sidewaysTiltRadians * sin);
+        double turretDisplacementRadians = (forwardTiltRadians * sin) - (sidewaysTiltRadians * cos);
+
+        return new DrivebaseTiltDisplacement(
+            new Rotation2d(turretDisplacementRadians),
+            new Rotation2d(hoodDisplacementRadians));
+    }
+
+    public Rotation2d getTurretDisplacementFromDrivebaseTilt() {
+        return getDrivebaseTiltDisplacement().turret();
     }
 
     public Rotation2d getHoodDisplacementFromDrivebaseTilt() {
-        if (Math.abs(drivetrain.getPigeon2().getRoll().getValue().in(Radians)) < 0.055 && Math.abs(drivetrain.getPigeon2().getPitch().getValue().in(Radians)) < 0.055) {
-            return Rotation2d.kZero;
-        }
-        return new Rotation2d(
-            (drivetrain.getPigeon2().getRoll().getValue().in(Radians) * Math.cos(getTurretRelativeAngleToFireWhileMoving().getRadians()))
-            + (drivetrain.getPigeon2().getPitch().getValue().in(Radians) * Math.sin(getTurretRelativeAngleToFireWhileMoving().getRadians())));
+        return getDrivebaseTiltDisplacement().hood();
     }
 
     public Rotation2d getTurretLeadAngleFromDrivetrainRotation() {
