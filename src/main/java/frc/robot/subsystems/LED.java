@@ -103,6 +103,8 @@ public class LED extends SubsystemBase{
                 apply(patternRedBreathe);
             } else if (robotContainer.currentMode == RobotContainer.RobotMode.AUTOAIM_FIRE) {
                 apply(patternGreenSolid);
+            } else if (robotContainer.currentMode == RobotContainer.RobotMode.PASS_SHOT && !robotContainer.autoaim.goodToPass()) {
+                apply(patternRedSolid);
             } else {
                 apply(patternBlueSolid);
             }
