@@ -28,23 +28,32 @@ public class RobotConstants {
 
     public static class AutoAimConstants {
 
+        // All measurements in meters
+
         public static final double fieldLengthX = 16.54175;
+        public static final double fieldWidthY = 8.06958;
         public static final double minimumToPassBehindHubX = 6.75;
+
+        public static final double hubBlocksPassingYTop = 4.7;
+        public static final double hubBlocksPassingYBottom = 3.3;
+
+        public static final double passingSwapTargetPoseYTop = 5;
+        public static final double passingSwapTargetYBottom = 3;
         
-        public static final Pose2d blueHubPose = new Pose2d(4.626, 4.035, new Rotation2d());
-        public static final Pose2d redHubPose = new Pose2d(11.914, 4.035, new Rotation2d());
+        public static final Pose2d blueHubPose = new Pose2d(4.626, 4.035, Rotation2d.kZero);
+        public static final Pose2d redHubPose = new Pose2d(11.914, 4.035, Rotation2d.kZero);
 
-        public static final Pose2d bluePassShotHighPose = new Pose2d(3, 5.4, new Rotation2d());
-        public static final Pose2d bluePassShotLowPose = new Pose2d(3, 2, new Rotation2d());
+        public static final Pose2d bluePassShotHighPose = new Pose2d(3, 5.4, Rotation2d.kZero);
+        public static final Pose2d bluePassShotLowPose = new Pose2d(3, 2, Rotation2d.kZero);
 
-        public static final Pose2d bluePassShotHighPoseBehindHub = new Pose2d(3, 6.4, new Rotation2d());
-        public static final Pose2d bluePassShotLowPoseBehindHub = new Pose2d(3, 1.7, new Rotation2d());
+        public static final Pose2d bluePassShotHighPoseBehindHub = new Pose2d(3, 6.4, Rotation2d.kZero);
+        public static final Pose2d bluePassShotLowPoseBehindHub = new Pose2d(3, 1.7, Rotation2d.kZero);
 
-        public static final Pose2d redPassShotHighPose = new Pose2d(13.54175, 5.4, new Rotation2d());
-        public static final Pose2d redPassShotLowPose = new Pose2d(13.54175, 2.6, new Rotation2d());
+        public static final Pose2d redPassShotHighPose = new Pose2d(13.54175, 5.4, Rotation2d.kZero);
+        public static final Pose2d redPassShotLowPose = new Pose2d(13.54175, 2.6, Rotation2d.kZero);
         
-        public static final Pose2d redPassShotHighPoseBehindHub = new Pose2d(13.54175, 6.4, new Rotation2d());
-        public static final Pose2d redPassShotLowPoseBehindHub = new Pose2d(13.54175, 1.7, new Rotation2d());
+        public static final Pose2d redPassShotHighPoseBehindHub = new Pose2d(13.54175, 6.4, Rotation2d.kZero);
+        public static final Pose2d redPassShotLowPoseBehindHub = new Pose2d(13.54175, 1.7, Rotation2d.kZero);
 
         public static final Pose2d outpostBlue = new Pose2d(2.885, 0.933, Rotation2d.kZero);
         public static final Pose2d outputRed = new Pose2d(14.392, 7.379, Rotation2d.kZero);

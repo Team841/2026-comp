@@ -115,7 +115,7 @@ public class Autoaim extends SubsystemBase {
     }
 
     public boolean goodToPass() {
-        if (drivetrain.getState().Pose.getY() > 4.7 || drivetrain.getState().Pose.getY() < 3.3) {
+        if (drivetrain.getState().Pose.getY() > RobotConstants.AutoAimConstants.hubBlocksPassingYTop || drivetrain.getState().Pose.getY() < RobotConstants.AutoAimConstants.hubBlocksPassingYBottom) {
             return true;
         }
         if (RobotConstants.isRedAlliance.getAsBoolean()) {
@@ -132,8 +132,7 @@ public class Autoaim extends SubsystemBase {
 
     @Override
     public void periodic() {
-        try {
-            switch (target) {
+        switch (target) {
             case HUB:
                 if (RobotConstants.isRedAlliance.getAsBoolean()) {
                     targetPose = RobotConstants.AutoAimConstants.redHubPose.getTranslation();
@@ -144,31 +143,33 @@ public class Autoaim extends SubsystemBase {
 
             case PASS:
                 if (RobotConstants.isRedAlliance.getAsBoolean()) {
-                    if (drivetrain.getState().Pose.getY() > 4.027) {
-                        if (drivetrain.getState().Pose.getY() > 4.7) {
+                    if (drivetrain.getState().Pose.getY() > (RobotConstants.AutoAimConstants.fieldWidthY / 2)) {
+                        if (drivetrain.getState().Pose.getY() > RobotConstants.AutoAimConstants.passingSwapTargetPoseYTop) {
                             targetPose = RobotConstants.AutoAimConstants.redPassShotHighPose.getTranslation();
                         } else {
                             targetPose = RobotConstants.AutoAimConstants.redPassShotHighPoseBehindHub.getTranslation();
                         }
                     } else {
-                        if (drivetrain.getState().Pose.getY() < 3.3) {
+                        if (drivetrain.getState().Pose.getY() < RobotConstants.AutoAimConstants.passingSwapTargetYBottom) {
                             targetPose = RobotConstants.AutoAimConstants.redPassShotLowPose.getTranslation();
                         } else {
                             targetPose = RobotConstants.AutoAimConstants.redPassShotLowPoseBehindHub.getTranslation();
                         }
                     }
                 } else {
-                    if (drivetrain.getState().Pose.getY() > 4.027) {
-                        if (drivetrain.getState().Pose.getY() > 4.7) {
+                    if (drivetrain.getState().Pose.getY() > (RobotConstants.AutoAimConstants.fieldWidthY / 2)) {
+                        if (drivetrain.getState().Pose.getY() > RobotConstants.AutoAimConstants.passingSwapTargetPoseYTop) {
                             targetPose = RobotConstants.AutoAimConstants.bluePassShotHighPose.getTranslation();
                         } else {
                             targetPose = RobotConstants.AutoAimConstants.bluePassShotHighPoseBehindHub.getTranslation();
-                        }                    } else {
-                        if (drivetrain.getState().Pose.getY() < 3.3) {
+                        }                    
+                    } else {
+                        if (drivetrain.getState().Pose.getY() < RobotConstants.AutoAimConstants.passingSwapTargetYBottom) {
                             targetPose = RobotConstants.AutoAimConstants.bluePassShotLowPose.getTranslation();
                         } else {
                             targetPose = RobotConstants.AutoAimConstants.bluePassShotLowPoseBehindHub.getTranslation();
-                        }                    }
+                        }                   
+                    }
                 }
 
             default:
@@ -176,8 +177,6 @@ public class Autoaim extends SubsystemBase {
         }
 
         periodicTOF();
-        } catch (Exception ignored) {
-        }
         
         try {
             Logger.recordOutput("Autoaim/target", new Pose2d(targetPose, new Rotation2d()));
