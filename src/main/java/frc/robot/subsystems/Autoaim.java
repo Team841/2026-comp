@@ -242,10 +242,10 @@ public class Autoaim extends SubsystemBase {
 		M1(0.7),
 		M2(0.9),
 		M3(1.1),
-		M4(1.4),
-		M5(1.6),
-		M6(1.8),
-		M7(2);
+		M4(1.3),
+		M5(1.5),
+		M6(1.7),
+		M7(1.9);
 
 		private final double sec;
 
