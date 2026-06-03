@@ -9,6 +9,7 @@ import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.MotorLogUtil;
 import frc.robot.constants.SuperstructureConstants;
 
 public class DyeRotor extends SubsystemBase {
@@ -33,10 +34,10 @@ public class DyeRotor extends SubsystemBase {
 
     @Override
     public void periodic() {
-        Logger.recordOutput("DyeRotor/MotorStatorCurrent", this.rotorMotor.getStatorCurrent().getValueAsDouble());
-        Logger.recordOutput("DyeRotor/MotorVelocity", this.rotorMotor.getVelocity().getValueAsDouble());
-        Logger.recordOutput("DyeRotor/Temp", this.rotorMotor.getDeviceTemp().getValueAsDouble());
+        Logger.recordOutput("DyeRotor/Velocity", this.rotorMotor.getVelocity().getValueAsDouble());
         Logger.recordOutput("DyeRotor/State", rotorState);
+
+        MotorLogUtil.logMotor(rotorMotor, "DyeRotor", "DyeRotorMotor");
 
         switch (rotorState) {
             case STOP:

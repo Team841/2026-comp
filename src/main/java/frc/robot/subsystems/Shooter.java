@@ -15,6 +15,7 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.MotorLogUtil;
 import frc.robot.constants.SuperstructureConstants;
 
 public class Shooter extends SubsystemBase {
@@ -127,6 +128,9 @@ public class Shooter extends SubsystemBase {
 		Logger.recordOutput("Shooter/Speed", this.getShooterVelocity());
 		Logger.recordOutput("Shooter/AtFullSpeed", this.atfullSpeed());
 		Logger.recordOutput("Shooter/State", shooterState);
+
+		MotorLogUtil.logMotor(leftMotor, "Shooter", "LeftShooterMotor");
+		MotorLogUtil.logMotor(rightMotor, "Shooter", "RightShooterMotor");
 
         switch (shooterState) {
             case STOP:

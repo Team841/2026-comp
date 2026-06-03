@@ -13,6 +13,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.MotorLogUtil;
 import frc.robot.constants.SuperstructureConstants;
 
 public class Turret extends SubsystemBase {
@@ -123,6 +124,8 @@ public class Turret extends SubsystemBase {
         Logger.recordOutput("Turret/WithinTolerance10deg", this.atAngle(10));
         Logger.recordOutput("Turret/WithinToleranceToFire", this.atAngleToFire());
         Logger.recordOutput("Turret/State", turretState);
+
+        MotorLogUtil.logMotor(turretMotor, "Turret", "TurretMotor");
 
         switch (turretState) {
             case STOP:

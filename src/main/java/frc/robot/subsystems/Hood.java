@@ -13,6 +13,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.MotorLogUtil;
 import frc.robot.constants.SuperstructureConstants;
 
 public class Hood extends SubsystemBase {
@@ -89,6 +90,8 @@ public class Hood extends SubsystemBase {
         Logger.recordOutput("Hood/TargetPosition", this.getHoodTargetPosition());
         Logger.recordOutput("Hood/Position", this.getHoodPosition());
         Logger.recordOutput("Hood/State", hoodState);
+
+        MotorLogUtil.logMotor(hoodMotor, "Hood", "HoodMotor");
 
         switch (hoodState) {
             case STOP:

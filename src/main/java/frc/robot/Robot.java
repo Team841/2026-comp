@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.RobotContainer.RobotMode;
 import frc.robot.constants.RobotConstants;
@@ -151,6 +152,7 @@ public class Robot extends LoggedRobot {
         Logger.recordOutput("Drivetrain/TurretPose", new Pose2d(drivetrain.getState().Pose.getTranslation(), turret.getTurretAngleAbsolute().plus(drivetrain.getState().Pose.getRotation())));
         var latestShiftInfo = HubShiftUtil.getOfficialShiftInfo();
         Logger.recordOutput("HubShift/Official", latestShiftInfo);
+        Logger.recordOutput("BatteryVoltage", RobotController.getBatteryVoltage());
 
         SmartDashboard.putString("Current Shift", latestShiftInfo.currentShift().toString());
         // SmartDashboard.putNumber("Elapsed Time", latestShiftInfo.elapsedTime());

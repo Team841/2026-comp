@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.MotorLogUtil;
 import frc.robot.constants.RobotConstants;
 
 /**
@@ -110,6 +111,17 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
         Logger.recordOutput("Drivetrain/PigeonYaw", this.getPigeon2().getYaw().getValueAsDouble());
         Logger.recordOutput("Drivetrain/PigeonRoll", this.getPigeon2().getRoll().getValueAsDouble());
         Logger.recordOutput("Drivetrain/PigeonPitch", this.getPigeon2().getPitch().getValueAsDouble());
+
+        // 0 = Front Left, 1 = Front Right, 2 = Back Left, 3 = Back Right
+        for (int i = 0; i < 4; i++) {
+            String module = 
+                i == 0 ? "FrontLeft"
+                : i == 1 ? "FrontRight"
+                : i == 2 ? "BackLeft"
+                : "BackRight";
+            MotorLogUtil.logMotor(getModule(i).getDriveMotor(), "Drivetrain", module + "DriveMotor");
+            MotorLogUtil.logMotor(getModule(i).getSteerMotor(), "Drivetrain", module + "SteerMotor");
+        }
 
         /*
          * // * Periodically try to apply the operator perspective.

@@ -16,6 +16,7 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.MotorLogUtil;
 import frc.robot.constants.SuperstructureConstants;
 
 public class Intake extends SubsystemBase {
@@ -46,9 +47,10 @@ public class Intake extends SubsystemBase {
     @Override
     public void periodic() {
         Logger.recordOutput("Intake/Velocity", this.intakeMotorLeft.getVelocity().getValueAsDouble());
-        Logger.recordOutput("Intake/RightMotorTemp", this.intakeMotorRight.getDeviceTemp().getValueAsDouble());
-        Logger.recordOutput("Intake/LeftMotorTemp", this.intakeMotorLeft.getDeviceTemp().getValueAsDouble());
         Logger.recordOutput("Intake/State", intakeState);
+
+        MotorLogUtil.logMotor(intakeMotorLeft, "Intake", "LeftIntakeMotor");
+        MotorLogUtil.logMotor(intakeMotorRight, "Intake", "RightIntakeMotor");
 
         switch (intakeState) {
             case STOP:

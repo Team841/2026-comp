@@ -12,6 +12,7 @@ import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.MotorLogUtil;
 import frc.robot.constants.SuperstructureConstants;
 
 public class IntakePivot extends SubsystemBase {
@@ -69,6 +70,8 @@ public class IntakePivot extends SubsystemBase {
         Logger.recordOutput("IntakePivot/TargetPosition", this.getIntakePivotTargetPosition());
         Logger.recordOutput("IntakePivot/Position", this.getIntakePivotPosition());
         Logger.recordOutput("IntakePivot/State", intakePivotState);
+
+        MotorLogUtil.logMotor(intakePivotMotor, "IntakePivot", "IntakePivotMotor");
         
         switch (intakePivotState) {
             case STOP:
