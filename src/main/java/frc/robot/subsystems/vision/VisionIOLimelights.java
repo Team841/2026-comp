@@ -20,15 +20,38 @@ public class VisionIOLimelights implements VisionIO{
 
             Logger.recordOutput("Vision/TurretCameraPose", RobotConstants.Vision.turretPose);
             
-            LimelightHelpers.setLimelightNTDoubleArray(RobotConstants.Vision.frontLeftName, "camerapose_robotspace_set", RobotConstants.Vision.frontLeftPose);
-            LimelightHelpers.setLimelightNTDoubleArray(RobotConstants.Vision.turretName, "camerapose_robotspace_set", RobotConstants.Vision.turretPose);
-            LimelightHelpers.setLimelightNTDoubleArray(RobotConstants.Vision.backRightName, "camerapose_robotspace_set", RobotConstants.Vision.backRightPose);
+            LimelightHelpers.setCameraPose_RobotSpace(
+                RobotConstants.Vision.turretName, 
+                RobotConstants.Vision.turretPose[0], 
+                RobotConstants.Vision.turretPose[1], 
+                RobotConstants.Vision.turretPose[2], 
+                RobotConstants.Vision.turretPose[3], 
+                RobotConstants.Vision.turretPose[4], 
+                RobotConstants.Vision.turretPose[5]);
 
+            LimelightHelpers.setCameraPose_RobotSpace(
+                RobotConstants.Vision.frontLeftName, 
+                RobotConstants.Vision.frontLeftPose[0], 
+                RobotConstants.Vision.frontLeftPose[1], 
+                RobotConstants.Vision.frontLeftPose[2], 
+                RobotConstants.Vision.frontLeftPose[3], 
+                RobotConstants.Vision.frontLeftPose[4], 
+                RobotConstants.Vision.frontLeftPose[5]);
+    
+            LimelightHelpers.setCameraPose_RobotSpace(
+                RobotConstants.Vision.backRightName, 
+                RobotConstants.Vision.backRightPose[0], 
+                RobotConstants.Vision.backRightPose[1], 
+                RobotConstants.Vision.backRightPose[2], 
+                RobotConstants.Vision.backRightPose[3], 
+                RobotConstants.Vision.backRightPose[4], 
+                RobotConstants.Vision.backRightPose[5]);
+    
             LimelightHelpers.SetIMUMode(RobotConstants.Vision.frontLeftName, 0);
             LimelightHelpers.SetIMUMode(RobotConstants.Vision.turretName, 0);
             LimelightHelpers.SetIMUMode(RobotConstants.Vision.backRightName, 0);
-
-            LimelightHelpers.SetRobotOrientation(
+    
+            LimelightHelpers.SetRobotOrientation_NoFlush(
                     RobotConstants.Vision.frontLeftName,
                     inputs.robotYawDegrees,
                     inputs.robotYawRateDegreesPerSecond,
@@ -38,7 +61,7 @@ public class VisionIOLimelights implements VisionIO{
                     inputs.robotRollRateDegreesPerSecond
             );
             
-            LimelightHelpers.SetRobotOrientation(
+            LimelightHelpers.SetRobotOrientation_NoFlush(
                     RobotConstants.Vision.turretName,
                     inputs.robotYawDegrees,
                     inputs.robotYawRateDegreesPerSecond,
@@ -48,7 +71,7 @@ public class VisionIOLimelights implements VisionIO{
                     inputs.robotRollRateDegreesPerSecond
             );
 
-            LimelightHelpers.SetRobotOrientation(
+            LimelightHelpers.SetRobotOrientation_NoFlush(
                     RobotConstants.Vision.backRightName,
                     inputs.robotYawDegrees,
                     inputs.robotYawRateDegreesPerSecond,
@@ -57,6 +80,8 @@ public class VisionIOLimelights implements VisionIO{
                     inputs.robotRollDegrees,
                     inputs.robotRollRateDegreesPerSecond
             );
+
+            LimelightHelpers.Flush();
         } catch (Exception e) {
             System.out.println("Error setting limelight settings: " + e.getMessage());
         }
