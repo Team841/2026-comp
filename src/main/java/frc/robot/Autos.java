@@ -122,7 +122,7 @@ public class Autos {
     public AutoRoutine LeftSideOneSweepPlusDepotAndReturn() {
         AutoRoutine routine = autoFactory.newRoutine("LeftSideOneSweepPlusDepotAndReturn");
 
-        AutoTrajectory path = routine.trajectory("LeftSideOneSweepPlusDepot");  
+        AutoTrajectory path = routine.trajectory("LeftSideOneSweepPlusDepotNew");  
         
         routine.active().onTrue(
             Commands.sequence(
@@ -174,17 +174,17 @@ public class Autos {
             }, turret, shooter, hood, dyeRotor)
         );
 
-        path.atTime("DisableVision").onTrue(
-            Commands.runOnce(
-                () -> robotContainer.vision.disableVision(), 
-                robotContainer.vision)
-        );
+        // path.atTime("DisableVision").onTrue(
+        //     Commands.runOnce(
+        //         () -> robotContainer.vision.disableVision(), 
+        //         robotContainer.vision)
+        // );
 
-        path.atTime("EnableVision").onTrue(
-            Commands.runOnce(
-                () -> robotContainer.vision.disableVision(), 
-                robotContainer.vision)
-        );
+        // path.atTime("EnableVision").onTrue(
+        //     Commands.runOnce(
+        //         () -> robotContainer.vision.disableVision(), 
+        //         robotContainer.vision)
+        // );
 
         path.done().onTrue(
             Commands.runOnce(

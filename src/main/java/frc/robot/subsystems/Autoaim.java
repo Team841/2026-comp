@@ -198,7 +198,7 @@ public class Autoaim extends SubsystemBase {
         switch (target) {
             case HUB:
                 double hubCycleTOF = hubTimeOfFlightMap.get(getDistanceToTarget());
-                for (int i = 0; i < 10; i++) {
+                for (int i = 0; i < 5; i++) {
                     hubCycleTOF = hubTimeOfFlightMap.get(getDistanceToTargetWhileMoving(hubCycleTOF));
                 }
                 iteratedTOF = hubCycleTOF;
@@ -207,7 +207,7 @@ public class Autoaim extends SubsystemBase {
 
             case PASS:
                 double passCycleTOF = hubTimeOfFlightMap.get(getDistanceToTarget());
-                for (int i = 0; i < 10; i++) {
+                for (int i = 0; i < 5; i++) {
                     passCycleTOF = passTimeOfFlightMap.get(getDistanceToTargetWhileMoving(passCycleTOF));
                 }
                 iteratedTOF = passCycleTOF;
