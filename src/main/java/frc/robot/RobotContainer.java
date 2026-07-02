@@ -302,13 +302,16 @@ public class RobotContainer {
         // Intake rollers and pivot
         joystick.leftTrigger().onTrue(
             new RepeatCommand(
-                new InstantCommand(() -> intake.setState(IntakeState.INTAKE), intake)
+                new InstantCommand(() -> intake.setState(IntakeState.FULLSPEED_INTAKE), intake)
                     .onlyIf(() -> intakePivot.atPosition(-22.9))))
             .onFalse(new InstantCommand(() -> intake.setState(IntakeState.STOP), intake));
 
         joystick.leftTrigger().onTrue(
             new InstantCommand(() -> intakePivot.setState(IntakePivotState.INTAKE), intakePivot))
             .onFalse(new InstantCommand(() -> intakePivot.setState(IntakePivotState.BUMP_STOW), intakePivot));
+
+        joystick.rightStick().onTrue(new InstantCommand(() -> intakePivot.setState(IntakePivotState.AGITATE)));
+        joystick.rightStick().onTrue(new InstantCommand(() -> intake.setState(IntakeState.INTAKE)));
        
         // Fire balls out of intake (alternative to passing)
         joystick.b().onTrue(

@@ -62,7 +62,7 @@ public class Autos {
         );
 
         path.atTime("IntakeDown").onTrue(Commands.runOnce(() -> {
-            intake.setState(IntakeState.INTAKE);
+            intake.setState(IntakeState.FULLSPEED_INTAKE);
             intakePivot.setState(IntakePivotState.INTAKE);
         }, intake, intakePivot));
 
@@ -97,7 +97,7 @@ public class Autos {
         );
 
         path.atTime("IntakeDown").onTrue(Commands.runOnce(() -> {
-            intake.setState(IntakeState.INTAKE);
+            intake.setState(IntakeState.FULLSPEED_INTAKE);
             intakePivot.setState(IntakePivotState.INTAKE);
         }, intake, intakePivot));
 
@@ -140,7 +140,7 @@ public class Autos {
         );
 
         path.atTime("IntakeDown").onTrue(Commands.runOnce(() -> {
-            intake.setState(IntakeState.INTAKE);
+            intake.setState(IntakeState.FULLSPEED_INTAKE);
             intakePivot.setState(IntakePivotState.INTAKE);
         }, intake, intakePivot));
 
@@ -221,7 +221,7 @@ public class Autos {
         );
 
         path.atTime("IntakeDown").onTrue(Commands.runOnce(() -> {
-            intake.setState(IntakeState.INTAKE);
+            intake.setState(IntakeState.FULLSPEED_INTAKE);
             intakePivot.setState(IntakePivotState.INTAKE);
         }, intake, intakePivot));
 
@@ -301,7 +301,7 @@ public class Autos {
         );
 
         path.atTime("IntakeDown").onTrue(Commands.runOnce(() -> {
-            intake.setState(IntakeState.INTAKE);
+            intake.setState(IntakeState.FULLSPEED_INTAKE);
             intakePivot.setState(IntakePivotState.INTAKE);
         }, intake, intakePivot));
 
@@ -373,7 +373,7 @@ public class Autos {
         );
 
         path.atTime("IntakeDown").onTrue(Commands.runOnce(() -> {
-            intake.setState(IntakeState.INTAKE);
+            intake.setState(IntakeState.FULLSPEED_INTAKE);
             intakePivot.setState(IntakePivotState.INTAKE);
         }, intake, intakePivot));
 
@@ -464,7 +464,7 @@ public class Autos {
         );
 
         path.atTime("IntakeDown").onTrue(Commands.runOnce(() -> {
-            intake.setState(IntakeState.INTAKE);
+            intake.setState(IntakeState.FULLSPEED_INTAKE);
             intakePivot.setState(IntakePivotState.INTAKE);
         }, intake, intakePivot));
 
@@ -499,7 +499,7 @@ public class Autos {
         );
 
         path.atTime("IntakeDown").onTrue(Commands.runOnce(() -> {
-            intake.setState(IntakeState.INTAKE);
+            intake.setState(IntakeState.FULLSPEED_INTAKE);
             intakePivot.setState(IntakePivotState.INTAKE);
         }, intake, intakePivot));
 

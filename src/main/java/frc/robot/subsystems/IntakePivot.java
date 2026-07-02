@@ -11,6 +11,7 @@ import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.MotorLogUtil;
 import frc.robot.constants.SuperstructureConstants;
@@ -23,6 +24,8 @@ public class IntakePivot extends SubsystemBase {
 
     private double targetPosition = -3;
 
+    private Timer timer = new Timer();
+
     StatusCode[] latestStatus;
 
     public enum IntakePivotState {
@@ -30,13 +33,15 @@ public class IntakePivot extends SubsystemBase {
         MATCHSTART_STOW,
         COMPACT_STOW,
         BUMP_STOW,
-        INTAKE
+        INTAKE,
+        AGITATE
     }
 
     public IntakePivotState intakePivotState = IntakePivotState.MATCHSTART_STOW;
 
     public IntakePivot() {
         intakePivotMotor.getConfigurator().apply(SuperstructureConstants.IntakePivotConstants.intakePivotMotorConfigs);
+        timer.restart();
     }
 
     public void setState(IntakePivotState wantedState) {
@@ -93,6 +98,13 @@ public class IntakePivot extends SubsystemBase {
             case COMPACT_STOW:
                 this.targetPosition = -6;
                 break;
+
+            case AGITATE:
+                if (timer.get() % 1 < 0.5) {
+                    this.targetPosition = -22.9;
+                } else {
+                    this.targetPosition = -16;
+                }
         
             default:
                 intakePivotMotor.stopMotor();
