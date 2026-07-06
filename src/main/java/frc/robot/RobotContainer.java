@@ -4,13 +4,16 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,19 +24,19 @@ import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Autoaim;
+import frc.robot.subsystems.Autoaim.FiringLocation;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.DyeRotor;
-import frc.robot.subsystems.Hood;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.IntakePivot;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.Autoaim.FiringLocation;
 import frc.robot.subsystems.DyeRotor.RotorState;
+import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Hood.HoodState;
 import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.subsystems.IntakePivot.IntakePivotState;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakePivot;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Shooter.ShooterState;
+import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Turret.TurretState;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
@@ -95,6 +98,10 @@ public class RobotContainer {
         SmartDashboard.putNumber("Shooter/ShootSpeed2", -20);
         SmartDashboard.putNumber("Shooter/ShootSpeed3", -40);
         SmartDashboard.putNumber("Shooter/ShootSpeed4", -100);
+
+        SmartDashboard.putNumber("Test/PIDPoseX", 0);
+        SmartDashboard.putNumber("Test/PIDPoseY", 0);
+        SmartDashboard.putNumber("Test/PIDPoseOmegaRad", 0);
         
         configureBindings();
     }
@@ -297,7 +304,13 @@ public class RobotContainer {
         joystick.povLeft().onTrue(new InstantCommand(() -> setMode(RobotMode.ZERO)));
 
         // X-Lock the drivebase to help against defense
-        joystick.y().whileTrue(drivetrain.applyRequest(() -> brake));
+        // joystick.y().whileTrue(drivetrain.applyRequest(() -> brake));
+        joystick.y().whileTrue(
+            drivetrain.PIDToPose(
+                new Pose2d(
+                    SmartDashboard.getNumber("Test/PIDPoseX", 0), 
+                    SmartDashboard.getNumber("Test/PIDPoseY", 0),
+                    Rotation2d.fromRadians(SmartDashboard.getNumber("Test/PIDPoseOmegaRad", 0)))));
         
         // Intake rollers and pivot
         joystick.leftTrigger().onTrue(

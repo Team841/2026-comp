@@ -12,6 +12,7 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -53,17 +54,23 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean m_hasAppliedOperatorPerspective = false;
 
-    private final PIDController xController = new PIDController(7.0, 0.0, 0.2);
-    private final PIDController yController = new PIDController(7.0, 0.0, 0.2);
-    private final PIDController headingController = new PIDController(5, 0.0, 0.1);
+    private final PIDController xController = new PIDController(2.0, 0.0, 0.1);
+    private final PIDController yController = new PIDController(2.0, 0.0, 0.1);
+    private final PIDController headingController = new PIDController(3.0, 0.0, 0.1);
 
-    public final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds()
+    private final PIDController xControllerChoreo = new PIDController(7.0, 0.0, 0.2);
+    private final PIDController yControllerChoreo = new PIDController(7.0, 0.0, 0.2);
+    private final PIDController headingControllerChoreo = new PIDController(5, 0.0, 0.1);
+
+    public final SwerveRequest.ApplyRobotSpeeds pathApplyRobotSpeeds = 
+        new SwerveRequest.ApplyRobotSpeeds()
             .withDriveRequestType(SwerveModule.DriveRequestType.Velocity)
             .withSteerRequestType(SwerveModule.SteerRequestType.Position);
 
-    public final SwerveRequest.ApplyFieldSpeeds pathApply =
-    new SwerveRequest.ApplyFieldSpeeds()
-        .withDriveRequestType(DriveRequestType.Velocity);
+    public final SwerveRequest.ApplyFieldSpeeds pathApplyFieldSpeeds =
+        new SwerveRequest.ApplyFieldSpeeds()
+            .withDriveRequestType(DriveRequestType.Velocity)
+            .withSteerRequestType(SteerRequestType.Position);
 
     /**
      * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -85,9 +92,14 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
                 drivetrainConstants, modules
             );
             headingController.enableContinuousInput(-Math.PI, Math.PI);
-            headingController.setTolerance(0.1);
-            xController.setTolerance(0.2);
-            yController.setTolerance(0.2);
+            headingController.setTolerance(0.025);
+            xController.setTolerance(0.01);
+            yController.setTolerance(0.01);
+
+            headingControllerChoreo.enableContinuousInput(-Math.PI, Math.PI);
+            headingControllerChoreo.setTolerance(0.1);
+            xControllerChoreo.setTolerance(0.2);
+            yControllerChoreo.setTolerance(0.2);
     }
 
     /**
@@ -99,6 +111,17 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
      */
     public Command applyRequest(Supplier<SwerveRequest> request) {
         return run(() -> this.setControl(request.get()));
+    }
+
+    public Command PIDToPose(Pose2d targetPose) {
+        return run(() -> {
+            Pose2d currentPose = this.getPose();
+            double vx = xController.calculate(currentPose.getX(), targetPose.getX());
+            double vy = yController.calculate(currentPose.getY(), targetPose.getY());
+            double vomega = headingController.calculate(currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
+
+            this.setControl(pathApplyFieldSpeeds.withSpeeds(new ChassisSpeeds(vx, vy, vomega)));
+        }).finallyDo(() -> this.setControl(pathApplyRobotSpeeds.withSpeeds(new ChassisSpeeds())));
     }
 
     public void periodic() {
@@ -222,13 +245,13 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
 
         // Generate the next speeds for the robot
         ChassisSpeeds speeds = new ChassisSpeeds(
-            sample.vx + xController.calculate(pose.getX(), sample.x),
-            sample.vy + yController.calculate(pose.getY(), sample.y),
-            sample.omega + headingController.calculate(pose.getRotation().getRadians(), sample.heading)
+            sample.vx + xControllerChoreo.calculate(pose.getX(), sample.x),
+            sample.vy + yControllerChoreo.calculate(pose.getY(), sample.y),
+            sample.omega + headingControllerChoreo.calculate(pose.getRotation().getRadians(), sample.heading)
         );
 
         // Apply the generated speeds
-        this.setControl(pathApply.withSpeeds(speeds));
+        this.setControl(pathApplyFieldSpeeds.withSpeeds(speeds));
     }
 
     public Pose2d getPose() {
