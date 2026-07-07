@@ -98,10 +98,6 @@ public class RobotContainer {
         SmartDashboard.putNumber("Shooter/ShootSpeed2", -20);
         SmartDashboard.putNumber("Shooter/ShootSpeed3", -40);
         SmartDashboard.putNumber("Shooter/ShootSpeed4", -100);
-
-        SmartDashboard.putNumber("Test/PIDPoseX", 0);
-        SmartDashboard.putNumber("Test/PIDPoseY", 0);
-        SmartDashboard.putNumber("Test/PIDPoseOmegaRad", 0);
         
         configureBindings();
     }
@@ -307,10 +303,7 @@ public class RobotContainer {
         // joystick.y().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.y().whileTrue(
             drivetrain.PIDToPose(
-                new Pose2d(
-                    SmartDashboard.getNumber("Test/PIDPoseX", 0), 
-                    SmartDashboard.getNumber("Test/PIDPoseY", 0),
-                    Rotation2d.fromRadians(SmartDashboard.getNumber("Test/PIDPoseOmegaRad", 0)))));
+                new Pose2d(10.3, 2.5, Rotation2d.k180deg)));
         
         // Intake rollers and pivot
         joystick.leftTrigger().onTrue(
