@@ -208,7 +208,7 @@ public class SuperstructureConstants {
                     .withNeutralMode(NeutralModeValue.Brake))
             .withCurrentLimits(
                 new CurrentLimitsConfigs()
-                    .withStatorCurrentLimit(120)
+                    .withStatorCurrentLimit(160)
                     .withStatorCurrentLimitEnable(true)
                     .withSupplyCurrentLimit(40)
                     .withSupplyCurrentLimitEnable(true))

@@ -93,8 +93,8 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
             );
             headingController.enableContinuousInput(-Math.PI, Math.PI);
             headingController.setTolerance(0.025);
-            xController.setTolerance(0.01);
-            yController.setTolerance(0.01);
+            xController.setTolerance(0.02);
+            yController.setTolerance(0.02);
 
             headingControllerChoreo.enableContinuousInput(-Math.PI, Math.PI);
             headingControllerChoreo.setTolerance(0.1);

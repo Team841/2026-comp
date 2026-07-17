@@ -15,6 +15,9 @@ import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelights;
+
+import static edu.wpi.first.units.Units.Amps;
+
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
@@ -160,6 +163,27 @@ public class Robot extends LoggedRobot {
         // SmartDashboard.putNumber("Elapsed Time", latestShiftInfo.elapsedTime());
         SmartDashboard.putNumber("Remaining Time", latestShiftInfo.remainingTime());
         SmartDashboard.putBoolean("Shift Active", latestShiftInfo.active());
+
+        double totalSupplyCurrent = 
+            drivetrain.getModule(0).getDriveMotor().getSupplyCurrent().getValue().in(Amps) +
+            drivetrain.getModule(0).getSteerMotor().getSupplyCurrent().getValue().in(Amps) +
+            drivetrain.getModule(1).getDriveMotor().getSupplyCurrent().getValue().in(Amps) +
+            drivetrain.getModule(1).getSteerMotor().getSupplyCurrent().getValue().in(Amps) +
+            drivetrain.getModule(2).getDriveMotor().getSupplyCurrent().getValue().in(Amps) +
+            drivetrain.getModule(2).getSteerMotor().getSupplyCurrent().getValue().in(Amps) +
+            drivetrain.getModule(3).getDriveMotor().getSupplyCurrent().getValue().in(Amps) +
+            drivetrain.getModule(3).getSteerMotor().getSupplyCurrent().getValue().in(Amps) +
+
+            dyeRotor.rotorMotor.getSupplyCurrent().getValue().in(Amps) +
+            hood.hoodMotor.getSupplyCurrent().getValue().in(Amps) +
+            intake.intakeMotorLeft.getSupplyCurrent().getValue().in(Amps) +
+            intake.intakeMotorRight.getSupplyCurrent().getValue().in(Amps) +
+            intakePivot.intakePivotMotor.getSupplyCurrent().getValue().in(Amps) +
+            shooter.leftMotor.getSupplyCurrent().getValue().in(Amps) +
+            shooter.rightMotor.getSupplyCurrent().getValue().in(Amps) +
+            turret.turretMotor.getSupplyCurrent().getValue().in(Amps);
+
+        Logger.recordOutput("TotalSupplyCurrent", totalSupplyCurrent);
     }
 
     @Override

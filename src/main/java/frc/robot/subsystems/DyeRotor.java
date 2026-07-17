@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Fahrenheit;
+
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -35,6 +37,7 @@ public class DyeRotor extends SubsystemBase {
     @Override
     public void periodic() {
         Logger.recordOutput("DyeRotor/Velocity", this.rotorMotor.getVelocity().getValueAsDouble());
+        Logger.recordOutput("DyeRotor/MotorTemp", this.rotorMotor.getDeviceTemp().getValue().in(Fahrenheit));
         Logger.recordOutput("DyeRotor/State", rotorState);
 
         MotorLogUtil.logMotor(rotorMotor, "DyeRotor", "DyeRotorMotor");

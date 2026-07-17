@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Fahrenheit;
+
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.AudioConfigs;
@@ -48,6 +50,8 @@ public class Intake extends SubsystemBase {
     public void periodic() {
         Logger.recordOutput("Intake/Velocity", this.intakeMotorLeft.getVelocity().getValueAsDouble());
         Logger.recordOutput("Intake/State", intakeState);
+        Logger.recordOutput("Intake/LeftMotorTemp", this.intakeMotorLeft.getDeviceTemp().getValue().in(Fahrenheit));
+        Logger.recordOutput("Intake/RightMotorTemp", this.intakeMotorRight.getDeviceTemp().getValue().in(Fahrenheit));
 
         MotorLogUtil.logMotor(intakeMotorLeft, "Intake", "LeftIntakeMotor");
         MotorLogUtil.logMotor(intakeMotorRight, "Intake", "RightIntakeMotor");
