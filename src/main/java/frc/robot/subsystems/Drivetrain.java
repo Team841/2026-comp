@@ -58,9 +58,9 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
     private final PIDController yController = new PIDController(2.0, 0.0, 0.1);
     private final PIDController headingController = new PIDController(3.0, 0.0, 0.1);
 
-    private final PIDController xControllerChoreo = new PIDController(7.0, 0.0, 0.2);
-    private final PIDController yControllerChoreo = new PIDController(7.0, 0.0, 0.2);
-    private final PIDController headingControllerChoreo = new PIDController(5, 0.0, 0.1);
+    private final PIDController xControllerChoreo = new PIDController(3.0, 0.0, 0.1);
+    private final PIDController yControllerChoreo = new PIDController(3.0, 0.0, 0.1);
+    private final PIDController headingControllerChoreo = new PIDController(4, 0.0, 0.1);
 
     public final SwerveRequest.ApplyRobotSpeeds pathApplyRobotSpeeds = 
         new SwerveRequest.ApplyRobotSpeeds()
@@ -98,8 +98,8 @@ public class Drivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> imp
 
             headingControllerChoreo.enableContinuousInput(-Math.PI, Math.PI);
             headingControllerChoreo.setTolerance(0.1);
-            xControllerChoreo.setTolerance(0.2);
-            yControllerChoreo.setTolerance(0.2);
+            xControllerChoreo.setTolerance(0.1);
+            yControllerChoreo.setTolerance(0.1);
     }
 
     /**
