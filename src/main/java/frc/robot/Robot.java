@@ -32,6 +32,7 @@ import choreo.auto.AutoFactory;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Autoaim;
 import frc.robot.subsystems.Drivetrain;
@@ -119,6 +120,7 @@ public class Robot extends LoggedRobot {
         autoChooser = new AutoChooser();
 
         autoChooser.addRoutine("L_NZ_DP_NZR", autos::LeftSideOneSweepPlusDepotAndReturn);
+        autoChooser.addRoutine("L_NZ_DP_NZR_DeepSweep", autos::LeftSideOneSweepDeepPlusDepotAndReturn);
         autoChooser.addRoutine("R_NZ", autos::RightSideOneSweepNZ);
         autoChooser.addRoutine("L_NZ", autos::LeftSideOneSweepNZ);
         autoChooser.addRoutine("L_NZ_NZ", autos::LeftSideTwoSweep);
@@ -131,6 +133,7 @@ public class Robot extends LoggedRobot {
         SmartDashboard.putData("AutoChooser", autoChooser);
 
         RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());
+        RobotModeTriggers.autonomous().onTrue(Commands.waitSeconds(0.5).andThen(Commands.run(() -> vision.enableVision())));
 
         Threads.setCurrentThreadPriority(true, 5);
 
@@ -173,7 +176,6 @@ public class Robot extends LoggedRobot {
             drivetrain.getModule(2).getSteerMotor().getSupplyCurrent().getValue().in(Amps) +
             drivetrain.getModule(3).getDriveMotor().getSupplyCurrent().getValue().in(Amps) +
             drivetrain.getModule(3).getSteerMotor().getSupplyCurrent().getValue().in(Amps) +
-
             dyeRotor.rotorMotor.getSupplyCurrent().getValue().in(Amps) +
             hood.hoodMotor.getSupplyCurrent().getValue().in(Amps) +
             intake.intakeMotorLeft.getSupplyCurrent().getValue().in(Amps) +
@@ -204,7 +206,7 @@ public class Robot extends LoggedRobot {
     @Override
     public void autonomousInit() {
         HubShiftUtil.initialize();
-        vision.enableVision();
+        vision.disableVision();
         vision.enableTurretVision();
 
         LimelightHelpers.SetThrottle(RobotConstants.Vision.backRightName, 0);
