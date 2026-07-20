@@ -802,7 +802,7 @@
    {"name":"IntakeBumpStow", "from":{"target":16, "targetTimestamp":15.99917, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
    {"name":"HubFire", "from":{"target":17, "targetTimestamp":17.62999, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
    {"name":"StopFire", "from":{"target":9, "targetTimestamp":11.02104, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
-   {"name":"IntakeUp", "from":{"target":8, "targetTimestamp":6.79474, "offset":{"exp":"3.25 s", "val":3.25}}, "event":null},
+   {"name":"IntakeUp", "from":{"target":8, "targetTimestamp":6.79474, "offset":{"exp":"3 s", "val":3.0}}, "event":null},
    {"name":"DisableVision", "from":{"target":8, "targetTimestamp":6.79474, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
    {"name":"EnableVision", "from":{"target":9, "targetTimestamp":11.02104, "offset":{"exp":"0 s", "val":0.0}}, "event":null}]
 }
