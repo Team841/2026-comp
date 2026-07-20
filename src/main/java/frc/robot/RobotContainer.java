@@ -229,11 +229,11 @@ public class RobotContainer {
                     Commands.runOnce(
                     () -> {
                         autoaim.setFiringLocation(FiringLocation.HUB);
-                        turret.setOverridePosition(Rotation2d.kZero);
+                        turret.setOverridePosition(Rotation2d.k180deg);
                         turret.setState(TurretState.TRACK_SUPPLIER);
                         hood.setState(HoodState.TRACK_SUPPLIER);
                         hood.setOverrideSupplier(-4.1);
-                        shooter.setOverrideVelocity(-10);
+                        shooter.setOverrideVelocity(-20);
                         shooter.setState(ShooterState.FOLLOW_SUPPLIER);
                     }, turret, hood, shooter),
                     runDyeRotorForPoopShot()
@@ -300,10 +300,11 @@ public class RobotContainer {
         joystick.povLeft().onTrue(new InstantCommand(() -> setMode(RobotMode.ZERO)));
 
         // X-Lock the drivebase to help against defense
-        // joystick.y().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.y().whileTrue(
-            drivetrain.PIDToPose(
-                new Pose2d(10.3, 2.5, Rotation2d.k180deg)));
+        joystick.y().whileTrue(drivetrain.applyRequest(() -> brake));
+       
+        // joystick.y().whileTrue(
+        //     drivetrain.PIDToPose(
+        //         new Pose2d(10.3, 2.5, Rotation2d.k180deg)));
         
         // Intake rollers and pivot
         joystick.leftTrigger().onTrue(
@@ -330,7 +331,8 @@ public class RobotContainer {
 
         // Run rotor in reverse in case of jamming
         joystick.leftBumper().onTrue(
-            new InstantCommand(() -> dyeRotor.setState(RotorState.UNJAM_BACKWARD), dyeRotor))
+            new InstantCommand(() -> dyeRotor.setState(RotorState.UNJAM_BACKWARD), dyeRotor)
+            .alongWith(new InstantCommand(() -> setMode(RobotMode.NEUTRAL))))
             .onFalse(new InstantCommand(() -> dyeRotor.setState(RotorState.STOP), dyeRotor));
 
         // Zero drivebase relative to field
