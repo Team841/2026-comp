@@ -201,7 +201,7 @@ public class Autos {
     }
 
     public AutoRoutine LeftSideOneSweepDeepPlusDepotAndReturn() {
-        AutoRoutine routine = autoFactory.newRoutine("LeftSideOneSweepPlusDepotAndReturn");
+        AutoRoutine routine = autoFactory.newRoutine("LeftSideOneSweepPlusDepotAndReturnDeepSweep");
 
         AutoTrajectory path = routine.trajectory("LeftSideOneSweepPlusDepotNewDeepSweep");  
         
@@ -337,17 +337,17 @@ public class Autos {
             }, turret, shooter, hood, dyeRotor)
         );
 
-        path.atTime("DisableVision").onTrue(
-            Commands.runOnce(
-                () -> robotContainer.vision.disableVision(), 
-                robotContainer.vision)
-        );
+        // path.atTime("DisableVision").onTrue(
+        //     Commands.runOnce(
+        //         () -> robotContainer.vision.disableVision(), 
+        //         robotContainer.vision)
+        // );
 
-        path.atTime("EnableVision").onTrue(
-            Commands.runOnce(
-                () -> robotContainer.vision.disableVision(), 
-                robotContainer.vision)
-        );
+        // path.atTime("EnableVision").onTrue(
+        //     Commands.runOnce(
+        //         () -> robotContainer.vision.disableVision(), 
+        //         robotContainer.vision)
+        // );
 
         path.done().onTrue(
             Commands.sequence(
@@ -417,21 +417,181 @@ public class Autos {
             }, turret, shooter, hood, dyeRotor)
         );
 
-        path.atTime("DisableVision").onTrue(
-            Commands.runOnce(
-                () -> robotContainer.vision.disableVision(), 
-                robotContainer.vision)
-        );
+        // path.atTime("DisableVision").onTrue(
+        //     Commands.runOnce(
+        //         () -> robotContainer.vision.disableVision(), 
+        //         robotContainer.vision)
+        // );
 
-        path.atTime("EnableVision").onTrue(
-            Commands.runOnce(
-                () -> robotContainer.vision.disableVision(), 
-                robotContainer.vision)
-        );
+        // path.atTime("EnableVision").onTrue(
+        //     Commands.runOnce(
+        //         () -> robotContainer.vision.disableVision(), 
+        //         robotContainer.vision)
+        // );
 
         path.done().onTrue(
             Commands.sequence(
                 Commands.waitSeconds(2),
+                Commands.runOnce(
+                    () -> intakePivot.setState(IntakePivotState.COMPACT_STOW), 
+                    intakePivot)
+            )
+        );
+
+        return routine;
+    }
+
+    public AutoRoutine LeftSideTwoSweepDeepSweep() {
+        AutoRoutine routine = autoFactory.newRoutine("LeftSideTwoSweepDeepSweep");
+
+        AutoTrajectory path = routine.trajectory("LeftSideTwoSweepDeepSweep");  
+        
+        routine.active().onTrue(
+            Commands.sequence(
+                path.resetOdometry(),
+                Commands.parallel(
+                    path.cmd(),
+                    Commands.runOnce(() -> {
+                        shooter.setState(ShooterState.FOLLOW_TARGET);
+                        autoaim.setFiringLocation(FiringLocation.HUB);
+                        turret.setState(TurretState.TRACK_TARGET);
+                        hood.setState(HoodState.TRACK_TARGET);
+                    })
+                )
+            )
+        );
+
+        path.atTime("IntakeDown").onTrue(Commands.runOnce(() -> {
+            intake.setState(IntakeState.FULLSPEED_INTAKE);
+            intakePivot.setState(IntakePivotState.INTAKE);
+        }, intake, intakePivot));
+
+        path.atTime("IntakeBumpStow").onTrue(Commands.runOnce(() -> {
+            intakePivot.setState(IntakePivotState.BUMP_STOW);
+        }, intakePivot));
+
+        path.atTime("IntakeUp").onTrue(Commands.runOnce(() -> {
+            intakePivot.setState(IntakePivotState.COMPACT_STOW);
+        }, intakePivot));
+
+        path.atTime("HubFire").onTrue(new ParallelCommandGroup(
+            Commands.runOnce(
+            () -> {
+                autoaim.setFiringLocation(FiringLocation.HUB);
+                turret.setState(TurretState.TRACK_TARGET);
+                hood.setState(HoodState.TRACK_TARGET);
+                shooter.setState(ShooterState.FOLLOW_TARGET);
+                dyeRotor.setState(RotorState.FULLSPEED_FORWARD);
+            }, turret, shooter, hood) //,
+            // robotContainer.runDyeRotorForHubShot()
+        ));
+
+        path.atTime("StopFire").onTrue(
+            Commands.runOnce(
+            () -> {
+                autoaim.setFiringLocation(FiringLocation.HUB);
+                turret.setState(TurretState.TRACK_TARGET);
+                hood.setState(HoodState.TRACK_TARGET);
+                shooter.setState(ShooterState.FOLLOW_TARGET);
+                dyeRotor.setState(RotorState.STOP);
+            }, turret, shooter, hood, dyeRotor)
+        );
+
+        // path.atTime("DisableVision").onTrue(
+        //     Commands.runOnce(
+        //         () -> robotContainer.vision.disableVision(), 
+        //         robotContainer.vision)
+        // );
+
+        // path.atTime("EnableVision").onTrue(
+        //     Commands.runOnce(
+        //         () -> robotContainer.vision.disableVision(), 
+        //         robotContainer.vision)
+        // );
+
+        path.done().onTrue(
+            Commands.sequence(
+                Commands.waitSeconds(1.5),
+                Commands.runOnce(
+                    () -> intakePivot.setState(IntakePivotState.COMPACT_STOW), 
+                    intakePivot)
+            )
+        );
+
+        return routine;
+    }
+
+    public AutoRoutine RightSideTwoSweepDeepSweep() {
+        AutoRoutine routine = autoFactory.newRoutine("LeftSideTwoSweepDeepSweep");
+
+        AutoTrajectory path = routine.trajectory("LeftSideTwoSweepDeepSweep").mirrorY();  
+        
+        routine.active().onTrue(
+            Commands.sequence(
+                path.resetOdometry(),
+                Commands.parallel(
+                    path.cmd(),
+                    Commands.runOnce(() -> {
+                        shooter.setState(ShooterState.FOLLOW_TARGET);
+                        autoaim.setFiringLocation(FiringLocation.HUB);
+                        turret.setState(TurretState.TRACK_TARGET);
+                        hood.setState(HoodState.TRACK_TARGET);
+                    })
+                )
+            )
+        );
+
+        path.atTime("IntakeDown").onTrue(Commands.runOnce(() -> {
+            intake.setState(IntakeState.FULLSPEED_INTAKE);
+            intakePivot.setState(IntakePivotState.INTAKE);
+        }, intake, intakePivot));
+
+        path.atTime("IntakeBumpStow").onTrue(Commands.runOnce(() -> {
+            intakePivot.setState(IntakePivotState.BUMP_STOW);
+        }, intakePivot));
+
+        path.atTime("IntakeUp").onTrue(Commands.runOnce(() -> {
+            intakePivot.setState(IntakePivotState.COMPACT_STOW);
+        }, intakePivot));
+
+        path.atTime("HubFire").onTrue(new ParallelCommandGroup(
+            Commands.runOnce(
+            () -> {
+                autoaim.setFiringLocation(FiringLocation.HUB);
+                turret.setState(TurretState.TRACK_TARGET);
+                hood.setState(HoodState.TRACK_TARGET);
+                shooter.setState(ShooterState.FOLLOW_TARGET);
+                dyeRotor.setState(RotorState.FULLSPEED_FORWARD);
+            }, turret, shooter, hood) //,
+            // robotContainer.runDyeRotorForHubShot()
+        ));
+
+        path.atTime("StopFire").onTrue(
+            Commands.runOnce(
+            () -> {
+                autoaim.setFiringLocation(FiringLocation.HUB);
+                turret.setState(TurretState.TRACK_TARGET);
+                hood.setState(HoodState.TRACK_TARGET);
+                shooter.setState(ShooterState.FOLLOW_TARGET);
+                dyeRotor.setState(RotorState.STOP);
+            }, turret, shooter, hood, dyeRotor)
+        );
+
+        // path.atTime("DisableVision").onTrue(
+        //     Commands.runOnce(
+        //         () -> robotContainer.vision.disableVision(), 
+        //         robotContainer.vision)
+        // );
+
+        // path.atTime("EnableVision").onTrue(
+        //     Commands.runOnce(
+        //         () -> robotContainer.vision.disableVision(), 
+        //         robotContainer.vision)
+        // );
+
+        path.done().onTrue(
+            Commands.sequence(
+                Commands.waitSeconds(1.5),
                 Commands.runOnce(
                     () -> intakePivot.setState(IntakePivotState.COMPACT_STOW), 
                     intakePivot)
