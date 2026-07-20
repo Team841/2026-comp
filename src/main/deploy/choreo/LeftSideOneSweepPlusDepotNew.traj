@@ -852,16 +852,12 @@
  "events":[
    {"name":"IntakeDown", "from":{"target":1, "targetTimestamp":0.7853, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
    {"name":"IntakeBumpStow", "from":{"target":6, "targetTimestamp":4.3887, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
-   {"name":"HubFire", "from":{"target":7, "targetTimestamp":5.79613, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
+   {"name":"HubFireForced", "from":{"target":7, "targetTimestamp":5.79613, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
    {"name":"IntakeDown", "from":{"target":7, "targetTimestamp":5.79613, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
    {"name":"StopFire", "from":{"target":8, "targetTimestamp":9.32676, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
-   {"name":"HubFire", "from":{"target":11, "targetTimestamp":12.41265, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
+   {"name":"HubFireForced", "from":{"target":11, "targetTimestamp":12.41265, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
    {"name":"StopFire", "from":{"target":12, "targetTimestamp":17.03561, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
    {"name":"IntakeUp", "from":{"target":11, "targetTimestamp":12.41265, "offset":{"exp":"2.5 s", "val":2.5}}, "event":null},
    {"name":"IntakeDown", "from":{"target":12, "targetTimestamp":17.03561, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
-   {"name":"DisableVision", "from":{"target":7, "targetTimestamp":5.79613, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
-   {"name":"EnableVision", "from":{"target":8, "targetTimestamp":9.32676, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
-   {"name":"DisableVision", "from":{"target":11, "targetTimestamp":12.41265, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
-   {"name":"EnableVision", "from":{"target":12, "targetTimestamp":17.03561, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
    {"name":"IntakeUp", "from":{"target":11, "targetTimestamp":12.41265, "offset":{"exp":"2.5 s", "val":2.5}}, "event":null}]
 }

@@ -888,16 +888,12 @@
  "events":[
    {"name":"IntakeDown", "from":{"target":1, "targetTimestamp":0.78533, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
    {"name":"IntakeBumpStow", "from":{"target":7, "targetTimestamp":5.10321, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
-   {"name":"HubFire", "from":{"target":8, "targetTimestamp":6.52851, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
+   {"name":"HubFireForced", "from":{"target":8, "targetTimestamp":6.52851, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
    {"name":"IntakeDown", "from":{"target":8, "targetTimestamp":6.52851, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
    {"name":"StopFire", "from":{"target":9, "targetTimestamp":10.05913, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
-   {"name":"HubFire", "from":{"target":12, "targetTimestamp":13.18885, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
+   {"name":"HubFireForced", "from":{"target":12, "targetTimestamp":13.18885, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
    {"name":"StopFire", "from":{"target":13, "targetTimestamp":17.81181, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
    {"name":"IntakeUp", "from":{"target":12, "targetTimestamp":13.18885, "offset":{"exp":"2.5 s", "val":2.5}}, "event":null},
    {"name":"IntakeDown", "from":{"target":13, "targetTimestamp":17.81181, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
-   {"name":"DisableVision", "from":{"target":8, "targetTimestamp":6.52851, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
-   {"name":"EnableVision", "from":{"target":9, "targetTimestamp":10.05913, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
-   {"name":"DisableVision", "from":{"target":12, "targetTimestamp":13.18885, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
-   {"name":"EnableVision", "from":{"target":13, "targetTimestamp":17.81181, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
    {"name":"IntakeUp", "from":{"target":12, "targetTimestamp":13.18885, "offset":{"exp":"2.5 s", "val":2.5}}, "event":null}]
 }

@@ -732,6 +732,6 @@
    {"name":"HubFire", "from":{"target":7, "targetTimestamp":5.79694, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
    {"name":"IntakeDown", "from":{"target":1, "targetTimestamp":0.74447, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
    {"name":"IntakeDown", "from":{"target":7, "targetTimestamp":5.79694, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
-   {"name":"IntakeBumpStow", "from":{"target":14, "targetTimestamp":null, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
-   {"name":"StopFire", "from":{"target":14, "targetTimestamp":null, "offset":{"exp":"0 s", "val":0.0}}, "event":null}]
+   {"name":"IntakeBumpStow", "from":{"target":14, "targetTimestamp":16.79398, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
+   {"name":"StopFire", "from":{"target":14, "targetTimestamp":16.79398, "offset":{"exp":"0 s", "val":0.0}}, "event":null}]
 }

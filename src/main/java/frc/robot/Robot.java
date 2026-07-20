@@ -120,9 +120,7 @@ public class Robot extends LoggedRobot {
         autoChooser = new AutoChooser();
 
         autoChooser.addRoutine("L_NZ_DP_NZR", autos::LeftSideOneSweepPlusDepotAndReturn);
-        autoChooser.addRoutine("L_NZ_DP_NZR_DeepSweep", autos::LeftSideOneSweepDeepPlusDepotAndReturn);
-        autoChooser.addRoutine("R_NZ", autos::RightSideOneSweepNZ);
-        autoChooser.addRoutine("L_NZ", autos::LeftSideOneSweepNZ);
+        autoChooser.addRoutine("L_NZ_DP_NZR_DeepSweep", autos::LeftSideOneSweepPlusDepotAndReturnDeepSweep);
         autoChooser.addRoutine("L_NZ_NZ", autos::LeftSideTwoSweep);
         autoChooser.addRoutine("R_NZ_NZ", autos::RightSideTwoSweep);
         autoChooser.addRoutine("L_NZ_NZ_DeepSweep", autos::LeftSideTwoSweepDeepSweep);
