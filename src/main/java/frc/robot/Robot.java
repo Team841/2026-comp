@@ -5,11 +5,13 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.RobotContainer.RobotMode;
 import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.vision.Vision;
@@ -136,6 +138,17 @@ public class Robot extends LoggedRobot {
         RobotModeTriggers.autonomous().onTrue(Commands.waitSeconds(0.5).andThen(Commands.run(() -> vision.enableVision())));
 
         Threads.setCurrentThreadPriority(true, 5);
+
+        new Trigger(() -> DriverStation.isFMSAttached())
+            .onTrue((
+                Commands.runOnce(
+                    () -> {
+                    if (RobotConstants.isRedAlliance.getAsBoolean()) {
+                        drivetrain.resetRotation(Rotation2d.k180deg);
+                    } else {
+                        drivetrain.resetRotation(Rotation2d.kZero);
+                    }})
+            ));
 
         Logger.start();
 
