@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Autoaim;
@@ -331,8 +332,9 @@ public class RobotContainer {
 
         // Run rotor in reverse in case of jamming
         joystick.leftBumper().onTrue(
-            new InstantCommand(() -> dyeRotor.setState(RotorState.UNJAM_BACKWARD), dyeRotor)
-            .alongWith(new InstantCommand(() -> setMode(RobotMode.NEUTRAL))))
+            new InstantCommand(() -> setMode(RobotMode.NEUTRAL))
+            .andThen(new WaitCommand(0.01))
+            .andThen(new InstantCommand(() -> dyeRotor.setState(RotorState.UNJAM_BACKWARD))))
             .onFalse(new InstantCommand(() -> dyeRotor.setState(RotorState.STOP), dyeRotor));
 
         // Zero drivebase relative to field

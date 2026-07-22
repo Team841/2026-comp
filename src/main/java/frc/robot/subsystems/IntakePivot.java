@@ -32,6 +32,7 @@ public class IntakePivot extends SubsystemBase {
         STOP,
         MATCHSTART_STOW,
         COMPACT_STOW,
+        SMALL_COMPACT_STOW,
         BUMP_STOW,
         INTAKE,
         AGITATE
@@ -97,6 +98,10 @@ public class IntakePivot extends SubsystemBase {
 
             case COMPACT_STOW:
                 this.targetPosition = -6;
+                break;
+
+            case SMALL_COMPACT_STOW:
+                this.targetPosition = -16;
                 break;
 
             case AGITATE:

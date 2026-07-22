@@ -304,6 +304,15 @@ public class Autos {
         );
 
         AssignStandardCommandsToTrajectory(path);
+        
+        path.done().onTrue(
+            Commands.sequence(
+                Commands.waitSeconds(2),
+                Commands.runOnce(
+                    () -> intakePivot.setState(IntakePivotState.COMPACT_STOW), 
+                    intakePivot)
+            )
+        );
 
         return routine;
     }
@@ -334,6 +343,10 @@ public class Autos {
 
         path.atTime("IntakeUp").onTrue(Commands.runOnce(() -> {
             intakePivot.setState(IntakePivotState.COMPACT_STOW);
+        }, intakePivot));
+
+        path.atTime("IntakeUpSmall").onTrue(Commands.runOnce(() -> {
+            intakePivot.setState(IntakePivotState.SMALL_COMPACT_STOW);
         }, intakePivot));
 
         path.atTime("IntakeBumpStow").onTrue(Commands.runOnce(() -> {

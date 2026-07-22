@@ -139,17 +139,6 @@ public class Robot extends LoggedRobot {
 
         Threads.setCurrentThreadPriority(true, 5);
 
-        new Trigger(() -> DriverStation.isFMSAttached())
-            .onTrue((
-                Commands.runOnce(
-                    () -> {
-                    if (RobotConstants.isRedAlliance.getAsBoolean()) {
-                        drivetrain.resetRotation(Rotation2d.k180deg);
-                    } else {
-                        drivetrain.resetRotation(Rotation2d.kZero);
-                    }})
-            ));
-
         Logger.start();
 
         // this.orchestra.addInstrument(this.dyeRotor.rotorMotor);
