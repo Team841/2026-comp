@@ -145,9 +145,9 @@ public class Autos {
 
         path.done().onTrue(
             Commands.sequence(
-                Commands.waitSeconds(2),
+                Commands.waitSeconds(1.5),
                 Commands.runOnce(
-                    () -> intakePivot.setState(IntakePivotState.COMPACT_STOW), 
+                    () -> intakePivot.setState(IntakePivotState.SMALL_COMPACT_STOW), 
                     intakePivot)
             )
         );
@@ -179,9 +179,9 @@ public class Autos {
 
         path.done().onTrue(
             Commands.sequence(
-                Commands.waitSeconds(2),
+                Commands.waitSeconds(1.5),
                 Commands.runOnce(
-                    () -> intakePivot.setState(IntakePivotState.COMPACT_STOW), 
+                    () -> intakePivot.setState(IntakePivotState.SMALL_COMPACT_STOW), 
                     intakePivot)
             )
         );
@@ -213,9 +213,9 @@ public class Autos {
 
         path.done().onTrue(
             Commands.sequence(
-                Commands.waitSeconds(1.5),
+                Commands.waitSeconds(1),
                 Commands.runOnce(
-                    () -> intakePivot.setState(IntakePivotState.COMPACT_STOW), 
+                    () -> intakePivot.setState(IntakePivotState.SMALL_COMPACT_STOW), 
                     intakePivot)
             )
         );
@@ -247,9 +247,9 @@ public class Autos {
 
         path.done().onTrue(
             Commands.sequence(
-                Commands.waitSeconds(1.5),
+                Commands.waitSeconds(1),
                 Commands.runOnce(
-                    () -> intakePivot.setState(IntakePivotState.COMPACT_STOW), 
+                    () -> intakePivot.setState(IntakePivotState.SMALL_COMPACT_STOW), 
                     intakePivot)
             )
         );

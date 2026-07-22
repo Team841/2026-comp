@@ -101,7 +101,7 @@ public class IntakePivot extends SubsystemBase {
                 break;
 
             case SMALL_COMPACT_STOW:
-                this.targetPosition = -16;
+                this.targetPosition = -12;
                 break;
 
             case AGITATE:
