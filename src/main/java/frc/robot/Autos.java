@@ -121,6 +121,43 @@ public class Autos {
         return routine;
     }
 
+    
+    public AutoRoutine LeftSideOneSweepPlusDepotAndReturnDeepSweepSlow() {
+        AutoRoutine routine = autoFactory.newRoutine("LeftSideOneSweepPlusDepotAndReturnDeepSweepSlow");
+
+        AutoTrajectory path = routine.trajectory("LeftSideOneSweepPlusDepotNewDeepSweepSlow");  
+        
+        routine.active().onTrue(
+            Commands.sequence(
+                path.resetOdometry(),
+                Commands.parallel(
+                    path.cmd(),
+                    Commands.runOnce(() -> {
+                        shooter.setState(ShooterState.FOLLOW_TARGET);
+                        autoaim.setFiringLocation(FiringLocation.HUB);
+                        turret.setState(TurretState.TRACK_TARGET);
+                        hood.setState(HoodState.TRACK_TARGET);
+                    })
+                )
+            )
+        );
+
+        AssignStandardCommandsToTrajectory(path);
+
+        path.done().onTrue(
+            Commands.runOnce(
+                    () -> {
+                        autoaim.setFiringLocation(FiringLocation.HUB);
+                        turret.setState(TurretState.HOLD);
+                        hood.setState(HoodState.HOLD);
+                        shooter.setState(ShooterState.FOLLOW_TARGET);
+                        dyeRotor.setState(RotorState.STOP);
+                    }, turret, shooter, hood, dyeRotor)
+        );
+
+        return routine;
+    }
+
     public AutoRoutine LeftSideTwoSweep() {
         AutoRoutine routine = autoFactory.newRoutine("LeftSideTwoSweep");
 

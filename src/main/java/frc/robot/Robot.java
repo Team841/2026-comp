@@ -123,6 +123,7 @@ public class Robot extends LoggedRobot {
 
         autoChooser.addRoutine("L_NZ_DP_NZR", autos::LeftSideOneSweepPlusDepotAndReturn);
         autoChooser.addRoutine("L_NZ_DP_NZR_DeepSweep", autos::LeftSideOneSweepPlusDepotAndReturnDeepSweep);
+        autoChooser.addRoutine("NEW_L_NZ_DP_NZR_DeepSweepSlow", autos::LeftSideOneSweepPlusDepotAndReturnDeepSweepSlow);
         autoChooser.addRoutine("L_NZ_NZ", autos::LeftSideTwoSweep);
         autoChooser.addRoutine("R_NZ_NZ", autos::RightSideTwoSweep);
         autoChooser.addRoutine("L_NZ_NZ_DeepSweep", autos::LeftSideTwoSweepDeepSweep);
@@ -132,6 +133,7 @@ public class Robot extends LoggedRobot {
         autoChooser.addRoutine("M_DP", autos::MiddleDepot);
         autoChooser.addRoutine("M_OP", autos::MiddleOutpost);
 
+        
         SmartDashboard.putData("AutoChooser", autoChooser);
 
         RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());
