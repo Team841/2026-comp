@@ -89,7 +89,7 @@ public class IntakePivot extends SubsystemBase {
                 break;
 
             case BUMP_STOW:
-                this.targetPosition = -20;
+                this.targetPosition = -22.9;
                 break;
 
             case MATCHSTART_STOW:
