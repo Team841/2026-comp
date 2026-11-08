@@ -132,6 +132,7 @@ public class Robot extends LoggedRobot {
         autoChooser.addRoutine("M_Preload", autos::MiddlePreloadFire);
         autoChooser.addRoutine("M_DP", autos::MiddleDepot);
         autoChooser.addRoutine("M_OP", autos::MiddleOutpost);
+        autoChooser.addRoutine("MTTD_L_NZ_DP", autos::LeftSideOneSweepPlusDepotMTTD);
 
         
         SmartDashboard.putData("AutoChooser", autoChooser);
